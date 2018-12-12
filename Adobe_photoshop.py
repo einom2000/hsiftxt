@@ -338,8 +338,8 @@ def castPole(minXTrim, maxXTrim, minYTrim, maxYTrim, minDur, maxDur):
     pyautogui.rightClick(mousePosition[0], mousePosition[1], rm[2])
     # print('mouse wonder x y and time is =', rm)
 
-def randomWait(min, max):
-    time.sleep(random.randint(min, max) / 1000)
+# def randomWait(min, max):
+#     time.sleep(random.randint(min, max) / 1000)
 
 def getNormalCursorhandle():
     randomWait(300,500)

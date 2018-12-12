@@ -22,6 +22,15 @@ STOP_KEY = 'F12'
 TIME_TO_RUN = 480
 ANTI_AFT_TIME = 10
 
+def getRandomWait(min, max):
+    time.sleep(random.randint(min, max) / 1000)
+
+def blurPosDur():
+    blurXplus = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
+    blurYplus = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
+    blurTime = random.randint(BLUR_DUR[0], BLUR_DUR[1])
+    return (blurXplus, blurYplus, blurTime)
+
 # Game variables
 infoTxt = ''
 hookMissed = 0
@@ -42,7 +51,9 @@ class CastPole:
         self.mousePosition = mousePosition
 
     def castPole(self):
-        temp()
+        getRandomWait(100, 300)
+        blur = blurPosDur()
+        print(blur)
         pass
 
 
