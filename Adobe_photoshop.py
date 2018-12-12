@@ -263,10 +263,10 @@ def makeform(root, fields, defaultvalues, entrycolors):
         ent.grid(row=i, column=1)
         entries.append((fields[i], ent))
     return entries
-
-def getRandomNum(mimium, maxium):
-    randomNum = random.randint(mimium,maxium)
-    return randomNum
+#
+# def getRandomNum(mimium, maxium):
+#     randomNum = random.randint(mimium,maxium)
+#     return randomNum
 
 def check_for_key_in():
     if keyboard.is_pressed(STARTKEY):
@@ -330,12 +330,12 @@ def waitForKeyin():
             pass
     return checkForKey
 
-def castPole(minXTrim, maxXTrim, minYTrim, maxYTrim, minDur, maxDur):
-    rm = mouseWondering(minXTrim, maxXTrim, minYTrim, maxYTrim, minDur, maxDur)
-    mousePosition = pyautogui.position() + (rm[0], rm[1])
-    pyautogui.rightClick(mousePosition[0], mousePosition[1], rm[2])
-    randomWait(100,300)
-    pyautogui.rightClick(mousePosition[0], mousePosition[1], rm[2])
+# def castPole(minXTrim, maxXTrim, minYTrim, maxYTrim, minDur, maxDur):
+#     rm = mouseWondering(minXTrim, maxXTrim, minYTrim, maxYTrim, minDur, maxDur)
+#     mousePosition = pyautogui.position() + (rm[0], rm[1])
+#     pyautogui.rightClick(mousePosition[0], mousePosition[1], rm[2])
+#     randomWait(100,300)
+#     pyautogui.rightClick(mousePosition[0], mousePosition[1], rm[2])
     # print('mouse wonder x y and time is =', rm)
 
 # def randomWait(min, max):
@@ -349,11 +349,11 @@ def getNormalCursorhandle():
     mouseInfo = win32gui.GetCursorInfo()
     return mouseInfo[1]
 
-def mouseWondering(minX, maxX, minY, maxY, minDur, maxDur):
-    randomXTrim = getRandomNum(minX, maxX)
-    randomYTrim = getRandomNum(minY, maxY)
-    randomDur = getRandomNum(minDur, maxDur) / 1000
-    return (randomXTrim, randomYTrim, randomDur)
+# def mouseWondering(minX, maxX, minY, maxY, minDur, maxDur):
+#     randomXTrim = getRandomNum(minX, maxX)
+#     randomYTrim = getRandomNum(minY, maxY)
+#     randomDur = getRandomNum(minDur, maxDur) / 1000
+#     return (randomXTrim, randomYTrim, randomDur)
 
 def shakeToSecure(currentCursor, step):
     currentMousePosition = pyautogui.position()

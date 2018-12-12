@@ -23,13 +23,16 @@ TIME_TO_RUN = 480
 ANTI_AFT_TIME = 10
 
 def getRandomWait(min, max):
+    # wait for a random time
     time.sleep(random.randint(min, max) / 1000)
 
 def blurPosDur():
+    # get a random blur relevant x and y and random time according to the constants
     blurXplus = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
     blurYplus = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
     blurTime = random.randint(BLUR_DUR[0], BLUR_DUR[1])
     return (blurXplus, blurYplus, blurTime)
+
 
 # Game variables
 infoTxt = ''
@@ -50,17 +53,23 @@ class CastPole:
     def __init__(self, mousePosition):
         self.mousePosition = mousePosition
 
-    def castPole(self):
-        getRandomWait(100, 300)
+    def cast(self):
+        # get a blur
         blur = blurPosDur()
-        print(blur)
-        pass
+        self.mousePosition =tuple(map(lambda x, y: x + y, pyautogui.position(),
+                                      (blur[0] * 3, blur[1] * 3)))
+        # right double click
+        pyautogui.rightClick(self.mousePosition[0], self.mousePosition[1], blur[2])
+        getRandomWait(100, 300)
+        pyautogui.rightClick(self.mousePosition[0], self.mousePosition[1], blur[2])
+        getRandomWait(500, 800)
+
+    def findhooker(self):
 
 
-def temp():
-    print('here i am called')
+
 
 
 cl = CastPole((300, 400))
-cl.castPole()
+cl.cast()
 
