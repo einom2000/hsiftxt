@@ -33,6 +33,25 @@ def blur_pos_dur():
     t = random.randint(BLUR_DUR[0], BLUR_DUR[1])
     return x, y, t
 
+def scope_size():
+    # get searching area for the dobber
+    rect = ((SCREEN_WIDTH // 6, SCREEN_HEIGHT // 9),
+            (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 10))
+    return rect
+
+def locate_mixer():
+    t = time.time()
+    found_mixer = False
+    pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
+    while not found_mixer:
+        found_mixer = pyautogui.locateOnScreen("speaker.png", region=(SCREEN_WIDTH, 0,
+                                                                      SCREEN_WIDTH + 500, SCREEN_HEIGHT // 2),
+                                               grayscale=False, confidence=0.5)
+        if found_mixer:
+            break
+        if time.time() - t >= 5.0:
+            break
+    return found_mixer
 
 # Game variables
 infoTxt = ''
@@ -56,6 +75,7 @@ class CastPole:
     def cast(self):
         # get a blur
         blur_x, blur_y, dur_t = blur_pos_dur()
+        pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], 0.3, pyautogui.easeInQuad)
         self.mouse_pos =tuple(map(lambda x, y: x + y, self.mouse_pos,
                                       (blur_x * 3, blur_y * 3)))
         # right double click
@@ -64,17 +84,38 @@ class CastPole:
         pyautogui.rightClick(self.mouse_pos[0], self.mouse_pos[1], dur_t)
         get_random_wait(500, 800)
 
-    def find_hooker(self, rect, confi):
+    def find_hooker(self, rect, confi=None):
+        if not confi: confi = 0.5
         found_hook = False
-        for i in range(0, 5):
+        t = time.time()
+        print(rect)
+        while not found_hook:
             for img in dobber_images:
-                img_found = pyautogui.locateCenterOnScreen()
+                found_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
+                                                                        rect[1][0], rect[1][0]),
+                                                            grayscale=True, confidence=confi)
+                if found_hook:
+                    break
+            # if searching time is too long quit loop
+            if time.time() - t >= 5.0:
+                break
+        return found_hook
 
+class Listen2mixer():
+    def __init(self, trigger):
+        self.strigger = trigger
 
+    def listen(self):
+        t = time.time()
 
-
-
-
-cl = CastPole((300, 400))
-cl.cast()
-
+lm = locate_mixer()
+if lm:
+    print('found')
+    pyautogui.moveTo(lm[0], lm[1], 0.2)
+# rect = scope_size()
+# cst = CastPole((300, 800))
+# cst.cast()
+# fd = cst.find_hooker(rect, 0.6)
+# if fd:
+#     pyautogui.moveTo(fd[0], fd[1], 0.5)
+#     print(fd)

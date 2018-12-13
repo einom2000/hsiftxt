@@ -52,10 +52,7 @@ def main(entries, rttk):
         setGlobal(newvalues)
     except ValueError:
         sys.exit()
-    # print ('SCREENSIZE=', SCREENSIZE, 'LEFTTOP=', LEFTTOP, 'RIGHTBOTTOM=', RIGHTBOTTOM,
-    #        'XWONDER=', XWONDER, 'YWONDER=', YWONDER, 'DURWONDER=', DURWONDER, 'MINVOLUME=', MINVOLUME,
-    #        'MAXVOLUME=', MAXVOLUME,'SEARCHINGCURSORSTEP=', 'SWAPPIXEL=', SWAPPIXEL,
-    #        'STARTKEY=', STARTKEY, 'STOPKEY=', STOPKEY, 'REALELASPE=', REALELASPE)
+
     global VARTXT
     VARTXT ='SCREENSIZE='+ str(SCREENSIZE) + '; LEFTTOP=' + str(LEFTTOP) + '; RIGHTBOTTOM=' + str(RIGHTBOTTOM) +\
             '; XWONDER=' + str(XWONDER) + '; YWONDER=' + str(YWONDER) + '; DURWONDER=' + str(DURWONDER) + '; MINVOLUME='\
@@ -68,11 +65,7 @@ def main(entries, rttk):
     frame.geometry('400x80+0+0')
     text = Text(frame, wrap=WORD, height=7)
     text.config(background="gray", foreground="black")
-    # scrollbar = Scrollbar(frame)
-    # scrollbar.config(command=text.yview)
-    # text.config(yscrollcommand=scrollbar.set)
     text.insert('1.0', VARTXT)
-    # scrollbar.pack(side=RIGHT, fill=Y)
     text.pack(expand=YES, fill=BOTH)
     VARTXT = 'Press ' + str(STARTKEY) + 'to Continue or Press ' + str(STOPKEY) + 'to Stop! \n'
     text.insert('1.0',VARTXT)
@@ -85,9 +78,6 @@ def main(entries, rttk):
     masterup.attributes("-topmost", True)
     geo0 = str(scopelength) + 'x2+' + str(LEFTTOP[0]) + '+' + str(LEFTTOP[1])
     masterup.geometry(geo0)
-    # canvasup = Canvas(masterup)
-    # canvasup.pack()
-    # canvasup.create_line(LEFTTOP[0] , LEFTTOP[1] , LEFTTOP[0] + scopelength, LEFTTOP[1])
     masterdown = Tk()
     masterdown.overrideredirect(1)
     masterdown.attributes("-topmost", True)
@@ -194,48 +184,48 @@ def main1(speakerintensitycoors):
 
     #cast works as pickup
 
-def findimgHooker(ltp, rbtm):
-    global VARTXT, MISSHK
-    flag = 0
-    images = 'pp1.png', 'pp2.png','pp3.png','pp4.png','pp5.png','pp6.png','pp7.png','pp8.png','pp9.png','pp10.png'
-    # print(ltp,rbtm)
-    for i in range(0, 5):
-        for image in images:
-            foundimg = pyautogui.locateCenterOnScreen(image, region=(ltp[0], ltp[1], rbtm[0], rbtm[1]), confidence=.5)
-            if foundimg != None:
-                flag = 1
-                break
-        checkQuit()
+# def findimgHooker(ltp, rbtm):
+#     global VARTXT, MISSHK
+#     flag = 0
+#     images = 'pp1.png', 'pp2.png','pp3.png','pp4.png','pp5.png','pp6.png','pp7.png','pp8.png','pp9.png','pp10.png'
+#     # print(ltp,rbtm)
+#     for i in range(0, 5):
+#         for image in images:
+#             foundimg = pyautogui.locateCenterOnScreen(image, region=(ltp[0], ltp[1], rbtm[0], rbtm[1]), confidence=.5)
+#             if foundimg != None:
+#                 flag = 1
+#                 break
+#         checkQuit()
+#
+#     if flag != 1:
+#         # print('Can not find the hongkong!')
+#         VARTXT = VARTXT+ 'Can not find the hongkong!\n'
+#         MISSHK += 1
+#         pyautogui.moveTo(LEFTTOP[0] + (RIGHTBOTTOM[0] - LEFTTOP[0]) * 10 / 20,
+#                          LEFTTOP[1] + (RIGHTBOTTOM[1] - LEFTTOP[1]) \
+#                          * 10 / 20, random.randint(300, 500) / 1000, pyautogui.easeOutQuad)
+#         foundimg = None
+#     randomWait(300,500)
+#     checkQuit()
+#     return (flag, foundimg)
 
-    if flag != 1:
-        # print('Can not find the hongkong!')
-        VARTXT = VARTXT+ 'Can not find the hongkong!\n'
-        MISSHK += 1
-        pyautogui.moveTo(LEFTTOP[0] + (RIGHTBOTTOM[0] - LEFTTOP[0]) * 10 / 20,
-                         LEFTTOP[1] + (RIGHTBOTTOM[1] - LEFTTOP[1]) \
-                         * 10 / 20, random.randint(300, 500) / 1000, pyautogui.easeOutQuad)
-        foundimg = None
-    randomWait(300,500)
-    checkQuit()
-    return (flag, foundimg)
-
-def setGlobal(newvalues):
-    global SCREENSIZE, LEFTTOP, RIGHTBOTTOM, RATIO, XWONDER, YWONDER, DURWONDER, MINVOLUME, MAXVOLUME, \
-           SWAPPIXEL, STARTKEY, STOPKEY, REALELASPE, PROGRAMSTARTTIME
-    SCREENSIZE = (newvalues[0],newvalues[1])
-    LEFTTOP = (int(SCREENSIZE[0] * 0.20), 80)
-    RIGHTBOTTOM = (int(2.2 * SCREENSIZE[0] / 3), int(SCREENSIZE[1] * 0.45))
-    RATIO = RATIO = SCREENSIZE[0] / SCREENSIZE[1]
-    XWONDER = (newvalues[2],newvalues[3])
-    YWONDER = (newvalues[4],newvalues[5])
-    DURWONDER = (newvalues[6],newvalues[7])
-    MINVOLUME = newvalues[8]
-    MAXVOLUME = newvalues[9]
-    SWAPPIXEL = newvalues[10]
-    STARTKEY = newvalues[11]
-    STOPKEY = newvalues[12]
-    REALELASPE = random.randint(int(0.8 * newvalues[13]*60), int(1.2 * newvalues[13]*60))
-    PROGRAMSTARTTIME = time.time()
+# def setGlobal(newvalues):
+#     global SCREENSIZE, LEFTTOP, RIGHTBOTTOM, RATIO, XWONDER, YWONDER, DURWONDER, MINVOLUME, MAXVOLUME, \
+#            SWAPPIXEL, STARTKEY, STOPKEY, REALELASPE, PROGRAMSTARTTIME
+#     SCREENSIZE = (newvalues[0],newvalues[1])
+#     LEFTTOP = (int(SCREENSIZE[0] * 0.20), 80)
+#     RIGHTBOTTOM = (int(2.2 * SCREENSIZE[0] / 3), int(SCREENSIZE[1] * 0.45))
+#     RATIO = RATIO = SCREENSIZE[0] / SCREENSIZE[1]
+#     XWONDER = (newvalues[2],newvalues[3])
+#     YWONDER = (newvalues[4],newvalues[5])
+#     DURWONDER = (newvalues[6],newvalues[7])
+#     MINVOLUME = newvalues[8]
+#     MAXVOLUME = newvalues[9]
+#     SWAPPIXEL = newvalues[10]
+#     STARTKEY = newvalues[11]
+#     STOPKEY = newvalues[12]
+#     REALELASPE = random.randint(int(0.8 * newvalues[13]*60), int(1.2 * newvalues[13]*60))
+#     PROGRAMSTARTTIME = time.time()
 
 
 def fetch(entries):
