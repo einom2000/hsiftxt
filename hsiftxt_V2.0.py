@@ -52,9 +52,9 @@ def locate_mixer():
         height = mixer_rect[3] -mixer_rect[1]
         x = mixer_rect[0] + int(width * 0.13)
         y = mixer_rect[1] + int(height * (1 - SOUND_THRESHOLD * 0.85))
-        print(x, y)
         mixer_trigger = (x, y)
-    else: mixer_trigger = None
+    else:
+        mixer_trigger = None
     return mixer_trigger
 
 def enumHandler(hwnd, lParam):
@@ -69,6 +69,7 @@ def create_mixer():
     os.startfile("SndVol.exe")
     time.sleep(5)
     win32gui.EnumWindows(enumHandler, None)
+
 
 # Game variables
 infoTxt = ''
@@ -107,7 +108,6 @@ class CastPole:
         if not confi: confi = 0.5
         found_hook = False
         t = time.time()
-        print(rect)
         while not found_hook:
             for img in dobber_images:
                 found_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
@@ -120,14 +120,33 @@ class CastPole:
                 break
         return found_hook
 
+
 class Listen2mixer():
-    def __init(self, trigger):
-        self.strigger = trigger
+    def __init(self, trigger_pos):
+        self.trigger_x = trigger_pos[0] - 8
+        self.trigger_y = trigger_pos[1]
+        self.trigger_length = 24
+        self.blank = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
+                                                  self.trigger_x + self.trigger_length, self.trigger_y + 1))
 
     def listen(self):
         t = time.time()
+        listening = True
+        bingo = False
+        while listening:
+            new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
+                                               self.trigger_x + self.trigger_length, self.trigger_y + 1))
+            if new == self.blank:
+                bingo = True
+                listening = False
+            elif time.time() - t >= 17.0:
+                listening = False
+        return bingo
 
 
+
+
+# looking for mixer and get the triger pixel in tirgger_pos
 while not mixer_found:
     trigger_pos = locate_mixer()
     if trigger_pos:
