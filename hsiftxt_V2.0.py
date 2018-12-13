@@ -42,22 +42,15 @@ def scope_size():
 def locate_mixer():
     pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
     pyautogui.click()
-    mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
-    print(mixer_rect)
-    print(mixer_rect[2]-mixer_rect[0], mixer_rect[3] - mixer_rect[1])
+    mixer_txt = win32gui.GetWindowText(win32gui.GetForegroundWindow())
+    mixer_txt = mixer_txt[:4]
+    if mixer_txt == "音量合成":
+        print(mixer_txt)
+        mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
+        print(mixer_rect)
+        print(mixer_rect[2]-mixer_rect[0], mixer_rect[3] - mixer_rect[1])
+    else: mixer_rect = None
     return mixer_rect
-    # t = time.time()
-    # found_mixer = False
-    # pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
-    # while not found_mixer:
-    #     found_mixer = pyautogui.locateOnScreen("icon.png", region=(SCREEN_WIDTH, 0,
-    #                                                                   SCREEN_WIDTH + 500, SCREEN_HEIGHT // 2),
-    #                                            grayscale=False, confidence=confi)
-    #     if found_mixer:
-    #         break
-    #     if time.time() - t >= 5.0:
-    #         break
-    # return found_mixer
 
 # Game variables
 infoTxt = ''
