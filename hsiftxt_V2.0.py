@@ -39,14 +39,15 @@ def scope_size():
             (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 10))
     return rect
 
-def locate_mixer():
+def locate_mixer(confi=None):
+    if not confi: confi = 0.5
     t = time.time()
     found_mixer = False
     pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
     while not found_mixer:
-        found_mixer = pyautogui.locateOnScreen("speaker.png", region=(SCREEN_WIDTH, 0,
+        found_mixer = pyautogui.locateOnScreen("icon.png", region=(SCREEN_WIDTH, 0,
                                                                       SCREEN_WIDTH + 500, SCREEN_HEIGHT // 2),
-                                               grayscale=False, confidence=0.5)
+                                               grayscale=False, confidence=confi)
         if found_mixer:
             break
         if time.time() - t >= 5.0:
@@ -108,7 +109,7 @@ class Listen2mixer():
     def listen(self):
         t = time.time()
 
-lm = locate_mixer()
+lm = locate_mixer(0.5)
 if lm:
     print('found')
     pyautogui.moveTo(lm[0], lm[1], 0.2)
