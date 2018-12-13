@@ -39,20 +39,25 @@ def scope_size():
             (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 10))
     return rect
 
-def locate_mixer(confi=None):
-    if not confi: confi = 0.5
-    t = time.time()
-    found_mixer = False
-    pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
-    while not found_mixer:
-        found_mixer = pyautogui.locateOnScreen("icon.png", region=(SCREEN_WIDTH, 0,
-                                                                      SCREEN_WIDTH + 500, SCREEN_HEIGHT // 2),
-                                               grayscale=False, confidence=confi)
-        if found_mixer:
-            break
-        if time.time() - t >= 5.0:
-            break
-    return found_mixer
+def locate_mixer():
+    pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
+    pyautogui.click()
+    mixer_hwdl = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
+    print(mixer_hwdl)
+    print(mixer_hwdl[2]-mixer_hwdl[0], mixer_hwdl[3] - mixer_hwdl[1])
+
+    # t = time.time()
+    # found_mixer = False
+    # pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
+    # while not found_mixer:
+    #     found_mixer = pyautogui.locateOnScreen("icon.png", region=(SCREEN_WIDTH, 0,
+    #                                                                   SCREEN_WIDTH + 500, SCREEN_HEIGHT // 2),
+    #                                            grayscale=False, confidence=confi)
+    #     if found_mixer:
+    #         break
+    #     if time.time() - t >= 5.0:
+    #         break
+    # return found_mixer
 
 # Game variables
 infoTxt = ''
@@ -109,10 +114,8 @@ class Listen2mixer():
     def listen(self):
         t = time.time()
 
-lm = locate_mixer(0.5)
-if lm:
-    print('found')
-    pyautogui.moveTo(lm[0], lm[1], 0.2)
+locate_mixer()
+# sudo
 # rect = scope_size()
 # cst = CastPole((300, 800))
 # cst.cast()
