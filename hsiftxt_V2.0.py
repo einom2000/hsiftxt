@@ -22,9 +22,11 @@ STOP_KEY = 'F12'
 TIME_TO_RUN = 480
 ANTI_AFT_TIME = 10
 
+
 def get_random_wait(low, high):
     # wait for a random time
     time.sleep(random.randint(low, high) / 1000)
+
 
 def blur_pos_dur():
     # get a random blur relevant x and y and random time according to the constants
@@ -33,11 +35,13 @@ def blur_pos_dur():
     t = random.randint(BLUR_DUR[0], BLUR_DUR[1])
     return x, y, t
 
+
 def scope_size():
     # get searching area for the dobber
     rect = ((SCREEN_WIDTH // 6, SCREEN_HEIGHT // 9),
             (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 10))
     return rect
+
 
 def locate_mixer():
     # locate a trigger pixel in a mixer via proportion
@@ -57,12 +61,14 @@ def locate_mixer():
         mixer_trigger = None
     return mixer_trigger
 
+
 def enumHandler(hwnd, lParam):
-    # enumwindows's callback function
+    # enumwindows' callback function
     # if mixer found, move it next to the main windows
     if win32gui.IsWindowVisible(hwnd):
         if '音量合成' in win32gui.GetWindowText(hwnd):
             win32gui.MoveWindow(hwnd, SCREEN_WIDTH, 0, 760, 500, True)
+
 
 def create_mixer():
     # create mixer and allocate it after 5 seconds
@@ -78,6 +84,7 @@ soundMissed = 0
 count = 0
 running = True
 mixer_found = False
+trigger_pos = ()
 
 # load standard images
 dobber_images = []
@@ -96,7 +103,7 @@ class CastPole:
         # get a blur
         blur_x, blur_y, dur_t = blur_pos_dur()
         pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], 0.3, pyautogui.easeInQuad)
-        self.mouse_pos =tuple(map(lambda x, y: x + y, self.mouse_pos,
+        self.mouse_pos = tuple(map(lambda x, y: x + y, self.mouse_pos,
                                       (blur_x * 3, blur_y * 3)))
         # right double click
         pyautogui.rightClick(self.mouse_pos[0], self.mouse_pos[1], dur_t)
@@ -121,13 +128,19 @@ class CastPole:
         return found_hook
 
 
-class Listen2mixer():
-    def __init(self, trigger_pos):
-        self.trigger_x = trigger_pos[0] - 8
-        self.trigger_y = trigger_pos[1]
-        self.trigger_length = 24
-        self.blank = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
-                                                  self.trigger_x + self.trigger_length, self.trigger_y + 1))
+class Listen2mixer:
+    def __init__(self, trigger):
+        self.trigger_x = trigger[0] - 8
+        self.trigger_y = trigger[1]
+        self.trigger_length = 20
+        img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
+                                           self.trigger_x + self.trigger_length, self.trigger_y + 1))
+        self.silent = []
+        for i in range(0, self.trigger_length):
+            self.silent.append(img.getpixel((i, 2)))
+        print(self.silent)
+        print(self.trigger_x, self.trigger_y - 1,
+                                                  self.trigger_x + self.trigger_length, self.trigger_y + 1)
 
     def listen(self):
         t = time.time()
@@ -136,7 +149,9 @@ class Listen2mixer():
         while listening:
             new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                                self.trigger_x + self.trigger_length, self.trigger_y + 1))
-            if new == self.blank:
+            if new != self.blank:
+                print(self.blank)
+                print(new)
                 bingo = True
                 listening = False
             elif time.time() - t >= 17.0:
@@ -144,18 +159,24 @@ class Listen2mixer():
         return bingo
 
 
-
-
-# looking for mixer and get the triger pixel in tirgger_pos
+# looking for mixer and get the trigger pixel in tirgger_pos
 while not mixer_found:
     trigger_pos = locate_mixer()
     if trigger_pos:
-        pyautogui.moveTo(trigger_pos[0], trigger_pos[1], 0.2)
+        # pyautogui.moveTo(trigger_pos[0], trigger_pos[1], 0.2)
         mixer_found = True
     else:
         create_mixer()
 
-sys.exit()
+print(trigger_pos)
+lstn = Listen2mixer(trigger_pos)
+#
+# if lstn.listen():
+#     print('yes!')
+# else:
+#     print('no!')
+#
+# sys.exit()
 
 # sudo
 # rect = scope_size()
