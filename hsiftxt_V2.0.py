@@ -42,10 +42,10 @@ def scope_size():
 def locate_mixer():
     pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
     pyautogui.click()
-    mixer_hwdl = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
-    print(mixer_hwdl)
-    print(mixer_hwdl[2]-mixer_hwdl[0], mixer_hwdl[3] - mixer_hwdl[1])
-
+    mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
+    print(mixer_rect)
+    print(mixer_rect[2]-mixer_rect[0], mixer_rect[3] - mixer_rect[1])
+    return mixer_rect
     # t = time.time()
     # found_mixer = False
     # pyautogui.moveTo(SCREEN_WIDTH, 0, 0.2)
@@ -114,7 +114,12 @@ class Listen2mixer():
     def listen(self):
         t = time.time()
 
-locate_mixer()
+tmp = locate_mixer()
+if tmp:
+    height = tmp[3] - tmp[1]
+    width = tmp[2] - tmp[0]
+    pyautogui.moveTo((tmp[0] + int(width * 0.13)), (tmp[1] + int(height  * (1 - SOUND_THRESHOLD * 0.85))), 0.2)
+
 # sudo
 # rect = scope_size()
 # cst = CastPole((300, 800))
