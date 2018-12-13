@@ -7,7 +7,7 @@
 # optimized sound detect
 
 import pyautogui, win32gui, keyboard
-import time, random, winsound
+import time, random, winsound,os
 from tkinter import *
 
 # user options as constants
@@ -40,6 +40,8 @@ def scope_size():
     return rect
 
 def locate_mixer():
+    # locate a trigger pixel in a mixer via proportion
+    # if there is a mixer next to the main window
     pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
     pyautogui.click()
     mixer_txt = win32gui.GetWindowText(win32gui.GetForegroundWindow())
@@ -55,12 +57,26 @@ def locate_mixer():
     else: mixer_trigger = None
     return mixer_trigger
 
+def enumHandler(hwnd, lParam):
+    # enumwindows's callback function
+    # if mixer found, move it next to the main windows
+    if win32gui.IsWindowVisible(hwnd):
+        if '音量合成' in win32gui.GetWindowText(hwnd):
+            win32gui.MoveWindow(hwnd, SCREEN_WIDTH, 0, 760, 500, True)
+
+def create_mixer():
+    # create mixer and allocate it after 5 seconds
+    os.startfile("SndVol.exe")
+    time.sleep(5)
+    win32gui.EnumWindows(enumHandler, None)
+
 # Game variables
 infoTxt = ''
 hookMissed = 0
 soundMissed = 0
 count = 0
 running = True
+mixer_found = False
 
 # load standard images
 dobber_images = []
@@ -111,9 +127,16 @@ class Listen2mixer():
     def listen(self):
         t = time.time()
 
-tmp = locate_mixer()
-if tmp:
-    pyautogui.moveTo(tmp[0], tmp[1], 0.2)
+
+while not mixer_found:
+    trigger_pos = locate_mixer()
+    if trigger_pos:
+        pyautogui.moveTo(trigger_pos[0], trigger_pos[1], 0.2)
+        mixer_found = True
+    else:
+        create_mixer()
+
+sys.exit()
 
 # sudo
 # rect = scope_size()
