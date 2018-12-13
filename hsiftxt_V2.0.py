@@ -45,18 +45,22 @@ def locate_mixer():
     mixer_txt = win32gui.GetWindowText(win32gui.GetForegroundWindow())
     mixer_txt = mixer_txt[:4]
     if mixer_txt == "音量合成":
-        print(mixer_txt)
         mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
-        print(mixer_rect)
-        print(mixer_rect[2]-mixer_rect[0], mixer_rect[3] - mixer_rect[1])
-    else: mixer_rect = None
-    return mixer_rect
+        width = mixer_rect[2] - mixer_rect[0]
+        height = mixer_rect[3] -mixer_rect[1]
+        x = mixer_rect[0] + int(width * 0.13)
+        y = mixer_rect[1] + int(height * (1 - SOUND_THRESHOLD * 0.85))
+        print(x, y)
+        mixer_trigger = (x, y)
+    else: mixer_trigger = None
+    return mixer_trigger
 
 # Game variables
 infoTxt = ''
 hookMissed = 0
 soundMissed = 0
 count = 0
+running = True
 
 # load standard images
 dobber_images = []
@@ -109,9 +113,7 @@ class Listen2mixer():
 
 tmp = locate_mixer()
 if tmp:
-    height = tmp[3] - tmp[1]
-    width = tmp[2] - tmp[0]
-    pyautogui.moveTo((tmp[0] + int(width * 0.13)), (tmp[1] + int(height  * (1 - SOUND_THRESHOLD * 0.85))), 0.2)
+    pyautogui.moveTo(tmp[0], tmp[1], 0.2)
 
 # sudo
 # rect = scope_size()
