@@ -7,13 +7,13 @@
 # optimized sound detect
 
 import pyautogui, win32gui, keyboard
-import time, random, winsound,os
+import time, random, winsound, os
 from tkinter import *
 
 # user options as constants
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-BLUR_PIXEL = [6, 16]
+BLUR_PIXEL = [1, 6]
 BLUR_DUR = [250, 400]
 SOUND_THRESHOLD = 0.45
 HAND_SHAKE_FACTOR = 0
@@ -53,7 +53,7 @@ def locate_mixer():
     if mixer_txt == "音量合成":
         mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
         width = mixer_rect[2] - mixer_rect[0]
-        height = mixer_rect[3] -mixer_rect[1]
+        height = mixer_rect[3] - mixer_rect[1]
         x = mixer_rect[0] + int(width * 0.13)
         y = mixer_rect[1] + int(height * (1 - SOUND_THRESHOLD * 0.85))
         mixer_trigger = (x, y)
@@ -77,11 +77,27 @@ def create_mixer():
     win32gui.EnumWindows(enumHandler, None)
 
 
-def get_line(screenshot, length):
+def get_line(screen_shot, length):
     line = []
     for i in range(0, length):
-        line.append(screenshot.getpixel((i, 2)))
+        line.append(screen_shot.getpixel((i, 2)))
     return line
+
+def get_fish():
+    # ensure a rightclick to have a fish after bit
+    pyautogui.rightClick()
+    get_random_wait(200, 300)
+    pyautogui.rightClick()
+
+
+def check_for_key_in():
+    if keyboard.is_pressed(START_KEY):
+        key = 1
+    elif keyboard.is_pressed(STOP_KEY):
+        key = 0
+    else:
+        key = 99
+    return key
 
 
 class CastPole:
@@ -105,19 +121,20 @@ class CastPole:
 
     def find_hooker(self, rect, confi=None):
         if not confi: confi = 0.5
-        found_hook = False
-        t = time.time()
-        while not found_hook:
+        fd_hook = None
+        tm = time.time()
+        while not fd_hook:
             for img in dobber_images:
-                found_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
+                fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
                                                                         rect[1][0], rect[1][0]),
-                                                            grayscale=True, confidence=confi)
-                if found_hook:
+                                                         grayscale=True, confidence=confi)
+                print('not yet')
+                if fd_hook:
                     break
             # if searching time is too long quit loop
-            if time.time() - t >= 5.0:
+            if time.time() - tm >= 5.0:
                 break
-        return found_hook
+        return fd_hook
 
 
 class Listen2mixer:
@@ -148,6 +165,8 @@ class Listen2mixer:
                 listening = False
         return bingo
 
+
+###############################################################################################################
 # Game variables
 infoTxt = ''
 hookMissed = 0
@@ -155,7 +174,12 @@ soundMissed = 0
 count = 0
 running = True
 mixer_found = False
+hook_found = None
 trigger_pos = ()
+running_elapsed = time.time()
+rect = scope_size()
+rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
+               int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
 
 # load standard images
 dobber_images = []
@@ -163,29 +187,48 @@ for i in range(1, 10+1):
     dobber_images.append("pp{}.png".format(i))
 
 
-# looking for mixer and get the trigger pixel in tirgger_pos
-while not mixer_found:
-    trigger_pos = locate_mixer()
-    if trigger_pos:
-        # pyautogui.moveTo(trigger_pos[0], trigger_pos[1], 0.2)
-        mixer_found = True
+# game loop start
+#=============================================================================================================
+while True:
+    # check for start 1, stop 0, none of them 99
+    key = check_for_key_in()
+    if key == 1:
+        running = True
+        winsound.Beep(1000, 200)
+        break
+    elif key == 0:
+        running = False
+        winsound.Beep(500, 400)
+        break
+
+while running:
+    # checking for time lapsed and STOP_KEY to quit
+    if time.time() - running_elapsed >= TIME_TO_RUN or check_for_key_in() == 99:
+        running = False
+    # looking for mixer, if not create one and move it next to the main window
+    while not mixer_found:
+        trigger_pos = locate_mixer()
+        if trigger_pos:
+            mixer_found = True
+        else:
+            create_mixer()
+    # Cast fishing pole until found a hook
+    while hook_found is None:
+        print(hook_found)
+        cst = CastPole(rect_center)
+        cst.cast()
+        # Looking for the hook
+        print(rect)
+        hook_found = cst.find_hooker(rect, 0.5)
+        if hook_found is not None:
+            x, y, t = blur_pos_dur()
+            pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2, pyautogui.easeInBounce)
+            break
+    #checking the mixer for 15 seconds
+    lstn = Listen2mixer(trigger_pos)
+    if lstn.listen():
+        print('yes!')
     else:
-        create_mixer()
+        print('no!')
 
-print(trigger_pos)
-lstn = Listen2mixer(trigger_pos)
-if lstn.listen():
-    print('yes!')
-else:
-    print('no!')
 
-sys.exit()
-
-# sudo
-# rect = scope_size()
-# cst = CastPole((300, 800))
-# cst.cast()
-# fd = cst.find_hooker(rect, 0.6)
-# if fd:
-#     pyautogui.moveTo(fd[0], fd[1], 0.5)
-#     print(fd)
