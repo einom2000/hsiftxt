@@ -15,7 +15,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 BLUR_PIXEL = [6, 16]
 BLUR_DUR = [250, 400]
-SOUND_THRESHOLD = 0.50
+SOUND_THRESHOLD = 0.45
 HAND_SHAKE_FACTOR = 0
 START_KEY = 'F10'
 STOP_KEY = 'F12'
@@ -77,19 +77,11 @@ def create_mixer():
     win32gui.EnumWindows(enumHandler, None)
 
 
-# Game variables
-infoTxt = ''
-hookMissed = 0
-soundMissed = 0
-count = 0
-running = True
-mixer_found = False
-trigger_pos = ()
-
-# load standard images
-dobber_images = []
-for i in range(1, 10+1):
-    dobber_images.append("pp{}.png".format(i))
+def get_line(screenshot, length):
+    line = []
+    for i in range(0, length):
+        line.append(screenshot.getpixel((i, 2)))
+    return line
 
 
 class CastPole:
@@ -135,12 +127,9 @@ class Listen2mixer:
         self.trigger_length = 20
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                            self.trigger_x + self.trigger_length, self.trigger_y + 1))
-        self.silent = []
-        for i in range(0, self.trigger_length):
-            self.silent.append(img.getpixel((i, 2)))
+        self.silent = get_line(img, self.trigger_length)
         print(self.silent)
-        print(self.trigger_x, self.trigger_y - 1,
-                                                  self.trigger_x + self.trigger_length, self.trigger_y + 1)
+        print(self.trigger_x, self.trigger_y - 1, self.trigger_x + self.trigger_length, self.trigger_y + 1)
 
     def listen(self):
         t = time.time()
@@ -149,14 +138,29 @@ class Listen2mixer:
         while listening:
             new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                                self.trigger_x + self.trigger_length, self.trigger_y + 1))
-            if new != self.blank:
-                print(self.blank)
-                print(new)
+            new_line = get_line(new, self.trigger_length)
+            if new_line != self.silent:
+                print(self.silent)
+                print(new_line)
                 bingo = True
                 listening = False
             elif time.time() - t >= 17.0:
                 listening = False
         return bingo
+
+# Game variables
+infoTxt = ''
+hookMissed = 0
+soundMissed = 0
+count = 0
+running = True
+mixer_found = False
+trigger_pos = ()
+
+# load standard images
+dobber_images = []
+for i in range(1, 10+1):
+    dobber_images.append("pp{}.png".format(i))
 
 
 # looking for mixer and get the trigger pixel in tirgger_pos
@@ -170,13 +174,12 @@ while not mixer_found:
 
 print(trigger_pos)
 lstn = Listen2mixer(trigger_pos)
-#
-# if lstn.listen():
-#     print('yes!')
-# else:
-#     print('no!')
-#
-# sys.exit()
+if lstn.listen():
+    print('yes!')
+else:
+    print('no!')
+
+sys.exit()
 
 # sudo
 # rect = scope_size()
