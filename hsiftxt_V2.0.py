@@ -15,7 +15,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 BLUR_PIXEL = [1, 6]
 BLUR_DUR = [250, 400]
-SOUND_THRESHOLD = 0.45
+SOUND_THRESHOLD = 0.40
 HAND_SHAKE_FACTOR = 0
 START_KEY = 'F10'
 STOP_KEY = 'F12'
@@ -142,12 +142,13 @@ class Listen2mixer:
     def __init__(self, trigger):
         self.trigger_x = trigger[0] - 8
         self.trigger_y = trigger[1]
-        self.trigger_length = 20
+        self.trigger_length = 150
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                            self.trigger_x + self.trigger_length, self.trigger_y + 1))
         self.silent = get_line(img, self.trigger_length)
         # print(self.silent)
         # print(self.trigger_x, self.trigger_y - 1, self.trigger_x + self.trigger_length, self.trigger_y + 1)
+        # pyautogui.moveTo(self.trigger_x + self.trigger_length, self.trigger_y + 1)
 
     def listen(self):
         t = time.time()
@@ -158,8 +159,8 @@ class Listen2mixer:
                                                self.trigger_x + self.trigger_length, self.trigger_y + 1))
             new_line = get_line(new, self.trigger_length)
             if new_line != self.silent:
-                # print(self.silent)
-                # print(new_line)
+                print(self.silent)
+                print(new_line)
                 bingo = True
                 listening = False
             elif time.time() - t >= 17.0:
@@ -219,7 +220,7 @@ while running:
     while hook_found is None:
         new_cst.cast()
         # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.5)
+        hook_found = new_cst.find_hooker(rect, 0.45)
     # move mouse to the blurred postion of the found hook
     # print("found hook!" + str(hook_found))
     x, y, t = blur_pos_dur()
