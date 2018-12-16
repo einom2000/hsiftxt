@@ -146,8 +146,8 @@ class Listen2mixer:
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                            self.trigger_x + self.trigger_length, self.trigger_y + 1))
         self.silent = get_line(img, self.trigger_length)
-        print(self.silent)
-        print(self.trigger_x, self.trigger_y - 1, self.trigger_x + self.trigger_length, self.trigger_y + 1)
+        # print(self.silent)
+        # print(self.trigger_x, self.trigger_y - 1, self.trigger_x + self.trigger_length, self.trigger_y + 1)
 
     def listen(self):
         t = time.time()
@@ -158,8 +158,8 @@ class Listen2mixer:
                                                self.trigger_x + self.trigger_length, self.trigger_y + 1))
             new_line = get_line(new, self.trigger_length)
             if new_line != self.silent:
-                print(self.silent)
-                print(new_line)
+                # print(self.silent)
+                # print(new_line)
                 bingo = True
                 listening = False
             elif time.time() - t >= 17.0:
@@ -221,13 +221,14 @@ while running:
         # Looking for the hook
         hook_found = new_cst.find_hooker(rect, 0.5)
     # move mouse to the blurred postion of the found hook
-    print("found hook!" + str(hook_found))
+    # print("found hook!" + str(hook_found))
     x, y, t = blur_pos_dur()
     pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, pyautogui.easeInBounce)
     # # checking the mixer for 15 seconds
     lstn = Listen2mixer(trigger_pos)
     if lstn.listen():
         print('yes!')
+        get_fish()
     else:
         print('no!')
 
