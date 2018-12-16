@@ -128,14 +128,13 @@ class CastPole:
                 fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
                                                                       rect[1][0], rect[1][1]),
                                                          grayscale=True, confidence=confi)
-                print((rect[0][0], rect[0][1], rect[1][0], rect[1][1]))
-                print(img)
-                print(fd_hook)
+                # print((rect[0][0], rect[0][1], rect[1][0], rect[1][1]))
+                # print(img)
+                # print(fd_hook)
             # if searching time is too long quit loop
-                if time.time() - tm >= 5.0:
-                    print('time is up')
-                    break
-        print("found", fd_hook)
+            if time.time() - tm >= 5.0:
+                # print('time is up', fd_hook, '=!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                break
         return fd_hook
 
 
@@ -216,16 +215,16 @@ while running:
     if time.time() - running_elapsed >= TIME_TO_RUN or check_for_key_in() == 99:
         running = False
     # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
+    new_cst = CastPole(rect_center)
     while hook_found is None:
-        print(hook_found)
-        cst = CastPole(rect_center)
-        cst.cast()
+        new_cst.cast()
         # Looking for the hook
-        hook_found = cst.find_hooker(rect, 0.5)
-    #
+        hook_found = new_cst.find_hooker(rect, 0.5)
+    # move mouse to the blurred postion of the found hook
+    print("found hook!" + str(hook_found))
     x, y, t = blur_pos_dur()
-    pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2, pyautogui.easeInBounce)
-    #checking the mixer for 15 seconds
+    pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, pyautogui.easeInBounce)
+    # # checking the mixer for 15 seconds
     lstn = Listen2mixer(trigger_pos)
     if lstn.listen():
         print('yes!')
