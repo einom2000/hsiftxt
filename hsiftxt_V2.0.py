@@ -20,7 +20,19 @@ HAND_SHAKE_FACTOR = 0
 START_KEY = 'F10'
 STOP_KEY = 'F12'
 TIME_TO_RUN = 480
+AFTER_GAME_END = ['v']
 ANTI_AFT_TIME = 10
+ANTI_AFT_KEY = ['f4', 'space']
+
+
+def check_for_stop():
+    key_in = check_for_key_in()
+    if key_in == 0: return False
+    else: return True
+
+
+def end_game():
+
 
 
 def get_random_wait(low, high):
@@ -179,6 +191,7 @@ mixer_found = False
 hook_found = None
 trigger_pos = ()
 running_elapsed = time.time()
+last_anti_afk = time.time()
 rect = scope_size()
 rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
                int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
@@ -188,11 +201,8 @@ dobber_images = []
 for i in range(1, 10+1):
     dobber_images.append("pp{}.png".format(i))
 
-
-# game loop start
-#=============================================================================================================
+# waiting for start 1, stop 0, none of them 99
 while True:
-    # check for start 1, stop 0, none of them 99
     key = check_for_key_in()
     if key == 1:
         running = True
@@ -203,34 +213,52 @@ while True:
         winsound.Beep(500, 400)
         break
 
-# looking for mixer, if not create one and move it next to the main window
-while not mixer_found:
-    trigger_pos = locate_mixer()
-    if trigger_pos:
-        mixer_found = True
-    else:
-        create_mixer()
-
+# game loop start
+#=============================================================================================================
 while running:
-    # checking for time lapsed and STOP_KEY to quit
-    if time.time() - running_elapsed >= TIME_TO_RUN or check_for_key_in() == 99:
+    # First Check if the running time is longer than expected or should have anti aftk key press.
+    cur_time = time.time()
+    if cur_time - running_elapsed >= TIME_TO_RUN * 3600:
         running = False
-    # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
-    new_cst = CastPole(rect_center)
-    while hook_found is None:
-        new_cst.cast()
-        # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.45)
-    # move mouse to the blurred postion of the found hook
-    # print("found hook!" + str(hook_found))
-    x, y, t = blur_pos_dur()
-    pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, pyautogui.easeInBounce)
-    # # checking the mixer for 15 seconds
-    lstn = Listen2mixer(trigger_pos)
-    if lstn.listen():
-        print('yes!')
-        get_fish()
-    else:
-        print('no!')
+        end_game()
+    elif cur_time - last_anti_afk >= ANTI_AFT_TIME * 60:
+        for i in range(0, len(ANTI_AFT_KEY)):
+            pyautogui.press(ANTI_AFT_KEY[i])
+            get_random_wait(400, 600)
+        last_anti_afk = time.time()
+
+    # looking for mixer, if not create one and move it next to the main window
+    while not mixer_found:
+        trigger_pos = locate_mixer()
+        if trigger_pos:
+            mixer_found = True
+        else:
+            create_mixer()
+
+    while running:
+        # checking for time lapsed and STOP_KEY to quit
+        if time.time() - running_elapsed >= TIME_TO_RUN or check_for_key_in() == 99:
+            running = False
+        # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
+        new_cst = CastPole(rect_center)
+        while hook_found is None:
+            new_cst.cast()
+            # Looking for the hook
+            hook_found = new_cst.find_hooker(rect, 0.5)
+        # move mouse to the blurred postion of the found hook
+        # print("found hook!" + str(hook_found))
+        x, y, t = blur_pos_dur()
+        pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, pyautogui.easeInBounce)
+        # # checking the mixer for 15 seconds
+        listening = Listen2mixer(trigger_pos)
+        if listening.listen():
+            # print('yes!')
+            get_fish()
+        else:
+            pass
+            # print('no!')
+
+    # check if stop key has been pressed
+    running = check_for_stop()
 
 
