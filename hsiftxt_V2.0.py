@@ -24,6 +24,11 @@ AFTER_GAME_END = ['v']
 ANTI_AFT_TIME = 10
 ANTI_AFT_KEY = ['f4', 'space']
 
+K1 = pyautogui.easeInQuad
+K2 = pyautogui.easeOutQuad
+K3 = pyautogui.easeInOutQuad
+K4 = pyautogui.easeInBounce
+K5 = pyautogui.easeInElastic
 
 def check_for_stop():
     key_in = check_for_key_in()
@@ -32,7 +37,7 @@ def check_for_stop():
 
 
 def end_game():
-
+    pass
 
 
 def get_random_wait(low, high):
@@ -122,7 +127,7 @@ class CastPole:
     def cast(self):
         # get a blur
         blur_x, blur_y, dur_t = blur_pos_dur()
-        pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], 0.3, pyautogui.easeInQuad)
+        pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], 0.3, random.choice([K1, K2, K3, K4, K5]))
         self.mouse_pos = tuple(map(lambda x, y: x + y, self.mouse_pos,
                                       (blur_x * 3, blur_y * 3)))
         # right double click
@@ -248,7 +253,7 @@ while running:
         # move mouse to the blurred postion of the found hook
         # print("found hook!" + str(hook_found))
         x, y, t = blur_pos_dur()
-        pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, pyautogui.easeInBounce)
+        pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
         # # checking the mixer for 15 seconds
         listening = Listen2mixer(trigger_pos)
         if listening.listen():
