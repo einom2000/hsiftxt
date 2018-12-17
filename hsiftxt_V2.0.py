@@ -21,9 +21,9 @@ START_KEY = 'F10'
 STOP_KEY = 'F12'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
-TIME_TO_RUN = 2
+TIME_TO_RUN = 480
 AFTER_GAME_END = ['v']
-ANTI_AFT_TIME = 1
+ANTI_AFT_TIME = 10
 ANTI_AFT_KEY = ['f4', 'space']
 
 K1 = pyautogui.easeInQuad
@@ -234,7 +234,7 @@ class ShowTrigger:
     def killframe(self):
         for i in range(0, 3 + 1):
             self.trigger_boards[i].destroy()
-        pass
+
 
 ###############################################################################################################
 # Game variables
@@ -279,7 +279,8 @@ while True:
         running = True
         winsound.Beep(1000, 200)
         show_trigger.killframe()
-        sys.exit()
+        del show_trigger
+        break
     elif key == 0:
         running = False
         winsound.Beep(500, 400)
