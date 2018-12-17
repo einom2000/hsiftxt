@@ -203,8 +203,8 @@ class Listen2mixer:
         return bingo
 
 
-class ShowTrigger:
-    def __init__(self, triggercore):
+class ShowBoundary:
+    def __init__(self, rec_size, top_left, collor):
         self.tplftx = triggercore[0] - TRIGGER_DEDENT
         self.tplfty = triggercore[1] - 1
         self.btrghtx = triggercore[0] + TRIGGER_LENGTH
@@ -234,6 +234,38 @@ class ShowTrigger:
     def killframe(self):
         for i in range(0, 3 + 1):
             self.trigger_boards[i].destroy()
+
+# class ShowBoundary:
+#     def __init__(self, triggercore):
+#         self.tplftx = triggercore[0] - TRIGGER_DEDENT
+#         self.tplfty = triggercore[1] - 1
+#         self.btrghtx = triggercore[0] + TRIGGER_LENGTH
+#         self.btrghty = triggercore[1] + 1
+#         self.trigger_boards = list()
+#         rec_top = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
+#                   str(self.tplfty - 3)
+#         rec_bottom = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
+#                      str(self.btrghty)
+#         rec_left = str("3x8+" + str(self.tplftx - 3) + "+" + str(self.tplfty - 3))
+#         rec_right = str("3x8+" + str(self.btrghtx + 3) + "+" + str(self.tplfty - 3))
+#         geo = (rec_top, rec_bottom, rec_left, rec_right)
+#
+#         for i in range(0, 3 + 1):
+#             self.trigger_boards.append(Tk())
+#         for i in range(0, 3 + 1):
+#             self.trigger_boards[i].overrideredirect(1)
+#             self.trigger_boards[i].attributes("-topmost", True)
+#             self.trigger_boards[i].config(bg="red")
+#             self.trigger_boards[i].geometry(geo[i])
+#
+#     def showframe(self):
+#         for i in range(0, 3 + 1):
+#             self.trigger_boards[i].update()
+#         pass
+#
+#     def killframe(self):
+#         for i in range(0, 3 + 1):
+#             self.trigger_boards[i].destroy()
 
 
 ###############################################################################################################
@@ -269,7 +301,8 @@ while not mixer_found:
         create_mixer()
 
 # showing sound trigger bar
-show_trigger = ShowTrigger(trigger_pos)
+
+show_trigger = ShowBoundary(((TRIGGER_DEDENT + TRIGGER_LENGTH), 3), (trigger_pos[0], trigger_pos[1] - 1), 'red')
 show_trigger.showframe()
 
 # waiting for start 1, stop 0, none of them 99
