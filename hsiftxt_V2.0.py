@@ -19,6 +19,7 @@ SOUND_THRESHOLD = 0.40
 HAND_SHAKE_FACTOR = 0
 START_KEY = 'F10'
 STOP_KEY = 'F12'
+PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
 TIME_TO_RUN = 480
@@ -32,16 +33,18 @@ K3 = pyautogui.easeInOutQuad
 K4 = pyautogui.easeInBounce
 K5 = pyautogui.easeInElastic
 
-def check_for_stop():
-    key_in = check_for_key_in()
-    if key_in == 0:
-        winsound.Beep(500, 400)
-        return False
-    else:
-        return True
+
+def go_pause():
+    while not keyboard.is_pressed(PAUSE_KEY):
+        if keyboard.is_pressed(STOP_KEY):
+            end_game()
+        pass
 
 
 def end_game():
+    winsound.Beep(1000, 300)
+    time.sleep(0.300)
+    winsound.Beep(1000, 300)
     pyautogui.press(AFTER_GAME_END)
     sys.exit()
     pass
@@ -119,6 +122,8 @@ def check_for_key_in():
         key = 1
     elif keyboard.is_pressed(STOP_KEY):
         key = 0
+    elif keyboard.is_pressed(PAUSE_KEY):
+        key = 2
     else:
         key = 99
     return key
@@ -159,12 +164,8 @@ class CastPole:
                 fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
                                                                       rect[1][0], rect[1][1]),
                                                          grayscale=True, confidence=confi)
-                # print((rect[0][0], rect[0][1], rect[1][0], rect[1][1]))
-                # print(img)
-                # print(fd_hook)
             # if searching time is too long quit loop
             if time.time() - tm >= 5.0:
-                # print('time is up', fd_hook, '=!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 hook_missing_counter += 1
                 break
         return fd_hook
@@ -179,28 +180,31 @@ class Listen2mixer:
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                            self.trigger_x + self.trigger_length, self.trigger_y + 1))
         self.silent = get_line(img, self.trigger_length)
-        # print(self.silent)
-        # print(self.trigger_x, self.trigger_y - 1, self.trigger_x + self.trigger_length, self.trigger_y + 1)
-        # pyautogui.moveTo(self.trigger_x + self.trigger_length, self.trigger_y + 1)
 
     def listen(self):
         global sound_missing_counter
         t = time.time()
         listening = True
         bingo = False
+        pause = False
+        stop = False
         while listening:
+            if keyboard.is_pressed(STOP_KEY):
+                stop = True
+                break
+            elif keyboard.is_pressed(PAUSE_KEY):
+                pause = True
+                break
             new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                                self.trigger_x + self.trigger_length, self.trigger_y + 1))
             new_line = get_line(new, self.trigger_length)
             if new_line != self.silent:
-                # print(self.silent)
-                # print(new_line)
                 bingo = True
                 listening = False
             elif time.time() - t >= 17.0:
                 listening = False
-                sound_missing_counter += 1
-        return bingo
+                bingo = False
+        return bingo, pause, stop
 
 
 class ShowBoundary:
@@ -240,6 +244,8 @@ hookMissed = 0
 soundMissed = 0
 count = 0
 running = True
+pause_is_pressed = False
+stop_is_pressed = False
 mixer_found = False
 hook_found = None
 trigger_pos = ()
@@ -265,11 +271,10 @@ while not mixer_found:
     else:
         create_mixer()
 
-# showing sound trigger bar
-
+# showing sound trigger bar area and the hook monitering area press STARTKEY to proceed or STOPKEY to rerun program
 show_trigger = ShowBoundary(((TRIGGER_DEDENT + TRIGGER_LENGTH), 3), (trigger_pos[0], trigger_pos[1] - 1), 'orange')
 show_trigger.showframe()
-show_scopesize = ShowBoundary((rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]), rect[0], 'green')
+show_scopesize = ShowBoundary((rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]), rect[0], 'cyan')
 show_scopesize.showframe()
 
 # waiting for start 1, stop 0, none of them 99
@@ -283,6 +288,8 @@ while True:
         del show_trigger
         del show_scopesize
         break
+    elif key == 2:
+        go_pause()
     elif key == 0:
         running = False
         winsound.Beep(500, 400)
@@ -316,18 +323,34 @@ while running:
     pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
+    listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
+    if pause_is_pressed:
+        listen_result = False
+        stop_is_pressed = False
+        go_pause()
+    if stop_is_pressed:
+        listen_result = False
+        running = False
+        end_game()
     if listening.listen():
-        # print('yes!')
         get_fish()
         fish_counter += 1
         hook_found = None
         winsound.Beep(500, 300)
         get_random_wait(300, 500)
     else:
-        pass
-        # print('no!')
-    # check if stop key has been pressed
-    running = check_for_stop()
+        sound_missing_counter += 1
+        hook_found = None
+        winsound.Beep(1200, 300)
+        get_random_wait(300, 500)
+
+    # check if stop key or pause key has been pressed
+    check_key = check_for_key_in()
+    if check_key == 0:
+        running = False
+    elif check_key == 2:
+        go_pause()
+
     print('fish couter: ' + str(fish_counter))
     print('hook_missing: ' + str(hook_missing_counter))
     print('sound_missing: ' + str(sound_missing_counter))
