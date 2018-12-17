@@ -19,6 +19,8 @@ SOUND_THRESHOLD = 0.40
 HAND_SHAKE_FACTOR = 0
 START_KEY = 'F10'
 STOP_KEY = 'F12'
+TRIGGER_DEDENT = 8
+TRIGGER_LENGTH = 200
 TIME_TO_RUN = 2
 AFTER_GAME_END = ['v']
 ANTI_AFT_TIME = 1
@@ -170,9 +172,10 @@ class CastPole:
 
 class Listen2mixer:
     def __init__(self, trigger):
-        self.trigger_x = trigger[0] - 8
+        self.trigger_x = trigger[0] - TRIGGER_DEDENT
+        # 8 can be adjusted
         self.trigger_y = trigger[1]
-        self.trigger_length = 150
+        self.trigger_length = TRIGGER_LENGTH
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
                                            self.trigger_x + self.trigger_length, self.trigger_y + 1))
         self.silent = get_line(img, self.trigger_length)
@@ -200,6 +203,39 @@ class Listen2mixer:
         return bingo
 
 
+class ShowTrigger:
+    def __init__(self, triggercore):
+        self.tplftx = triggercore[0] - TRIGGER_DEDENT
+        self.tplfty = triggercore[1] - 1
+        self.btrghtx = triggercore[0] + TRIGGER_LENGTH
+        self.btrghty = triggercore[1] + 1
+        self.trigger_boards = list()
+        rec_top = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
+                  str(self.tplfty - 3)
+        rec_bottom = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
+                     str(self.btrghty)
+        rec_left = str("3x8+" + str(self.tplftx - 3) + "+" + str(self.tplfty - 3))
+        rec_right = str("3x8+" + str(self.btrghtx + 3) + "+" + str(self.tplfty - 3))
+        geo = (rec_top, rec_bottom, rec_left, rec_right)
+
+        for i in range(0, 3 + 1):
+            self.trigger_boards.append(Tk())
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].overrideredirect(1)
+            self.trigger_boards[i].attributes("-topmost", True)
+            self.trigger_boards[i].config(bg="red")
+            self.trigger_boards[i].geometry(geo[i])
+
+    def showframe(self):
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].update()
+        pass
+
+    def killframe(self):
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].destroy()
+        pass
+
 ###############################################################################################################
 # Game variables
 infoTxt = ''
@@ -217,7 +253,7 @@ rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
                int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
 fish_counter = 0
 hook_missing_counter = 0
-sound_missing_counter =0
+sound_missing_counter = 0
 
 # load standard images
 dobber_images = []
@@ -232,13 +268,18 @@ while not mixer_found:
     else:
         create_mixer()
 
+# showing sound trigger bar
+show_trigger = ShowTrigger(trigger_pos)
+show_trigger.showframe()
+
 # waiting for start 1, stop 0, none of them 99
 while True:
     key = check_for_key_in()
     if key == 1:
         running = True
         winsound.Beep(1000, 200)
-        break
+        show_trigger.killframe()
+        sys.exit()
     elif key == 0:
         running = False
         winsound.Beep(500, 400)
