@@ -63,7 +63,7 @@ def blur_pos_dur():
 def scope_size():
     # get searching area for the dobber
     rect = ((SCREEN_WIDTH // 6, SCREEN_HEIGHT // 9),
-            (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 10))
+            (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 20))
     return rect
 
 
@@ -204,18 +204,15 @@ class Listen2mixer:
 
 
 class ShowBoundary:
-    def __init__(self, rec_size, top_left, collor):
-        self.tplftx = triggercore[0] - TRIGGER_DEDENT
-        self.tplfty = triggercore[1] - 1
-        self.btrghtx = triggercore[0] + TRIGGER_LENGTH
-        self.btrghty = triggercore[1] + 1
+    def __init__(self, rec_size, top_left, color):
         self.trigger_boards = list()
-        rec_top = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
-                  str(self.tplfty - 3)
-        rec_bottom = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
-                     str(self.btrghty)
-        rec_left = str("3x8+" + str(self.tplftx - 3) + "+" + str(self.tplfty - 3))
-        rec_right = str("3x8+" + str(self.btrghtx + 3) + "+" + str(self.tplfty - 3))
+        self.color = color
+        rec_top = str(rec_size[0] + 6) + "x3+" + str(top_left[0] - 3) + "+" + str(top_left[1] - 3)
+        rec_bottom = str(rec_size[0] + 6) + "x3+" + str(top_left[0] - 3) + "+" + str(top_left[1] + rec_size[1])
+        rec_left = str("3x" + str(rec_size[1] + 3 - 1) + "+" + str(top_left[0] - 3) + "+"
+                       + str(top_left[1] - 3))
+        rec_right = str("3x" + str(rec_size[1] + 3 - 1) + "+" + str(top_left[0] + rec_size[0]) + "+"
+                        + str(top_left[1] - 3))
         geo = (rec_top, rec_bottom, rec_left, rec_right)
 
         for i in range(0, 3 + 1):
@@ -223,7 +220,7 @@ class ShowBoundary:
         for i in range(0, 3 + 1):
             self.trigger_boards[i].overrideredirect(1)
             self.trigger_boards[i].attributes("-topmost", True)
-            self.trigger_boards[i].config(bg="red")
+            self.trigger_boards[i].config(bg=self.color)
             self.trigger_boards[i].geometry(geo[i])
 
     def showframe(self):
@@ -234,38 +231,6 @@ class ShowBoundary:
     def killframe(self):
         for i in range(0, 3 + 1):
             self.trigger_boards[i].destroy()
-
-# class ShowBoundary:
-#     def __init__(self, triggercore):
-#         self.tplftx = triggercore[0] - TRIGGER_DEDENT
-#         self.tplfty = triggercore[1] - 1
-#         self.btrghtx = triggercore[0] + TRIGGER_LENGTH
-#         self.btrghty = triggercore[1] + 1
-#         self.trigger_boards = list()
-#         rec_top = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
-#                   str(self.tplfty - 3)
-#         rec_bottom = str(TRIGGER_DEDENT + TRIGGER_LENGTH + 6) + "x3+" + str(self.tplftx - 3) + "+" + \
-#                      str(self.btrghty)
-#         rec_left = str("3x8+" + str(self.tplftx - 3) + "+" + str(self.tplfty - 3))
-#         rec_right = str("3x8+" + str(self.btrghtx + 3) + "+" + str(self.tplfty - 3))
-#         geo = (rec_top, rec_bottom, rec_left, rec_right)
-#
-#         for i in range(0, 3 + 1):
-#             self.trigger_boards.append(Tk())
-#         for i in range(0, 3 + 1):
-#             self.trigger_boards[i].overrideredirect(1)
-#             self.trigger_boards[i].attributes("-topmost", True)
-#             self.trigger_boards[i].config(bg="red")
-#             self.trigger_boards[i].geometry(geo[i])
-#
-#     def showframe(self):
-#         for i in range(0, 3 + 1):
-#             self.trigger_boards[i].update()
-#         pass
-#
-#     def killframe(self):
-#         for i in range(0, 3 + 1):
-#             self.trigger_boards[i].destroy()
 
 
 ###############################################################################################################
@@ -302,8 +267,10 @@ while not mixer_found:
 
 # showing sound trigger bar
 
-show_trigger = ShowBoundary(((TRIGGER_DEDENT + TRIGGER_LENGTH), 3), (trigger_pos[0], trigger_pos[1] - 1), 'red')
+show_trigger = ShowBoundary(((TRIGGER_DEDENT + TRIGGER_LENGTH), 3), (trigger_pos[0], trigger_pos[1] - 1), 'orange')
 show_trigger.showframe()
+show_scopesize = ShowBoundary((rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]), rect[0], 'green')
+show_scopesize.showframe()
 
 # waiting for start 1, stop 0, none of them 99
 while True:
@@ -312,7 +279,9 @@ while True:
         running = True
         winsound.Beep(1000, 200)
         show_trigger.killframe()
+        show_scopesize.killframe()
         del show_trigger
+        del show_scopesize
         break
     elif key == 0:
         running = False
