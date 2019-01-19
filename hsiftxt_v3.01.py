@@ -6,8 +6,32 @@ import cv2, os
 from datetime import datetime
 
 
-def key_2_sent(key):
+def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     key_sent = str(key)
+    ard.flush()
+    print("Python value sent: " + key_sent)
+    ard.write(str.encode(key_sent))
+    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    # waiting for pro micro to send 'Done'
+    done_received = False
+    while not done_received:
+        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        # print(original_msg)
+        # to git rid of the serial print additional letters.
+        msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
+        # print(msg[-4:])
+        if msg[-4:] == 'Done':
+            print("Message from arduino: ")
+            print(msg)
+            done_received = True
+        else:
+            ard.flush()
+            time.sleep(0.5)
+    return
+
+
+def mouse_2_sent(position):
+    key_sent = str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
     ard.flush()
     print ("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))
@@ -16,44 +40,18 @@ def key_2_sent(key):
     done_received = False
     while not done_received:
         original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        # print(original_msg)
         # to git rid of the serial print additional letters.
         msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
-        if msg[0:4] == 'Done':
-            # print("Message from arduino: ")
-            # print(msg)
+        # print(msg[-4:])
+        if msg[-4:] == 'Done':
+            print("Message from arduino: ")
+            print(msg)
             done_received = True
         else:
             ard.flush()
-            time.sleep(0.3)
+            time.sleep(0.5)
     return
-
-
-def mouse_2_move(x, y):
-    pass
-
-
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
-BLUR_PIXEL = [1, 6]
-BLUR_DUR = [250, 400]
-SOUND_THRESHOLD = 0.40
-HAND_SHAKE_FACTOR = 0
-START_KEY = 'F10'
-STOP_KEY = 'F12'
-PAUSE_KEY = 'F11'
-TRIGGER_DEDENT = 8
-TRIGGER_LENGTH = 200
-TIME_TO_RUN = 240
-AFTER_GAME_END = ['v']  # hide or quit after game end
-ANTI_AFT_TIME = 10
-ANTI_AFT_KEY = ['z', 'x', 'c', 'b']  # 4 action shortcut key to anti AFK
-CASTPOLE = 'f'  # key 'f' for cast fishing pole
-
-K1 = pyautogui.easeInQuad
-K2 = pyautogui.easeOutQuad
-K3 = pyautogui.easeInOutQuad
-K4 = pyautogui.easeInBounce
-K5 = pyautogui.easeInElastic
 
 
 def go_pause():
@@ -69,6 +67,7 @@ def end_game():
     winsound.Beep(1000, 300)
     for short_cut_key in AFTER_GAME_END:
         key_2_sent(short_cut_key)
+        get_random_wait(400, 600)
     sys.exit()
     pass
 
@@ -96,8 +95,10 @@ def scope_size():
 def locate_mixer():
     # locate a trigger pixel in a mixer via proportion
     # if there is a mixer next to the main window
-    pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
-    pyautogui.click()
+    # pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
+    # pyautogui.click()
+    mouse_2_sent([SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4])
+    key_2_sent('l')
     mixer_txt = win32gui.GetWindowText(win32gui.GetForegroundWindow())
     mixer_txt = mixer_txt[:4]
     if mixer_txt == "音量合成":
@@ -135,8 +136,9 @@ def get_line(screen_shot, length):
 
 def get_fish():
     # ensure a rightclick to have a fish after bit
+    key_2_sent('t')
     get_random_wait(200, 300)
-    # HERE to how to collect the fish?
+    key_2_sent('t')
 
 
 def check_for_key_in():
@@ -157,8 +159,9 @@ class CastPole:
     def __init__(self, mouse_position):
         self.mouse_pos = mouse_position
         # position the mouse to the center of screen first
-        pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
-                         random.choice([K1, K2, K3, K4, K5]))
+        # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
+        #                  random.choice([K1, K2, K3, K4, K5]))
+        mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
 
     def cast(self):
         # get a blur
@@ -167,9 +170,10 @@ class CastPole:
         self.mouse_pos = tuple(map(lambda x, y: x + y, self.mouse_pos,
                                       (blur_x * 15, blur_y * 15)))
         # move mouse away from the previous hook's place
-        pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
-                         random.choice([K1, K2, K3, K4, K5]))
-        # right double click
+        # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
+                         # random.choice([K1, K2, K3, K4, K5]))
+        mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
+        # cast command
         key_2_sent('f')
         winsound.Beep(1000, 300)
 
@@ -257,7 +261,37 @@ class ShowBoundary:
 
 
 ###############################################################################################################
-# Game variables
+#Game Constant
+
+X_RATIO = 1.741
+Y_RATIO = 0.999
+PORT = 'COM15'
+DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+BLUR_PIXEL = [1, 6]
+BLUR_DUR = [250, 400]
+SOUND_THRESHOLD = 0.40
+HAND_SHAKE_FACTOR = 0
+START_KEY = 'F10'
+STOP_KEY = 'F12'
+PAUSE_KEY = 'F11'
+TRIGGER_DEDENT = 8
+TRIGGER_LENGTH = 200
+TIME_TO_RUN = 240
+AFTER_GAME_END = ['v']  # hide or quit after game end
+ANTI_AFT_TIME = 10
+ANTI_AFT_KEY = ['z', 'x', 'c', 'b']  # 4 action shortcut key to anti AFK
+CASTPOLE = 'f'  # key 'f' for cast fishing pole
+
+# K1 = pyautogui.easeInQuad
+# K2 = pyautogui.easeOutQuad
+# K3 = pyautogui.easeInOutQuad
+# K4 = pyautogui.easeInBounce
+# K5 = pyautogui.easeInElastic
+
+#  Game variables
 infoTxt = ''
 hookMissed = 0
 soundMissed = 0
@@ -286,26 +320,10 @@ logging.basicConfig(filename='running.log',
                     datefmt='%H:%M:%S',
                     level=logging.DEBUG
                     )
-logging.info('Program starts!')
 
-if os.path.basename(__file__) == 'hsiftxt_v3.01.py':
-    port = 'COM10'  # note I'm not using Mac OS-X
-elif os.path.basename(__file__) == 'hsiftxt_v3.01_sur.py':
-    port = 'COM3'
-else:
-    port = ''
-    print('Wrong file name found!')
-    sys.exit()
-try:
-    ard = serial.Serial(port, 9600, timeout=5)
-    time.sleep(2)  # wait for arduino
-except FileNotFoundError:
-    print('There is no port named ' + port + ' !' )
-    sys.exit()
-except:
-    print('Unexpected Error!')
-    sys.exit()
-
+ard = serial.Serial(PORT, 9600, timeout=5)
+time.sleep(2)
+logging.info('Serial opened and program starts!')
 
 for i in range(1, 10+1):
     bobber_images.append("pp{}.png".format(i))
@@ -367,7 +385,8 @@ while running:
         hook_found = new_cst.find_hooker(rect, 0.55)
     # move mouse to the blurred postion of the found hook
     x, y, t = blur_pos_dur()
-    pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
+    # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
+    mouse_2_sent([hook_found[0] + x, hook_found[1] + y])
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
     listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
