@@ -5,22 +5,6 @@ import logging, json
 import cv2, os
 from datetime import datetime
 
-# P is for pet setting window
-# z search the pet boss
-# x search the the mob
-# c revival key
-# v for confirmation button
-# level of the first baby (329,328)(340,340)
-# vs image (627, 44)(668, 69)
-# round_end image (544, 695) (582, 736)
-# dead_choose image (399, 697)(558, 733)
-# revival button image (642, 71)(677, 109))
-# revival c key button image (274, 657) (299, 687)
-# black_teeth_2.png (432, 685)(481, 737)
-# black_teeth_3.png (490, 687) (535, 734)
-# rush_3.png (373, 687) (419, 735)
-# add keyboard.release(all) in arduino
-# rematch upleveling team auto
 
 logging.basicConfig(filename='leveling.log',
                     filemode='w',
