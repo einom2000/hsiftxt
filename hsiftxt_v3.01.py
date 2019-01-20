@@ -31,7 +31,7 @@ def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't
 
 
 def mouse_2_sent(position):
-    key_sent = str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
+    key_sent = 'M' + str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
     ard.flush()
     print ("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))

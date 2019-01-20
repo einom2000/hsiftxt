@@ -40,7 +40,7 @@ void loop()
           Serial.print("Done!");
           readString = "";
         }
-        else if (key_in <=57 )  // mouse move command
+        else if (key_in == 'M' )  // mouse move command
         {
           int commaIndex = readString.indexOf(',');
           String positionX = readString.substring(0, commaIndex);
