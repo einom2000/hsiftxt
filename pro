@@ -1,6 +1,7 @@
 // Serial test script
 #include <Keyboard.h>
 #include <AbsMouse.h>
+#include <Mouse.h>
 int buttonPin = 9;  // Set a button to any pin
 int setPoint = 55;
 String readString;
@@ -12,6 +13,8 @@ void setup()
   AbsMouse.init(2560, 1440);
   Serial.begin(9600);  // initialize serial communications at 9600 bps
   Keyboard.begin();
+  Mouse.begin();
+
 
 
 }
@@ -40,10 +43,30 @@ void loop()
           Serial.print("Done!");
           readString = "";
         }
-        else if (key_in == 'M' )  // mouse move command
+        else if (key_in == 'r')  //'r' for right mouse double click
+        {
+          Mouse.click(MOUSE_RIGHT);
+          delay(300);
+          Mouse.click(MOUSE_RIGHT);
+          Serial.print("Done!");
+          readString = "";
+        }
+        else if (key_in == 'l')  //'l' for left click
+        {
+          Mouse.click();
+          Serial.print("Done!");
+          readString = "";
+        }
+        else if (key_in == 't')  //'t' for right click
+        {
+          Mouse.click(MOUSE_RIGHT);
+          Serial.print("Done!");
+          readString = "";
+        }
+        else if (key_in == 'M' )  // mouse move command  or cuold be less than 57 to trigger the mouse
         {
           int commaIndex = readString.indexOf(',');
-          String positionX = readString.substring(0, commaIndex);
+          String positionX = readString.substring(1, commaIndex);
           String positionY = readString.substring(commaIndex + 1);
           int x = atoi(positionX.c_str());
           int y = atoi(positionY.c_str());
