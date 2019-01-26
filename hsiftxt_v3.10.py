@@ -397,10 +397,11 @@ while running:
         while current_role_running:
             # First Check if the running time is longer than expected or should have anti aftk key press.
             cur_time = time.time()
-            if cur_time - running_elapsed >= TIME_TO_RUN * 60:
+            if cur_time - running_elapsed >= TIME_TO_RUN * random.randint(58, 62):
                 running = False
                 end_game()
-            elif cur_time - role_running_elapsed >= TIME_FOR_EACH_ROLE * 60:
+            elif cur_time - role_running_elapsed >= TIME_FOR_EACH_ROLE * \
+                    random.randint(58, 62):
                 current_role_running = False
                 break
             elif cur_time - last_anti_afk >= ANTI_AFT_TIME * 60:
