@@ -213,7 +213,7 @@ class CastPole:
             for img in bobber_images:
                 fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
                                                                       rect[1][0], rect[1][1]),
-                                                         grayscale=True, confidence=confi)
+                                                         grayscale=False, confidence=confi)
             # if searching time is too long quit loop
             if time.time() - tm >= 5.0:
                 hook_missing_counter += 1
@@ -299,7 +299,7 @@ DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manu
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-BLUR_PIXEL = [1, 6]
+BLUR_PIXEL = [1, 3]
 BLUR_DUR = [250, 400]
 SOUND_THRESHOLD = 0.40
 HAND_SHAKE_FACTOR = 0
@@ -308,7 +308,7 @@ STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
-TIME_TO_RUN = 240
+TIME_TO_RUN = 180
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
 ANTI_AFT_KEY = ['z', 'x', 'c', 's']  # 4 action shortcut key to anti AFK
@@ -354,7 +354,7 @@ ard = serial.Serial(PORT, 9600, timeout=5)
 time.sleep(2)
 logging.info('Serial opened and program starts!')
 
-for i in range(1, 10+1):
+for i in range(5, 20+1):
     bobber_images.append("pp{}.png".format(i))
 
 # looking for mixer, if not create one and move it next to the main window
@@ -409,20 +409,26 @@ while running:
             get_random_wait(400, 600)
         last_anti_afk = time.time()
     # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
-    print(cur_time - running_elapsed )
-    print(cur_time - last_anti_afk)
+    print('time to stop = :' + str(int(cur_time - running_elapsed ))  +  ' and time to act: '
+          + str(int(cur_time - last_anti_afk)))
     while hook_found is None:
         get_random_wait(500, 700)
         new_cst.cast()
         # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.55)
+        hook_found = new_cst.find_hooker(rect, 0.5)
     # move mouse to the blurred postion of the found hook
     x, y, t = blur_pos_dur()
     # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
     get_random_wait(500, 600)
     curr_mouse = pyautogui.position()
-    mouse_2_rtv([(hook_found[0] - curr_mouse[0]) + x, (hook_found[1] - curr_mouse[1]) + y])
-    print('relative move: ' + str([(hook_found[0] - curr_mouse[0]) + x, (hook_found[1] - curr_mouse[1]) + y]))
+    rlt_x = int(hook_found[0] - curr_mouse[0])
+    rlt_y = int(hook_found[1] - curr_mouse[1])
+    # if rlt_x < 30 and rlt_y < 30:
+    mouse_2_rtv([rlt_x + x, rlt_y + y])
+    print('relative move: ' + str([rlt_x + x, rlt_y + y]))
+    # else:
+    #     mouse_2_sent([hook_found[0] + x , hook_found[1] + y])
+    #     print('abosolue move: ' + str([hook_found[0] + x, hook_found[1] + y]))
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
     listen_result, pause_is_pressed, stop_is_pressed = listening.listen()

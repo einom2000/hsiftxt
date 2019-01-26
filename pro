@@ -1,6 +1,7 @@
 // Serial test script
 #include <Keyboard.h>
-#include <AbsMouse.h>
+#include <MouseTo.h>
+#include <Mouse.h>
 int buttonPin = 9;  // Set a button to any pin
 int setPoint = 55;
 String readString;
@@ -11,9 +12,10 @@ void setup()
 {
   pinMode(buttonPin, INPUT); // Set the button as an input
   digitalWrite(buttonPin, HIGH); // Pull the button high
-  AbsMouse.init(2560, 1440);
   Serial.begin(9600);  // initialize serial communications at 9600 bps
   Keyboard.begin();
+  Mouse.begin();
+  MouseTo.setCorrectionFactor(1);
 }
 
 void loop()
@@ -45,35 +47,23 @@ void loop()
         {
           r = random(1, 1);
           t = random(80, 120);
-          AbsMouse.press(MOUSE_RIGHT);
+          Mouse.click(MOUSE_RIGHT);
           delay(r * t);
-          AbsMouse.release(MOUSE_RIGHT);
-          delay(2 * r * t);
-          AbsMouse.press(MOUSE_RIGHT);
-          delay(r * t);
-          AbsMouse.release(MOUSE_RIGHT);
+          Mouse.click(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
           key_in = "";
         }
         else if (key_in == 'l')  //'l' for left click
         {
-          r = random(1, 1);
-          t = random(80, 120);
-          AbsMouse.press(MOUSE_LEFT);
-          delay(r * t);
-          AbsMouse.release(MOUSE_LEFT);
+          Mouse.click();
           Serial.print("Done!");
           readString = "";
           key_in = "";
         }
         else if (key_in == 't')  //'t' for right click
         {
-          r = random(1, 1);
-          t = random(80, 120);
-          AbsMouse.press(MOUSE_RIGHT);
-          delay(r * t);
-          AbsMouse.release(MOUSE_RIGHT);
+          Mouse.click(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
           key_in = "";
@@ -85,7 +75,20 @@ void loop()
           String positionY = readString.substring(commaIndex + 1);
           int x = atoi(positionX.c_str());
           int y = atoi(positionY.c_str());
-          AbsMouse.move(x, y);
+          MouseTo.setTarget(x, y);
+          while (MouseTo.move() == false) {}
+          Serial.print("Done!");
+          readString ="";
+          key_in = "";
+        }
+        else if (key_in == 'N' )  // mouse relative move
+        {
+          int commaIndex = readString.indexOf(',');
+          String positionX = readString.substring(1, commaIndex);
+          String positionY = readString.substring(commaIndex + 1);
+          int x = atoi(positionX.c_str());
+          int y = atoi(positionY.c_str());
+          Mouse.move(x , y);
           Serial.print("Done!");
           readString ="";
           key_in = "";

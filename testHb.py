@@ -109,4 +109,4 @@ time.sleep(2)  # wait for arduino
 while True:
     if keyboard.is_pressed('='):
         print(pyautogui.position())
-        break=
+        break
