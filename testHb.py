@@ -14,8 +14,10 @@ logging.basicConfig(filename='leveling.log',
                     )
 logging.info('Program starts!')
 
-X_RATIO = 1
-Y_RATIO = 1
+X_RATIO = 1.04
+Y_RATIO = 1.04
+J_RATIO = 1.85
+Q_RATIO = 1.85
 
 def key_2_sent(key):
     key_sent = str(key)
@@ -63,20 +65,48 @@ def mouse_2_sent(position):
             time.sleep(0.5)
     return
 
+def mouse_2_rtv(position):
+    key_sent = 'N' + str(int(position[0] / J_RATIO)) + ',' + str(int(position[1] / Q_RATIO))
+    ard.flush()
+    print ("Python value sent: " + key_sent)
+    ard.write(str.encode(key_sent))
+    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    # waiting for pro micro to send 'Done'
+    done_received = False
+    while not done_received:
+        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        # print(original_msg)
+        # to git rid of the serial print additional letters.
+        msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
+        # print(msg[-4:])
+        if msg[-4:] == 'Done':
+            print("Message from arduino: ")
+            print(msg)
+            done_received = True
+        else:
+            ard.flush()
+            time.sleep(0.5)
+    return
+
 port = 'COM17'
 ard = serial.Serial(port, 9600, timeout=5)
 time.sleep(2)  # wait for arduino
 
-#
+# # #
 # mouse_2_sent([100,100])
 # print(pyautogui.position())
 # time.sleep(3)
-# mouse_2_sent([2560, 1440])
+# mouse_2_rtv([200, 200])
 # print(pyautogui.position())
-mouse_2_sent([300, 200])
-print('000')
-i = 0
+# mouse_2_sent([300, 200])
+# print('000')
+# i = 0
+#
+# key_2_sent('l')
+# print('11')
+# i = 1
 
-key_2_sent('l')
-print('11')
-i = 1
+while True:
+    if keyboard.is_pressed('='):
+        print(pyautogui.position())
+        break=

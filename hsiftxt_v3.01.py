@@ -54,6 +54,32 @@ def mouse_2_sent(position):
     return
 
 
+
+def mouse_2_rtv(position):
+    key_sent = 'N' + str(int(position[0] / J_RATIO)) + ',' + str(int(position[1] / Q_RATIO))
+    ard.flush()
+    print ("Python value sent: " + key_sent)
+    ard.write(str.encode(key_sent))
+    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    # waiting for pro micro to send 'Done'
+    done_received = False
+    while not done_received:
+        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        # print(original_msg)
+        # to git rid of the serial print additional letters.
+        msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
+        # print(msg[-4:])
+        if msg[-4:] == 'Done':
+            print("Message from arduino: ")
+            print(msg)
+            done_received = True
+        else:
+            ard.flush()
+            time.sleep(0.5)
+    return
+
+
+
 def go_pause():
     while not keyboard.is_pressed(PAUSE_KEY):
         if keyboard.is_pressed(STOP_KEY):
@@ -161,7 +187,7 @@ class CastPole:
         # position the mouse to the center of screen first
         # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
         #                  random.choice([K1, K2, K3, K4, K5]))
-        mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
+        # mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
 
     def cast(self):
         # get a blur
@@ -264,8 +290,10 @@ class ShowBoundary:
 ###############################################################################################################
 #Game Constant
 
-X_RATIO = 1.03
-Y_RATIO = 1.02
+X_RATIO = 1.04
+Y_RATIO = 1.04
+J_RATIO = 1.85
+Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
@@ -365,6 +393,9 @@ while True:
 #=============================================================================================================
 
 new_cst = CastPole(rect_center)
+mouse_2_sent([620, 220])
+## initialize the mouse to the pool center
+print('inintialize mouse to ' + str([620, 220]))
 
 while running:
     # First Check if the running time is longer than expected or should have anti aftk key press.
@@ -389,7 +420,9 @@ while running:
     x, y, t = blur_pos_dur()
     # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
     get_random_wait(500, 600)
-    mouse_2_sent([hook_found[0] + x, hook_found[1] + y])
+    curr_mouse = pyautogui.position()
+    mouse_2_rtv([(hook_found[0] - curr_mouse[0]) + x, (hook_found[1] - curr_mouse[1]) + y])
+    print('relative move: ' + str([(hook_found[0] - curr_mouse[0]) + x, (hook_found[1] - curr_mouse[1]) + y]))
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
     listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
