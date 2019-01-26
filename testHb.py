@@ -68,9 +68,10 @@ ard = serial.Serial(port, 9600, timeout=5)
 time.sleep(2)  # wait for arduino
 
 
-mouse_2_sent([100,100])
-print(pyautogui.position())
-time.sleep(3)
-mouse_2_sent([2560, 1440])
-print(pyautogui.position())
-
+# mouse_2_sent([100,100])
+# print(pyautogui.position())
+# time.sleep(3)
+# mouse_2_sent([2560, 1440])
+# print(pyautogui.position())
+while True:
+    key_2_sent('s')

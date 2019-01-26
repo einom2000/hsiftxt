@@ -4,7 +4,7 @@ import time, random, pyautogui
 import logging, json
 import cv2, os
 from datetime import datetime
-
+from tkinter import *
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     key_sent = str(key)

@@ -1,10 +1,11 @@
 // Serial test script
 #include <Keyboard.h>
 #include <AbsMouse.h>
-#include <Mouse.h>
 int buttonPin = 9;  // Set a button to any pin
 int setPoint = 55;
 String readString;
+int r = 0;
+int t = 0;
 
 void setup()
 {
@@ -13,10 +14,6 @@ void setup()
   AbsMouse.init(2560, 1440);
   Serial.begin(9600);  // initialize serial communications at 9600 bps
   Keyboard.begin();
-  Mouse.begin();
-
-
-
 }
 
 void loop()
@@ -45,21 +42,35 @@ void loop()
         }
         else if (key_in == 'r')  //'r' for right mouse double click
         {
-          Mouse.click(MOUSE_RIGHT);
-          delay(300);
-          Mouse.click(MOUSE_RIGHT);
+          r = random(1, 1);
+          t = random(80, 120);
+          AbsMouse.press(MOUSE_RIGHT);
+          delay(r * t);
+          AbsMouse.release(MOUSE_RIGHT);
+          delay(2 * r * t);
+          AbsMouse.press(MOUSE_RIGHT);
+          delay(r * t);
+          AbsMouse.release(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
         }
         else if (key_in == 'l')  //'l' for left click
         {
-          Mouse.click();
+          r = random(1, 1);
+          t = random(80, 120);
+          AbsMouse.press(MOUSE_LEFT);
+          delay(r * t);
+          AbsMouse.release(MOUSE_LEFT);
           Serial.print("Done!");
           readString = "";
         }
         else if (key_in == 't')  //'t' for right click
         {
-          Mouse.click(MOUSE_RIGHT);
+          r = random(1, 1);
+          t = random(80, 120);
+          AbsMouse.press(MOUSE_RIGHT);
+          delay(r * t);
+          AbsMouse.release(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
         }
@@ -70,7 +81,7 @@ void loop()
           String positionY = readString.substring(commaIndex + 1);
           int x = atoi(positionX.c_str());
           int y = atoi(positionY.c_str());
-          AbsMouse.move(x, y);
+//          AbsMouse.move(x, y);
           Serial.print("Done!");
           readString ="";
         }
