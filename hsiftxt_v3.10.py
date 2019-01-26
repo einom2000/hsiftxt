@@ -306,6 +306,7 @@ AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
 ANTI_AFT_KEY = ['z', 'x', 'c']  # 3 action shortcut key to anti AFK
 CASTPOLE = 'f'  # key 'f' for cast fishing pole
+ROLE_TO_LOOP = 3
 
 # K1 = pyautogui.easeInQuad
 # K2 = pyautogui.easeOutQuad
@@ -385,7 +386,7 @@ while True:
 new_cst = CastPole(rect_center)
 
 while running:
-    for role_roll in range(3):
+    for role_roll in range(ROLE_TO_LOOP):
         mouse_2_sent([620, 220])
         # initialize the mouse to the pool center
         print('initialize mouse to ' + str([620, 220]))
@@ -461,7 +462,22 @@ while running:
         # ============== current role end
         print('current role end!')
         get_random_wait(1000, 2000)
+        #  'o' for enter; 'u' for up; 'j' for down(jump); 'k' for macro /camp
+        key_2_sent('k')
+        time.sleep(30)
+        if role_roll < ROLE_TO_LOOP - 1:
+            key_2_sent('j')
+            get_random_wait(1000, 2000)
+            key_2_sent('o')
+            time.sleep(60)
+            get_random_wait(10000, 20000)
 
     # ============= 3 roles loops end but time is not end
-
+    print('all roles done! back to first role!')
+    for i in range(ROLE_TO_LOOP-1):
+        key_2_sent('u')
+        get_random_wait(1000, 2000)
+    key_2_sent('o')
+    time.sleep(60)
+    get_random_wait(10000, 20000)
 # =========================================================================
