@@ -137,8 +137,8 @@ def get_line(screen_shot, length):
 def get_fish():
     # ensure a rightclick to have a fish after bit
     key_2_sent('t')
-    get_random_wait(200, 300)
-    key_2_sent('t')
+    get_random_wait(800, 1300)
+    # key_2_sent('t')
 
 
 def check_for_key_in():
@@ -172,9 +172,10 @@ class CastPole:
         # move mouse away from the previous hook's place
         # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
                          # random.choice([K1, K2, K3, K4, K5]))
-        mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
+        # mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
         # cast command
         key_2_sent('f')
+        get_random_wait(600, 900)
         winsound.Beep(1000, 300)
 
     def find_hooker(self, rect, confi=None):
@@ -380,12 +381,14 @@ while running:
     print(cur_time - running_elapsed )
     print(cur_time - last_anti_afk)
     while hook_found is None:
+        get_random_wait(1100, 1300)
         new_cst.cast()
         # Looking for the hook
         hook_found = new_cst.find_hooker(rect, 0.55)
     # move mouse to the blurred postion of the found hook
     x, y, t = blur_pos_dur()
     # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
+    get_random_wait(1000, 1200)
     mouse_2_sent([hook_found[0] + x, hook_found[1] + y])
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
@@ -403,12 +406,12 @@ while running:
         fish_counter += 1
         hook_found = None
         winsound.Beep(500, 300)
-        get_random_wait(300, 500)
+        get_random_wait(800, 1200)
     else:
         sound_missing_counter += 1
         hook_found = None
         winsound.Beep(1200, 300)
-        get_random_wait(300, 500)
+        get_random_wait(600, 900)
 
     # check if stop key or pause key has been pressed
     check_key = check_for_key_in()

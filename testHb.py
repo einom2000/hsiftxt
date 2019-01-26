@@ -70,8 +70,14 @@ time.sleep(2)  # wait for arduino
 
 # mouse_2_sent([100,100])
 # print(pyautogui.position())
-# time.sleep(3)
+# time.sleep(3)1=
 # mouse_2_sent([2560, 1440])
-# print(pyautogui.position())
-while True:
-    key_2_sent('t')
+# print(pyautogui.position())=1
+mouse_2_sent([300, 400])1
+print('000')
+i = 0
+while not i:
+    if keyboard.is_pressed('='):
+        key_2_sent('t')
+        print('11')
+        i = 1

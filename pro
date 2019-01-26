@@ -39,6 +39,7 @@ void loop()
           Keyboard.write((char) 32);  //(char) 32
           Serial.print("Done!");
           readString = "";
+          key_in = "";
         }
         else if (key_in == 'r')  //'r' for right mouse double click
         {
@@ -53,6 +54,7 @@ void loop()
           AbsMouse.release(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
+          key_in = "";
         }
         else if (key_in == 'l')  //'l' for left click
         {
@@ -63,6 +65,7 @@ void loop()
           AbsMouse.release(MOUSE_LEFT);
           Serial.print("Done!");
           readString = "";
+          key_in = "";
         }
         else if (key_in == 't')  //'t' for right click
         {
@@ -73,6 +76,7 @@ void loop()
           AbsMouse.release(MOUSE_RIGHT);
           Serial.print("Done!");
           readString = "";
+          key_in = "";
         }
         else if (key_in == 'M' )  // mouse move command  or cuold be less than 57 to trigger the mouse
         {
@@ -84,13 +88,21 @@ void loop()
           AbsMouse.move(x, y);
           Serial.print("Done!");
           readString ="";
+          key_in = "";
         }
+        else if (key_in == '=') // do nothing
+        {
+          Serial.print("Done!");
+          readString = "";
+          key_in = "";
+         }
         else
         {
           Keyboard.write(key_in); // other key command
           Serial.print("Done!");
           //Serial.println(readString); //see what was received
           readString = "";
+          key_in = "";
          }
       }
 
