@@ -264,9 +264,9 @@ class ShowBoundary:
 ###############################################################################################################
 #Game Constant
 
-X_RATIO = 1.741
-Y_RATIO = 0.999
-PORT = 'COM15'
+X_RATIO = 1.03
+Y_RATIO = 1.02
+PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
 SCREEN_WIDTH = 1280
@@ -381,14 +381,14 @@ while running:
     print(cur_time - running_elapsed )
     print(cur_time - last_anti_afk)
     while hook_found is None:
-        get_random_wait(1100, 1300)
+        get_random_wait(500, 700)
         new_cst.cast()
         # Looking for the hook
         hook_found = new_cst.find_hooker(rect, 0.55)
     # move mouse to the blurred postion of the found hook
     x, y, t = blur_pos_dur()
     # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
-    get_random_wait(1000, 1200)
+    get_random_wait(500, 600)
     mouse_2_sent([hook_found[0] + x, hook_found[1] + y])
     # # checking the mixer for 15 seconds
     listening = Listen2mixer(trigger_pos)
@@ -406,7 +406,7 @@ while running:
         fish_counter += 1
         hook_found = None
         winsound.Beep(500, 300)
-        get_random_wait(800, 1200)
+        get_random_wait(400, 700)
     else:
         sound_missing_counter += 1
         hook_found = None

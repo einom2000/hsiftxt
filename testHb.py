@@ -14,8 +14,8 @@ logging.basicConfig(filename='leveling.log',
                     )
 logging.info('Program starts!')
 
-X_RATIO = 1.741
-Y_RATIO = 0.999
+X_RATIO = 1
+Y_RATIO = 1
 
 def key_2_sent(key):
     key_sent = str(key)
@@ -41,7 +41,7 @@ def key_2_sent(key):
     return
 
 def mouse_2_sent(position):
-    key_sent = str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
+    key_sent = 'M' + str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
     ard.flush()
     print ("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))
@@ -63,21 +63,20 @@ def mouse_2_sent(position):
             time.sleep(0.5)
     return
 
-port = 'COM15'
+port = 'COM17'
 ard = serial.Serial(port, 9600, timeout=5)
 time.sleep(2)  # wait for arduino
 
-
+#
 # mouse_2_sent([100,100])
 # print(pyautogui.position())
-# time.sleep(3)1=
+# time.sleep(3)
 # mouse_2_sent([2560, 1440])
-# print(pyautogui.position())=1
-mouse_2_sent([300, 400])1
+# print(pyautogui.position())
+mouse_2_sent([300, 200])
 print('000')
 i = 0
-while not i:
-    if keyboard.is_pressed('='):
-        key_2_sent('t')
-        print('11')
-        i = 1
+
+key_2_sent('l')
+print('11')
+i = 1
