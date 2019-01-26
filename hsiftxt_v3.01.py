@@ -282,7 +282,7 @@ TRIGGER_LENGTH = 200
 TIME_TO_RUN = 240
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
-ANTI_AFT_KEY = ['z', 'x', 'c', 'b']  # 4 action shortcut key to anti AFK
+ANTI_AFT_KEY = ['z', 'x', 'c', 's']  # 4 action shortcut key to anti AFK
 CASTPOLE = 'f'  # key 'f' for cast fishing pole
 
 # K1 = pyautogui.easeInQuad

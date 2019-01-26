@@ -74,4 +74,4 @@ time.sleep(2)  # wait for arduino
 # mouse_2_sent([2560, 1440])
 # print(pyautogui.position())
 while True:
-    key_2_sent('s')
+    key_2_sent('t')

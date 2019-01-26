@@ -81,7 +81,7 @@ void loop()
           String positionY = readString.substring(commaIndex + 1);
           int x = atoi(positionX.c_str());
           int y = atoi(positionY.c_str());
-//          AbsMouse.move(x, y);
+          AbsMouse.move(x, y);
           Serial.print("Done!");
           readString ="";
         }
