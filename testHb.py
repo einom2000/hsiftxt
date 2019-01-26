@@ -88,9 +88,9 @@ def mouse_2_rtv(position):
             time.sleep(0.5)
     return
 
-port = 'COM17'
-ard = serial.Serial(port, 9600, timeout=5)
-time.sleep(2)  # wait for arduino
+# port = 'COM17'
+# ard = serial.Serial(port, 9600, timeout=5)
+# time.sleep(2)  # wait for arduino
 
 # # #
 # mouse_2_sent([100,100])
@@ -106,7 +106,10 @@ time.sleep(2)  # wait for arduino
 # print('11')
 # i = 1
 
-while True:
-    if keyboard.is_pressed('='):
-        print(pyautogui.position())
-        break
+# while True:
+#     if keyboard.is_pressed('='):
+#         print(pyautogui.position())
+#         break
+
+for i in range(3):
+    print(i)
