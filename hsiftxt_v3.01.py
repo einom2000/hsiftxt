@@ -308,10 +308,10 @@ STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
-TIME_TO_RUN = 180
+TIME_TO_RUN = 600
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
-ANTI_AFT_KEY = ['z', 'x', 'c', 's']  # 4 action shortcut key to anti AFK
+ANTI_AFT_KEY = ['z', 'x', 'c']  # 4 action shortcut key to anti AFK
 CASTPOLE = 'f'  # key 'f' for cast fishing pole
 
 # K1 = pyautogui.easeInQuad
@@ -404,9 +404,9 @@ while running:
         running = False
         end_game()
     elif cur_time - last_anti_afk >= ANTI_AFT_TIME * 60:
-        for i in range(0, len(ANTI_AFT_KEY)):
-            key_2_sent(ANTI_AFT_KEY[i])
-            get_random_wait(400, 600)
+        key_2_sent(ANTI_AFT_KEY[random.randint(len(ANTI_AFT_KEY)-1)])
+        get_random_wait(400, 600)
+        key_2_sent('s')
         last_anti_afk = time.time()
     # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
     print('time to stop = :' + str(int(cur_time - running_elapsed ))  +  ' and time to act: '
@@ -415,7 +415,7 @@ while running:
         get_random_wait(500, 700)
         new_cst.cast()
         # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.5)
+        hook_found = new_cst.find_hooker(rect, 0.7)
     # move mouse to the blurred postion of the found hook
     x, y, t = blur_pos_dur()
     # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
@@ -423,9 +423,15 @@ while running:
     curr_mouse = pyautogui.position()
     rlt_x = int(hook_found[0] - curr_mouse[0])
     rlt_y = int(hook_found[1] - curr_mouse[1])
-    # if rlt_x < 30 and rlt_y < 30:
-    mouse_2_rtv([rlt_x + x, rlt_y + y])
-    print('relative move: ' + str([rlt_x + x, rlt_y + y]))
+    while abs(rlt_x) > 20 or abs(rlt_y) > 20:
+        if abs(rlt_y) > 175 or abs(rlt_x) > 175:
+            rlt_x = 175 * (rlt_x / abs(rlt_x))
+            rlt_y = 175 * (rlt_y / abs(rlt_y))
+        mouse_2_rtv([rlt_x + x, rlt_y + y])
+        print('relative move: ' + str([rlt_x + x, rlt_y + y]))
+        curr_mouse = pyautogui.position()
+        rlt_x = int(hook_found[0] - curr_mouse[0])
+        rlt_y = int(hook_found[1] - curr_mouse[1])
     # else:
     #     mouse_2_sent([hook_found[0] + x , hook_found[1] + y])
     #     print('abosolue move: ' + str([hook_found[0] + x, hook_found[1] + y]))
