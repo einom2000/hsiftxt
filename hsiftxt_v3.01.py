@@ -7,22 +7,23 @@ from datetime import datetime
 from tkinter import *
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
+    # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for macro /camp
     key_sent = str(key)
     ard.flush()
     print("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))
-    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    time.sleep(0.5)  # I shortened this to match the new value in your arduino code
     # waiting for pro micro to send 'Done'
     done_received = False
     while not done_received:
-        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        original_msg = str(ard.read(ard.inWaiting()))  # read all characters in buffer
         # print(original_msg)
         # to git rid of the serial print additional letters.
         msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
         # print(msg[-4:])
         if msg[-4:] == 'Done':
-            print("Message from arduino: ")
-            print(msg)
+            # print("Message from arduino: ")
+            # print(msg)
             done_received = True
         else:
             ard.flush()
@@ -33,51 +34,49 @@ def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't
 def mouse_2_sent(position):
     key_sent = 'M' + str(int(position[0] / X_RATIO)) + ',' + str(int(position[1] / Y_RATIO))
     ard.flush()
-    print ("Python value sent: " + key_sent)
+    print("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))
-    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    time.sleep(0.5)  # I shortened this to match the new value in your arduino code
     # waiting for pro micro to send 'Done'
     done_received = False
     while not done_received:
-        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        original_msg = str(ard.read(ard.inWaiting()))  # read all characters in buffer
         # print(original_msg)
         # to git rid of the serial print additional letters.
         msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
         # print(msg[-4:])
         if msg[-4:] == 'Done':
-            print("Message from arduino: ")
-            print(msg)
+            # print("Message from arduino: ")
+            # print(msg)
             done_received = True
         else:
             ard.flush()
             time.sleep(0.5)
     return
-
 
 
 def mouse_2_rtv(position):
     key_sent = 'N' + str(int(position[0] / J_RATIO)) + ',' + str(int(position[1] / Q_RATIO))
     ard.flush()
-    print ("Python value sent: " + key_sent)
+    print("Python value sent: " + key_sent)
     ard.write(str.encode(key_sent))
-    time.sleep(0.5) # I shortened this to match the new value in your arduino code
+    time.sleep(0.5)  # I shortened this to match the new value in your arduino code
     # waiting for pro micro to send 'Done'
     done_received = False
     while not done_received:
-        original_msg = str(ard.read(ard.inWaiting())) # read all characters in buffer
+        original_msg = str(ard.read(ard.inWaiting()))  # read all characters in buffer
         # print(original_msg)
         # to git rid of the serial print additional letters.
         msg = original_msg.replace('b\'', '').replace('\\r\\n', "   ")[:-2]
         # print(msg[-4:])
         if msg[-4:] == 'Done':
-            print("Message from arduino: ")
-            print(msg)
+            # print("Message from arduino: ")
+            # print(msg)
             done_received = True
         else:
             ard.flush()
             time.sleep(0.5)
     return
-
 
 
 def go_pause():
@@ -139,7 +138,7 @@ def locate_mixer():
     return mixer_trigger
 
 
-def enumHandler(hwnd, lParam):
+def enumhandler(hwnd, lParam):
     # enumwindows' callback function
     # if mixer found, move it next to the main windows
     if win32gui.IsWindowVisible(hwnd):
@@ -151,7 +150,7 @@ def create_mixer():
     # create mixer and allocate it after 5 seconds
     os.startfile("SndVol.exe")
     time.sleep(5)
-    win32gui.EnumWindows(enumHandler, None)
+    win32gui.EnumWindows(enumhandler, None)
 
 
 def get_line(screen_shot, length):
@@ -160,11 +159,11 @@ def get_line(screen_shot, length):
         line.append(screen_shot.getpixel((i, 2)))
     return line
 
+
 def get_fish():
-    # ensure a rightclick to have a fish after bit
+    # ensure a right click to have a fish after bit
     key_2_sent('t')
     get_random_wait(800, 1300)
-    # key_2_sent('t')
 
 
 def check_for_key_in():
@@ -184,21 +183,13 @@ class CastPole:
     # move mouse to the bobber
     def __init__(self, mouse_position):
         self.mouse_pos = mouse_position
-        # position the mouse to the center of screen first
-        # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
-        #                  random.choice([K1, K2, K3, K4, K5]))
-        # mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
 
     def cast(self):
         # get a blur
         blur_x, blur_y, dur_t = blur_pos_dur()
         self.mouse_pos = pyautogui.position()
         self.mouse_pos = tuple(map(lambda x, y: x + y, self.mouse_pos,
-                                      (blur_x * 15, blur_y * 15)))
-        # move mouse away from the previous hook's place
-        # pyautogui.moveTo(self.mouse_pos[0], self.mouse_pos[1], random.randint(2, 3) / 1000,
-                         # random.choice([K1, K2, K3, K4, K5]))
-        # mouse_2_sent([self.mouse_pos[0], self.mouse_pos[1]])
+                                   (blur_x * 15, blur_y * 15)))
         # cast command
         key_2_sent('f')
         get_random_wait(600, 900)
@@ -288,7 +279,7 @@ class ShowBoundary:
 
 
 ###############################################################################################################
-#Game Constant
+# Game Constant
 
 X_RATIO = 1.04
 Y_RATIO = 1.04
@@ -309,10 +300,12 @@ PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
 TIME_TO_RUN = 600
+TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
-ANTI_AFT_KEY = ['z', 'x', 'c']  # 4 action shortcut key to anti AFK
+ANTI_AFT_KEY = ['z', 'x', 'c']  # 3 action shortcut key to anti AFK
 CASTPOLE = 'f'  # key 'f' for cast fishing pole
+ROLE_TO_LOOP = 3
 
 # K1 = pyautogui.easeInQuad
 # K2 = pyautogui.easeOutQuad
@@ -354,7 +347,7 @@ ard = serial.Serial(PORT, 9600, timeout=5)
 time.sleep(2)
 logging.info('Serial opened and program starts!')
 
-for i in range(5, 20+1):
+for i in range(5, 20 + 1):
     bobber_images.append("pp{}.png".format(i))
 
 # looking for mixer, if not create one and move it next to the main window
@@ -417,8 +410,8 @@ while running:
         # Looking for the hook
         hook_found = new_cst.find_hooker(rect, 0.7)
     # move mouse to the blurred postion of the found hook
+
     x, y, t = blur_pos_dur()
-    # pyautogui.moveTo(hook_found[0] + x, hook_found[1] + y, t * 2 / 1000, random.choice([K1, K2, K3, K4, K5]))
     get_random_wait(500, 600)
     curr_mouse = pyautogui.position()
     rlt_x = int(hook_found[0] - curr_mouse[0])
@@ -433,10 +426,7 @@ while running:
         curr_mouse = pyautogui.position()
         rlt_x = int(hook_found[0] - curr_mouse[0])
         rlt_y = int(hook_found[1] - curr_mouse[1])
-    # else:
-    #     mouse_2_sent([hook_found[0] + x , hook_found[1] + y])
-    #     print('abosolue move: ' + str([hook_found[0] + x, hook_found[1] + y]))
-    # # checking the mixer for 15 seconds
+
     listening = Listen2mixer(trigger_pos)
     listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
     if pause_is_pressed:

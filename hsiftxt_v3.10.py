@@ -6,7 +6,6 @@ import cv2, os
 from datetime import datetime
 from tkinter import *
 
-
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for macro /camp
     key_sent = str(key)
@@ -323,8 +322,10 @@ running = True
 pause_is_pressed = False
 stop_is_pressed = False
 mixer_found = False
+hook_found = None
 trigger_pos = ()
 running_elapsed = time.time()
+last_anti_afk = time.time()
 rect = scope_size()
 rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
                int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
@@ -382,7 +383,8 @@ while True:
         break
 
 # game loop start
-# =============================================================================================================
+#=============================================================================================================
+
 new_cst = CastPole(rect_center)
 
 while running:
@@ -417,17 +419,25 @@ while running:
                 get_random_wait(500, 700)
                 new_cst.cast()
                 # Looking for the hook
-                hook_found = new_cst.find_hooker(rect, 0.5)
+                hook_found = new_cst.find_hooker(rect, 0.7)
             # move mouse to the blurred postion of the found hook
+
             x, y, t = blur_pos_dur()
             get_random_wait(500, 600)
-
             curr_mouse = pyautogui.position()
             rlt_x = int(hook_found[0] - curr_mouse[0])
             rlt_y = int(hook_found[1] - curr_mouse[1])
+            while abs(rlt_x) > 20 or abs(rlt_y) > 20:
+                if abs(rlt_x) > 175:
+                    rlt_x = 175 * (rlt_x / abs(rlt_x))
+                if abs(rlt_y) > 175:
+                    rlt_y = 175 * (rlt_y / abs(rlt_y))
+                mouse_2_rtv([rlt_x + x, rlt_y + y])
+                print('relative move: ' + str([rlt_x + x, rlt_y + y]))
+                curr_mouse = pyautogui.position()
+                rlt_x = int(hook_found[0] - curr_mouse[0])
+                rlt_y = int(hook_found[1] - curr_mouse[1])
 
-            mouse_2_rtv([rlt_x + x, rlt_y + y])
-            print('relative move: ' + str([rlt_x + x, rlt_y + y]))
             listening = Listen2mixer(trigger_pos)
             listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
             if pause_is_pressed:
