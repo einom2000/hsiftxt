@@ -400,11 +400,11 @@ print('inintialize mouse to ' + str([620, 220]))
 while running:
     # First Check if the running time is longer than expected or should have anti aftk key press.
     cur_time = time.time()
-    if cur_time - running_elapsed >= TIME_TO_RUN * 60:
+    if cur_time - running_elapsed >= TIME_TO_RUN * random.randint(58, 62):
         running = False
         end_game()
-    elif cur_time - last_anti_afk >= ANTI_AFT_TIME * 60:
-        key_2_sent(ANTI_AFT_KEY[random.randint(len(ANTI_AFT_KEY)-1)])
+    elif cur_time - last_anti_afk >= ANTI_AFT_TIME * random.randint(58, 62):
+        key_2_sent(ANTI_AFT_KEY[random.randint(0, (len(ANTI_AFT_KEY)-1))])
         get_random_wait(400, 600)
         key_2_sent('s')
         last_anti_afk = time.time()
@@ -424,8 +424,9 @@ while running:
     rlt_x = int(hook_found[0] - curr_mouse[0])
     rlt_y = int(hook_found[1] - curr_mouse[1])
     while abs(rlt_x) > 20 or abs(rlt_y) > 20:
-        if abs(rlt_y) > 175 or abs(rlt_x) > 175:
+        if abs(rlt_x) > 175 :
             rlt_x = 175 * (rlt_x / abs(rlt_x))
+        if abs(rlt_y) > 175 :
             rlt_y = 175 * (rlt_y / abs(rlt_y))
         mouse_2_rtv([rlt_x + x, rlt_y + y])
         print('relative move: ' + str([rlt_x + x, rlt_y + y]))
