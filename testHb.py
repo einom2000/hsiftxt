@@ -88,9 +88,9 @@ def mouse_2_rtv(position):
             time.sleep(0.5)
     return
 
-# port = 'COM17'
-# ard = serial.Serial(port, 9600, timeout=5)
-# time.sleep(2)  # wait for arduino
+port = 'COM17'
+ard = serial.Serial(port, 9600, timeout=5)
+time.sleep(2)  # wait for arduino
 
 # # #
 # mouse_2_sent([100,100])
@@ -102,9 +102,11 @@ def mouse_2_rtv(position):
 # print('000')
 # i = 0
 #
-# key_2_sent('l')
-# print('11')
-# i = 1
+key_2_sent('j')
+print('11')
+i = 1
+
+
 
 # while True:
 #     if keyboard.is_pressed('='):

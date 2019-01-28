@@ -93,9 +93,30 @@ void loop()
           readString ="";
           key_in = "";
         }
-        else if (key_in == '=') // do nothing
+        else if (key_in == 'o') // do enter
         {
+          Keyboard.write(KEY_RETURN);
           Serial.print("Done!");
+          readString = "";
+          key_in = "";
+         }
+        else if (key_in == 'u') // do up
+        {
+          Keyboard.write(KEY_UP_ARROW);
+          Serial.print("Done!");
+          readString = "";
+          key_in = "";
+         }
+        else if (key_in == 'j') // do down
+        {
+          Keyboard.write(KEY_DOWN_ARROW);
+          Serial.print("Done!");
+          readString = "";
+          key_in = "";
+         }
+        else if (key_in == 'k') // do /camp macro
+        {
+          Serial.print("k");
           readString = "";
           key_in = "";
          }
