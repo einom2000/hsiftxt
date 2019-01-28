@@ -347,7 +347,7 @@ ard = serial.Serial(PORT, 9600, timeout=5)
 time.sleep(2)
 logging.info('Serial opened and program starts!')
 
-for i in range(5, 20 + 1):
+for i in range(1, 20 + 1):
     bobber_images.append("pp{}.png".format(i))
 
 # looking for mixer, if not create one and move it next to the main window
@@ -426,6 +426,8 @@ while running:
         curr_mouse = pyautogui.position()
         rlt_x = int(hook_found[0] - curr_mouse[0])
         rlt_y = int(hook_found[1] - curr_mouse[1])
+
+    get_random_wait(300, 500)
 
     listening = Listen2mixer(trigger_pos)
     listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
