@@ -212,7 +212,8 @@ class CastPole:
                         print(fd_hook)
                         fd_hook = None
                     else:
-                        print(img)
+                        good_bobber[bobber_images.index(img)] += 1
+                        print(good_bobber)
                         break
 
             if time.time() - tm >= 5.0:
@@ -308,7 +309,7 @@ STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
-TIME_TO_RUN = 600
+TIME_TO_RUN = 280
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
@@ -344,7 +345,7 @@ sound_missing_counter = 0
 
 # load standard images
 bobber_images = []
-
+good_bobber = []
 logging.basicConfig(filename='running.log',
                     filemode='w',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
@@ -358,6 +359,7 @@ logging.info('Serial opened and program starts!')
 
 for i in range(1, 20 + 1):
     bobber_images.append("pp{}.png".format(i))
+    good_bobber.append(0)
 
 # looking for mixer, if not create one and move it next to the main window
 while not mixer_found:
@@ -417,7 +419,7 @@ while running:
         get_random_wait(500, 700)
         new_cst.cast()
         # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.9)
+        hook_found = new_cst.find_hooker(rect, 0.85)
     # move mouse to the blurred postion of the found hook
 
     x, y, t = blur_pos_dur()
