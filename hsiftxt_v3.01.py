@@ -112,8 +112,8 @@ def blur_pos_dur():
 
 def scope_size():
     # get searching area for the bobber
-    rect = ((SCREEN_WIDTH // 6, SCREEN_HEIGHT // 9),
-            (SCREEN_WIDTH * 5 // 6, SCREEN_HEIGHT * 9 // 20))
+    rect = ((SCREEN_WIDTH // 5, SCREEN_HEIGHT // 4),
+            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 10 // 20))
     return rect
 
 
@@ -206,6 +206,15 @@ class CastPole:
                                                                       rect[1][0], rect[1][1]),
                                                          grayscale=False, confidence=confi)
             # if searching time is too long quit loop
+                if fd_hook is not None:
+                    if fd_hook[1] > rect[1][1]:
+                        print('too big y')
+                        print(fd_hook)
+                        fd_hook = None
+                    else:
+                        print(img)
+                        break
+
             if time.time() - tm >= 5.0:
                 hook_missing_counter += 1
                 break
@@ -408,7 +417,7 @@ while running:
         get_random_wait(500, 700)
         new_cst.cast()
         # Looking for the hook
-        hook_found = new_cst.find_hooker(rect, 0.7)
+        hook_found = new_cst.find_hooker(rect, 0.67)
     # move mouse to the blurred postion of the found hook
 
     x, y, t = blur_pos_dur()
