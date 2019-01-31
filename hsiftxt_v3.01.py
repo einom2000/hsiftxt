@@ -309,7 +309,7 @@ STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 200
-TIME_TO_RUN = 280
+TIME_TO_RUN = 600
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
@@ -342,6 +342,7 @@ rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
 fish_counter = 0
 hook_missing_counter = 0
 sound_missing_counter = 0
+end_time = [random.randint(2, 3), random.randint(10, 30)]
 
 # load standard images
 bobber_images = []
@@ -415,6 +416,11 @@ while running:
     # Cast fishing pole until found a hook is can't found th hook in 5 seconds then recast
     print('time to stop = :' + str(int(cur_time - running_elapsed ))  +  ' and time to act: '
           + str(int(cur_time - last_anti_afk)))
+    if datetime.now().hour == end_time[0] and datetime.now().minute >= end_time[1]:
+        running = False
+        end_game()
+    else:
+        print('set to end at: ' + str(end_time[0]) + ':' + str(end_time[1]))
     while hook_found is None:
         get_random_wait(500, 700)
         new_cst.cast()
