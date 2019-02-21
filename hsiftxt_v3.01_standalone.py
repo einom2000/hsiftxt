@@ -209,6 +209,7 @@ class CastPole:
                 if fd_hook is not None:
                     # if fd_hook[1] > rect[1][1]:
                     if False:
+                        pass
                         # print('too big y')
                         # print(fd_hook)
                         # fd_hook = None
