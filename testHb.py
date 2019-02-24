@@ -16,8 +16,8 @@ logging.info('Program starts!')
 
 X_RATIO = 1.04
 Y_RATIO = 1.04
-J_RATIO = 1.85
-Q_RATIO = 1.85
+J_RATIO = 1.30
+Q_RATIO = 1.30
 
 def key_2_sent(key):
     key_sent = str(key)
@@ -88,30 +88,30 @@ def mouse_2_rtv(position):
             time.sleep(0.5)
     return
 
-port = 'COM17'
+port = 'COM8'
 ard = serial.Serial(port, 9600, timeout=5)
 time.sleep(2)  # wait for arduino
 
-# # #
-# mouse_2_sent([100,100])
-# print(pyautogui.position())
-# time.sleep(3)
-# mouse_2_rtv([200, 200])
-# print(pyautogui.position())
-# mouse_2_sent([300, 200])
-# print('000')
-# i = 0
+# #
+mouse_2_sent([100,100])
+print(pyautogui.position())
+time.sleep(3)
+mouse_2_rtv([200, 200])
+print(pyautogui.position())
+mouse_2_sent([300, 200])
+print('000')
+i = 0
 #
-key_2_sent('j')
-print('11')
-i = 1
-
-
-
-# while True:
-#     if keyboard.is_pressed('='):
-#         print(pyautogui.position())
-#         break
-
-for i in range(3):
-    print(i)
+# key_2_sent('j')
+# print('11')
+# i = 1
+#
+#
+#
+# # while True:
+# #     if keyboard.is_pressed('='):
+# #         print(pyautogui.position())
+# #         break
+#
+# for i in range(3):
+#     print(i)
