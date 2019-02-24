@@ -200,6 +200,7 @@ class CastPole:
         if not confi: confi = 0.5
         fd_hook = None
         tm = time.time()
+        # print((rect[0][0], rect[0][1],rect[1][0], rect[1][1]))
         while fd_hook is None:
             for img in bobber_images:
                 fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
@@ -310,7 +311,7 @@ START_KEY = 'F10'
 STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
-TRIGGER_LENGTH = 200
+TRIGGER_LENGTH = 400
 TIME_TO_RUN = 600
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
@@ -436,7 +437,7 @@ while running:
     curr_mouse = pyautogui.position()
     rlt_x = int(hook_found[0] - curr_mouse[0])
     rlt_y = int(hook_found[1] - curr_mouse[1])
-    while abs(rlt_x) > 20 or abs(rlt_y) > 20:
+    while abs(rlt_x) > 5 or abs(rlt_y) > 5:
         if abs(rlt_x) > 175 :
             rlt_x = 175 * (rlt_x / abs(rlt_x))
         if abs(rlt_y) > 175 :
