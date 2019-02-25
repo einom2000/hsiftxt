@@ -112,8 +112,8 @@ def blur_pos_dur():
 
 def scope_size():
     # get searching area for the bobber
-    rect = ((SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4),
-            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 12 // 20))
+    rect = ((SCREEN_WIDTH // 3, SCREEN_HEIGHT // 3),
+            (SCREEN_WIDTH * 8 // 12, SCREEN_HEIGHT * 11 // 20))
     return rect
 
 
@@ -296,10 +296,10 @@ class ShowBoundary:
 ###############################################################################################################
 # Game Constant
 
-X_RATIO = 1.04
-Y_RATIO = 1.04
-J_RATIO = 1.85
-Q_RATIO = 1.85
+X_RATIO = 1.88
+Y_RATIO = 1.88
+J_RATIO = 2.70
+Q_RATIO = 2.70
 PORT = 'COM3'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
@@ -313,7 +313,7 @@ START_KEY = 'F10'
 STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
-TRIGGER_LENGTH = 400
+TRIGGER_LENGTH = 500
 TIME_TO_RUN = 600
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
@@ -363,8 +363,8 @@ ard = serial.Serial(PORT, 9600, timeout=5)
 time.sleep(2)
 logging.info('Serial opened and program starts!')
 
-for i in range(1, 20 + 1):
-    bobber_images.append("pp{}.png".format(i))
+for i in range(1,7):
+    bobber_images.append("ppp{}.png".format(i))
     good_bobber.append(0)
 
 # looking for mixer, if not create one and move it next to the main window
