@@ -209,11 +209,13 @@ class CastPole:
             # if searching time is too long quit loop
                 if fd_hook is not None:
                     # if fd_hook[1] > rect[1][1]:
-                    if False:
-                        pass
-                        # print('too big y')
-                        # print(fd_hook)
-                        # fd_hook = None
+                    if fd_hook[1] > rect[1][1] or \
+                            fd_hook[1] < rect[0][1] or \
+                            fd_hook[0] > rect[1][0] or \
+                            fd_hook[0] < rect[0][0] :
+                        print('too far away')
+                        print(fd_hook)
+                        fd_hook = None
                     else:
                         good_bobber[bobber_images.index(img)] += 1
                         print(good_bobber)
@@ -298,7 +300,7 @@ X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
 Q_RATIO = 1.85
-PORT = 'COM17'
+PORT = 'COM3'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
 SCREEN_WIDTH = 1280
