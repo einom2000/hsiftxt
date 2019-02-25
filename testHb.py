@@ -14,10 +14,7 @@ logging.basicConfig(filename='leveling.log',
                     )
 logging.info('Program starts!')
 
-X_RATIO = 1.04
-Y_RATIO = 1.04
-J_RATIO = 1.30
-Q_RATIO = 1.30
+
 
 def key_2_sent(key):
     key_sent = str(key)
@@ -92,7 +89,12 @@ port = 'COM8'
 ard = serial.Serial(port, 9600, timeout=5)
 time.sleep(2)  # wait for arduino
 
-# #
+X_RATIO = 1.04
+Y_RATIO = 1.04
+J_RATIO = 1.89
+Q_RATIO = 1.89
+
+
 mouse_2_sent([100,100])
 print(pyautogui.position())
 time.sleep(3)

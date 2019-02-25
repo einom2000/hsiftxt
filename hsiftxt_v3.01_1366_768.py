@@ -296,13 +296,16 @@ class ShowBoundary:
 
 X_RATIO = 1.04
 Y_RATIO = 1.04
-J_RATIO = 1.85
-Q_RATIO = 1.85
-PORT = 'COM17'
+J_RATIO = 1.89
+Q_RATIO = 1.89
+# 1.45 & 2.6 for N56VZ
+# 1.04 and 1.89 for N56VZ 1366
+
+PORT = 'COM8'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 BLUR_PIXEL = [1, 3]
 BLUR_DUR = [250, 400]
 SOUND_THRESHOLD = 0.40
@@ -311,7 +314,7 @@ START_KEY = 'F10'
 STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
-TRIGGER_LENGTH = 400
+TRIGGER_LENGTH = 300
 TIME_TO_RUN = 600
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
@@ -342,6 +345,7 @@ last_anti_afk = time.time()
 rect = scope_size()
 rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
                int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
+print(rect_center)
 fish_counter = 0
 hook_missing_counter = 0
 sound_missing_counter = 0
@@ -401,9 +405,9 @@ while True:
 #=============================================================================================================
 
 new_cst = CastPole(rect_center)
-mouse_2_sent([620, 220])
+mouse_2_sent([300, 200])
 ## initialize the mouse to the pool center
-print('inintialize mouse to ' + str([620, 220]))
+print('inintialize mouse to ' + str([400, 280]))
 
 while running:
     # First Check if the running time is longer than expected or should have anti aftk key press.

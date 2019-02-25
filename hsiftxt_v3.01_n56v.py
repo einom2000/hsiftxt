@@ -294,11 +294,11 @@ class ShowBoundary:
 ###############################################################################################################
 # Game Constant
 
-X_RATIO = 1.04
-Y_RATIO = 1.04
-J_RATIO = 1.85
-Q_RATIO = 1.85
-PORT = 'COM17'
+X_RATIO = 1.45
+Y_RATIO = 1.45
+J_RATIO = 2.6
+Q_RATIO = 2.6
+PORT = 'COM8'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
 SCREEN_WIDTH = 1280
