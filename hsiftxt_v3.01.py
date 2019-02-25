@@ -112,8 +112,8 @@ def blur_pos_dur():
 
 def scope_size():
     # get searching area for the bobber
-    rect = ((SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4),
-            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 16 // 20))
+    rect = ((SCREEN_WIDTH * 10 // 36, SCREEN_HEIGHT // 4),
+            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 15 // 20))
     return rect
 
 
