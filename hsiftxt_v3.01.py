@@ -113,7 +113,7 @@ def blur_pos_dur():
 def scope_size():
     # get searching area for the bobber
     rect = ((SCREEN_WIDTH // 4, SCREEN_HEIGHT // 4),
-            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 12 // 20))
+            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 16 // 20))
     return rect
 
 
@@ -209,11 +209,14 @@ class CastPole:
             # if searching time is too long quit loop
                 if fd_hook is not None:
                     # if fd_hook[1] > rect[1][1]:
-                    if False:
+                    if fd_hook[1] > rect[1][1] or \
+                       fd_hook[1] < rect[0][1] or \
+                       fd_hook[0] > rect[1][0] or \
+                       fd_hook[0] < rect[0][0]:
                         pass
-                        # print('too big y')
-                        # print(fd_hook)
-                        # fd_hook = None
+                        print('too far away!')
+                        print(fd_hook)
+                        fd_hook = None
                     else:
                         good_bobber[bobber_images.index(img)] += 1
                         print(good_bobber)
