@@ -101,7 +101,6 @@ def get_random_wait(low, high):
     # wait for a random time
     time.sleep(random.randint(low, high) / 1000)
 
-
 def blur_pos_dur():
     # get a random blur relevant x and y and random time according to the constants
     x = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
@@ -315,7 +314,7 @@ STOP_KEY = 'F12'
 PAUSE_KEY = 'F11'
 TRIGGER_DEDENT = 8
 TRIGGER_LENGTH = 400
-TIME_TO_RUN = 600
+TIME_TO_RUN = 350
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
 ANTI_AFT_TIME = 10
@@ -348,7 +347,7 @@ rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
 fish_counter = 0
 hook_missing_counter = 0
 sound_missing_counter = 0
-end_time = [random.randint(4, 5), random.randint(10, 30)]
+end_time = [random.randint(6, 7), random.randint(10, 30)]
 
 # load standard images
 bobber_images = []
@@ -415,7 +414,7 @@ while running:
     if cur_time - running_elapsed >= TIME_TO_RUN * random.randint(58, 62):
         running = False
         end_game()
-    elif cur_time - last_anti_afk >= ANTI_AFT_TIME * random.randint(58, 62):
+    elif cur_time - last_anti_afk >= ANTI_AFT_TIME * random.randint(55, 58):
         key_2_sent(ANTI_AFT_KEY[random.randint(0, (len(ANTI_AFT_KEY)-1))])
         get_random_wait(400, 600)
         key_2_sent('s')
