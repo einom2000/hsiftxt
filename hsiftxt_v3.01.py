@@ -155,7 +155,7 @@ def create_mixer():
 def get_line(screen_shot, length):
     line = []
     for i in range(0, length):
-        line.append(screen_shot.getpixel((i, 2)))
+        line.append(screen_shot.getpixel((i, 1)))
     return line
 
 
@@ -203,7 +203,7 @@ class CastPole:
         while fd_hook is None:
             for img in bobber_images:
                 fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
-                                                                      rect[1][0], rect[1][1]),
+                                                                      rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]),
                                                          grayscale=False, confidence=confi)
             # if searching time is too long quit loop
                 if fd_hook is not None:
@@ -234,7 +234,7 @@ class Listen2mixer:
         self.trigger_y = trigger[1]
         self.trigger_length = TRIGGER_LENGTH
         img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
-                                           self.trigger_x + self.trigger_length, self.trigger_y + 1))
+                                           self.trigger_length, 2))
         self.silent = get_line(img, self.trigger_length)
 
     def listen(self):
@@ -252,7 +252,7 @@ class Listen2mixer:
                 pause = True
                 break
             new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
-                                               self.trigger_x + self.trigger_length, self.trigger_y + 1))
+                                               self.trigger_length, 2))
             new_line = get_line(new, self.trigger_length)
             if new_line != self.silent:
                 bingo = True
@@ -317,7 +317,7 @@ TRIGGER_LENGTH = 400
 TIME_TO_RUN = 350
 TIME_FOR_EACH_ROLE = 60
 AFTER_GAME_END = ['v']  # hide or quit after game end
-ANTI_AFT_TIME = 10
+ANTI_AFT_TIME = 8
 ANTI_AFT_KEY = ['z', 'x', 'c']  # 3 action shortcut key to anti AFK
 CASTPOLE = 'f'  # key 'f' for cast fishing pole
 ROLE_TO_LOOP = 3

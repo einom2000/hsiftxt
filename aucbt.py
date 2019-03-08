@@ -11,8 +11,9 @@ import numpy as np
 import cv2
 import PIL.ImageOps
 import pyperclip
-
 from matplotlib import pyplot as plt
+import json
+import datetime
 
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
@@ -231,18 +232,13 @@ K  == /RL MACRO
 (217, 178) auction buy search button backspace
 (863, 220) auction item search
 (867, 250) auction search sort
-                (615, 239) first history search
-                (615, 256) second history search
-                (615, 279) third history search
-                (615, 292) forth history search  
 (446, 267) (482, 280) first row posts
 (492, 267) (531, 280) first row stack/post
 (320, 614)(403, 650) scan_done
-
-
-
-
+(321, 617) BUY_SCAN_BUTTON
+(277, 220) INPUT_BOX
 '''
+
 ADJ = -5
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -264,18 +260,100 @@ Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
+with open('snipper_list.json', 'r') as fp:
+    snipper_list = json.load(fp)
+snipper_goods_names = snipper_list[0]
+snipper_goods_threshold_prc_pct = snipper_list[1]
 
-snipper_goods_list = ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔']
-snipper_goods_threshold_price_dic = {
-                                     '锚草': 9000,
-                                     '阿昆达之噬': 8000,
-                                     '凛冬之吻': 1200,
-                                     '海潮茎杆': 1000,
-                                     '流波花苞': 2000,
-                                     '海妖花粉': 2000,
-                                     '星光苔' : 1000
-                                    }
-snipper_goods_lowest_result = {}
+# ===== loading history and initializing data to check any new items=====
+with open('scan_data.json', 'r') as fp:
+    scan_data = json.load(fp)
+
+recorded = False
+for item in snipper_goods_names:
+    for recorded_item in scan_data:
+        if recorded_item.get('item_name') == item:
+            recorded = True
+            print(item + 'recorded')
+    if not recorded:
+        print(item + 'NOT recorded')
+        scan_data.append({
+            'item_name': item,
+            'item_threshold_price': snipper_goods_threshold_prc_pct.get(item)[0],
+            'item_threshold_pct': snipper_goods_threshold_prc_pct.get(item)[1],
+            'item_buyout_history': [],
+            'item_price_history': []
+        })
+with open('scan_data.json', 'w') as fp:
+    json.dump(scan_data, fp, ensure_ascii=False)
+
+# snipper_goods_names = ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔']
+# snipper_goods_threshold_prc_pct = {
+#                                      '锚草': (9000, 0),
+#                                      '阿昆达之噬': (8000, 0),
+#                                      '凛冬之吻': (1200, 0),
+#                                      '海潮茎杆': (1000, 0),
+#                                      '流波花苞': (2000, 0),
+#                                      '海妖花粉': (2000, 0),
+#                                      '星光苔': (1000, 0)
+#                                     }
+
+
+
+# ======= json file structure for scan_data.json ======
+'''
+{
+'item_name':'锚草', 
+'item_threshold_price': 9000, 
+'item_threshold_pct': 0.70, 
+'item_buyout_history':[{
+                            'date&time': '',
+                            'buyout_reason':'',
+                            'threshold_price':99999999,
+                            'threshold_pct': 0,
+                            'buyout_price':0,
+                            'buyout_stack':0,
+                            'buyout_post':0,
+                            '2nd_quotes':0
+                        },
+                        {
+                            'date&time': '',
+                            'buyout_reason':'',
+                            'threshold_price':99999999,
+                            'threshold_pct': 0,
+                            'buyout_price':0,
+                            'buyout_stack':0,
+                            'buyout_post':0,
+                            '2nd_quote':0
+                        }], 
+'item_price_history':[{
+                            'date&time':'',
+                            '1st_quote_post':0',
+                            '1st_quote_stack':0',
+                            '1st_quote_buyout':0',
+                            '2nd_quote_post':0',
+                            '2nd_quote_stack':0',
+                            '2nd_quote_buyout':0',
+                            '3rd_quote_post':0',
+                            '3rd_quote_stack':0',
+                            '3rd_quote_buyout':0',
+                            'snipper':'False'
+                        },
+                        {
+                            'date&time':'',
+                            '1st_quote_post':0',
+                            '1st_quote_stack':0',
+                            '1st_quote_buyout':0',
+                            '2nd_quote_post':0',
+                            '2nd_quote_stack':0',
+                            '2nd_quote_buyout':0',
+                            '3rd_quote_post':0',
+                            '3rd_quote_stack':0',
+                            '3rd_quote_buyout':0',
+                            'snipper':'False'
+                        }]
+'''
+
 
 # =======INITIALIZATION========
 logging.basicConfig(filename='AUCTION_LOGGING.log',
@@ -293,55 +371,61 @@ win32gui.EnumWindows(enumhandler, None)
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 
+
+
+
 # ===== wait to start ====
-while not keyboard.is_pressed(' '):
+while not keyboard.is_pressed('F10'):
     pass
 winsound.Beep(1000, 200)
+get_random_wait(1000, 1200)
 
 # ====== start tsm ========
-open_tsm()
-action_list = [BUY_SEARCH, BUY_SCAN_BUTTON]
-for act in action_list:
-    move2(act)
-    key_2_sent('l')
-    get_random_wait(600, 900)
-logging.info('ready to start, tsm opened')
+
+while True:
+    open_tsm()
+    action_list = [BUY_SEARCH, BUY_SCAN_BUTTON]
+    for act in action_list:
+        move2(act)
+        key_2_sent('l')
+        get_random_wait(600, 900)
+    logging.info('ready to start, tsm opened')
 
 
-for snipper_goods_name in snipper_goods_list:
-    move2(INPUT_BOX)
-    get_random_wait(600, 900)
-    key_2_sent('l')
-    get_random_wait(600, 900)
-    for i in range(10):
-        key_2_sent('<')
-    pyperclip.copy(snipper_goods_name)
-    key_2_sent('>')
-    get_random_wait(600, 900)
-    key_2_sent('o')
+    for snipper_goods_name in snipper_goods_list:
+        move2(INPUT_BOX)
+        get_random_wait(600, 900)
+        key_2_sent('l')
+        get_random_wait(600, 900)
+        for i in range(10):
+            key_2_sent('<')
+        pyperclip.copy(snipper_goods_name)
+        key_2_sent('>')
+        get_random_wait(600, 900)
+        key_2_sent('o')
 
-    snipper_goods = Item()
+        snipper_goods = Item()
 
-    # move2(ITEM_SEARCH)
-    # key_2_sent('l')
+        # move2(ITEM_SEARCH)
+        # key_2_sent('l')
 
-    found = False
-    while not found:
-        fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
-        if fd is not None:
-            found = True
-            break
-        time.sleep(0.5)
+        found = False
+        while not found:
+            fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
+            if fd is not None:
+                found = True
+                break
+            time.sleep(0.5)
 
-    move2(SORT_RESULT)
-    get_random_wait(500, 600)
-    key_2_sent('l')
-    get_random_wait(900, 1100)
-    key_2_sent('k')
+        move2(SORT_RESULT)
+        get_random_wait(500, 600)
+        key_2_sent('l')
+        get_random_wait(900, 1100)
+        key_2_sent('k')
 
-    for i in range(4):
-        fish_post = snipper_goods.get(i, 0)
-        # if fish_post[2] == 0:
-        #     fish_post = fish.get(i, 4)
-        print(fish_post)
+        for i in range(4):
+            fish_post = snipper_goods.get(i, 0)
+            # if fish_post[2] == 0:
+            #     fish_post = fish.get(i, 4)
+            print(fish_post)
 
