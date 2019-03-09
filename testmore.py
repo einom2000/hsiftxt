@@ -15,17 +15,13 @@
 
 # int('d')
 
-# import keyboard
-# import pyautogui
-# import time
-#
-# while True:
-#     while keyboard.is_pressed(' '):
-#         print(pyautogui.position())
-#         time.sleep(1)
+
 # #
 import random, pyautogui,time,keyboard
-lst = [(281, 440), (276, 473), (283, 509), (277, 544)]
+lst = [(357, 566),
+        (357, 609),
+        (356, 650),
+        (358, 694),]
 running = True
 t = 0
 while running:
@@ -35,7 +31,7 @@ while running:
     pyautogui.click()
     time.sleep(.5)
     t += 1
-    if keyboard.is_pressed(' ') or t >= 100:
+    if keyboard.is_pressed(' ') or t >= 105:
         running = False
 
 # import datetime
