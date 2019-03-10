@@ -138,7 +138,7 @@ class Item():
         str_tmp = str_tmp.replace('S', '5')
         total_tmp = str_tmp
         try:
-            post_num = int(str_tmp)
+            post_num = int(re.findall("\d+", str_tmp)[0])
         except ValueError:
             post_num = 0
         ####   stack   ####
@@ -153,7 +153,7 @@ class Item():
         str_tmp = str_tmp[:3]
         total_tmp = total_tmp + ' | ' + str_tmp
         try:
-            stack_num = int(str_tmp)
+            stack_num = int(re.findall("\d+", str_tmp)[0])
         except ValueError:
             stack_num = 0
         ####   buyout   ####
@@ -176,17 +176,15 @@ class Item():
             str_tmp_svr = str_tmp[str_tmp.index('g') + 1: str_tmp.index('s')]
             str_tmp_cpp = str_tmp[str_tmp.index('s') + 1: -1]
             try:
-                gold = int(str_tmp_gold)
-                if gold > 100:
-                    gold = int(gold / 10)
+                gold = int(re.findall("\d+", str_tmp_gold)[0])
             except ValueError:
                 gold = 0
             try:
-                silver = int(str_tmp_svr)
+                silver = int(re.findall("\d+", str_tmp_svr)[0])
             except ValueError:
                 silver = 0
             try:
-                copper = int(str_tmp_cpp)
+                copper = int(re.findall("\d+", str_tmp_cpp)[0])
             except ValueError:
                 copper = 0
         else:
@@ -217,6 +215,15 @@ def open_tsm():
     key_2_sent('y')
     get_random_wait(500, 700)
 
+def scan_is_end():
+    found = False
+    while not found:
+        fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
+        if fd is not None:
+            found = True
+            break
+        time.sleep(0.5)
+
 # ======CONSTANTS========
 '''
 G  == target npc
@@ -239,9 +246,10 @@ K  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
-ADJ = -5
+ADJ = 2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
 CLOSE_TSM = (911, 128 + ADJ)
+HISTORY_BUTTON_ON_SHOP = (641, 238 + ADJ)
 BUY_SEARCH = (641, 161 + ADJ)
 BUY_SEARCH_BACK = (217, 178 + ADJ)
 ITEM_SEARCH = (863, 220 + ADJ)
@@ -249,8 +257,8 @@ SORT_RESULT = (867, 252 + ADJ)
 FIRST_ROW_POST = (446, 267 + ADJ, 36, 14)
 FIRST_ROW_STACK  = (492, 267 + ADJ, 39, 14)
 FIRST_ROW_BUYOUT = (815, 268 + ADJ, 89, 14)
-BUY_SCAN_BUTTON = (321, 617 + ADJ)
-INPUT_BOX = (277, 220 + ADJ)
+FULL_SCAN_BUTTON = (343, 626 + ADJ)
+INPUT_BOX = (377, 220 + ADJ)
 BUYOUT_BUTTON = (0, 0)
 AUCTION_BUTTON_ON_SHOPPING = (0, 0)
 AUCTION_ON_SHOP_BIDING_PRICE_INPUT = (0, 0)
@@ -260,15 +268,12 @@ AUCTION_ON_SHOP_POST_VOLUME_INPUT_BUTTON = (0, 0)
 AUCTION_ON_SHOP_CONFIRM_BUTTON =(0, 0)
 
 
-
 X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
 Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
-
-
 
 
 # ======= json file structure for scan_data.json ======
@@ -288,7 +293,6 @@ in file target_goods_list.json
 ]
 
 '''
-
 
 '''
 in file scan_data.json
@@ -388,7 +392,7 @@ for item in all_goods_names:
             'item_threshold_price': all_goods_to_do.get(item)[3],
             'item_threshold_pct': all_goods_to_do.get(item)[4],
             'item_onshelf_lowest': all_goods_to_do.get(item)[1],
-            'item_onshelf_sticking_volume': all_goods_to_do.get[2],
+            'item_onshelf_sticking_volume': all_goods_to_do.get(item)[2],
             'item_buyout_history': [],
             'item_onshelf_history': []
         })
@@ -416,6 +420,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\t
 
 
 # ===== wait to start ====
+print('press F10 to start..')
 while not keyboard.is_pressed('F10'):
     pass
 winsound.Beep(1000, 200)
@@ -425,13 +430,12 @@ get_random_wait(1000, 1200)
 
 while True:
     open_tsm()
-    action_list = [BUY_SEARCH, BUY_SCAN_BUTTON]
+    action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
     for act in action_list:
         move2(act)
         key_2_sent('l')
-        get_random_wait(600, 900)
     logging.info('ready to start, tsm opened')
-
+    scan_is_end()
     for goods_name in all_goods_names:
         move2(INPUT_BOX)
         get_random_wait(600, 900)
@@ -446,16 +450,7 @@ while True:
 
         goods = Item()
 
-        # move2(ITEM_SEARCH)
-        # key_2_sent('l')
-
-        found = False
-        while not found:
-            fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
-            if fd is not None:
-                found = True
-                break
-            time.sleep(0.5)
+        scan_is_end()
 
         move2(SORT_RESULT)
         get_random_wait(500, 600)
@@ -463,9 +458,39 @@ while True:
         get_random_wait(900, 1100)
         key_2_sent('k')
 
-        for i in range(4):
-            fish_post = goods.get(i, 0)
-            # if fish_post[2] == 0:
-            #     fish_post = fish.get(i, 4)
-            print(fish_post)
+        quotes = []
+        for i in range(8):
+            quote = goods.get(i, 0)
+            if quote[2] == 0:
+                quote = goods.get(i, 4)
+            quotes.append(quote)
+            print(quote)
+        with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
+            data = json.load(fp)
+        data.append({   'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                     + ' ('+ datetime.datetime.today().strftime('%A'),
+                        '1st_quote_post': quotes[0][0],
+                        '1st_quote_stack': quotes[0][1],
+                        '1st_quote_buyout': quotes[0][2],
+                        '2nd_quote_post': quotes[1][0],
+                        '2nd_quote_stack': quotes[1][1],
+                        '2nd_quote_buyout': quotes[1][2],
+                        '3rd_quote_post': quotes[2][0],
+                        '3rd_quote_stack': quotes[2][1],
+                        '3rd_quote_buyout': quotes[2][2],
+                    })
+        with open('scan_history\\' + goods_name + '_history.json', 'w') as fp:
+            json.dump(data, fp, ensure_ascii=False)
+
+        # to check if the goods is the on_shelf goods:
+            # check the in range 8 check the first volume bigger than the minium volume
+            # check the volume is make by self?
+            # check the price is lower than the lowest
+            # list the goods & record
+
+        # else to check if the 1st is lower the threshold of snipper
+            # to check if the 1st is lower than % of the threshold
+            # to check if the price is lower than % of the second
+            # if yes ,buyout and record
+
 

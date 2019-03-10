@@ -17,26 +17,26 @@
 
 
 # #
-import random, pyautogui,time,keyboard
-lst = [(357, 566),
-        (357, 609),
-        (356, 650),
-        (358, 694),]
-running = True
-t = 0
-while running:
-    ran_pos = lst[random.randint(0, 3)]
-    pyautogui.moveTo(ran_pos[0], ran_pos[1])
-    time.sleep(.5)
-    pyautogui.click()
-    time.sleep(.5)
-    t += 1
-    if keyboard.is_pressed(' ') or t >= 105:
-        running = False
+# import random, pyautogui,time,keyboard
+# lst = [(357, 566),
+#         (357, 609),
+#         (356, 650),
+#         (358, 694),]
+# running = True
+# t = 0
+# while running:
+#     ran_pos = lst[random.randint(0, 3)]
+#     pyautogui.moveTo(ran_pos[0], ran_pos[1])
+#     time.sleep(.5)
+#     pyautogui.click()
+#     time.sleep(.5)
+#     t += 1
+#     if keyboard.is_pressed(' ') or t >= 105:
+#         running = False
 
-# import datetime
-# print(datetime.datetime.today().strftime('%A'))
-# print(datetime.datetime.today().strftime('%Y-%m-%d %H:%M') + ' ('+ datetime.datetime.today().strftime('%A') + ') :')
+import datetime
+print(datetime.datetime.today().strftime('%A'))
+print(datetime.datetime.today().strftime('%Y-%m-%d %H:%M') + ' ('+ datetime.datetime.today().strftime('%A') + ') :')
 
 
 
@@ -44,7 +44,7 @@ while running:
 # import json
 #
 #
-# with open('snipper_list.json', 'r') as fp:
+# with open('target_goods_list.json', 'r') as fp:
 #     snipper_list = json.load(fp)
 # snipper_goods_names = snipper_list[0]
 # snipper_goods_threshold_prc_pct = snipper_list[1]
