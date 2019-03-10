@@ -251,6 +251,14 @@ FIRST_ROW_STACK  = (492, 267 + ADJ, 39, 14)
 FIRST_ROW_BUYOUT = (815, 268 + ADJ, 89, 14)
 BUY_SCAN_BUTTON = (321, 617 + ADJ)
 INPUT_BOX = (277, 220 + ADJ)
+BUYOUT_BUTTON = (0, 0)
+AUCTION_BUTTON_ON_SHOPPING = (0, 0)
+AUCTION_ON_SHOP_BIDING_PRICE_INPUT = (0, 0)
+AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT = (0, 0)
+AUCTION_ON_SHOP_MAX_STACK_BUTTON = (0, 0)
+AUCTION_ON_SHOP_POST_VOLUME_INPUT_BUTTON = (0, 0)
+AUCTION_ON_SHOP_CONFIRM_BUTTON =(0, 0)
+
 
 
 X_RATIO = 1.04
@@ -361,7 +369,7 @@ with open('target_goods_list.json', 'r') as fp:
     all_goods_names = target_goods_list[0]               # the botting goods name list
     all_goods_to_do = target_goods_list[1]
     # [on_shelf?, threshold_on_shelf_price(lowest), sticking_volume, snip_threshold_price(highest),
-    #  ship_theshold_price_percentage(first 3 rows)]
+    #  ship_threshold_price_percentage(first 3 rows)]
 
 # ===== loading history and initializing data to check any new items=====
 with open('scan_data.json', 'r') as fp:
