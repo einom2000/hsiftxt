@@ -11,7 +11,7 @@ import numpy as np
 import cv2
 import PIL.ImageOps
 import pyperclip
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import json
 import datetime
 
@@ -260,55 +260,31 @@ Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
-with open('target_goods_list.json', 'r') as fp:
-    target_goods_list = json.load(fp)
-    target_goods_names = target_goods_list[0]               # the botting goods name list
-    goods_is_onshelf = target_goods_list[1]                 # if the goods on shelf, it won't be snippered
-    goods_onshelf_lowest = target_goods_list[2]       # the lowest price on shelf
-    goods_onshelf_sticking_volume = target_goods_list[3]    # the onshelf spying volume threshold
-    snipper_goods_threshold_prc_pct = target_goods_list[4]  # if the goods is not shelf, the snipper threshold price
-
-
-# ===== loading history and initializing data to check any new items=====
-with open('scan_data.json', 'r') as fp:
-    scan_data = json.load(fp)
-
-recorded = False
-for item in target_goods_names:
-    for recorded_item in scan_data:
-        if recorded_item.get('item_name') == item:
-            recorded = True
-            print(item + 'recorded')
-    if not recorded:
-        print(item + 'NOT recorded')
-        scan_data.append({
-            'item_name': item,
-            'item_threshold_price': snipper_goods_threshold_prc_pct.get(item)[0],
-            'item_threshold_pct': snipper_goods_threshold_prc_pct.get(item)[1],
-            'item_onshelf_lowest': goods_onshelf_lowest,
-            'item_onshelf_sticking_volume': goods_onshelf_sticking_volume,
-            'item_buyout_history': [],
-            'item_price_history': [],
-            'item_onshelf_history':[]
-        })
-with open('scan_data.json', 'w') as fp:
-    json.dump(scan_data, fp, ensure_ascii=False)
-
-# snipper_goods_names = ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔']
-# snipper_goods_threshold_prc_pct = {
-#                                      '锚草': (9000, 0),
-#                                      '阿昆达之噬': (8000, 0),
-#                                      '凛冬之吻': (1200, 0),
-#                                      '海潮茎杆': (1000, 0),
-#                                      '流波花苞': (2000, 0),
-#                                      '海妖花粉': (2000, 0),
-#                                      '星光苔': (1000, 0)
-#                                     }
 
 
 
 # ======= json file structure for scan_data.json ======
 '''
+in file target_goods_list.json
+[
+    ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔'],
+    {                                '锚草': [0, 99999, 100, 9000, 0],
+                                     '阿昆达之噬': [0, 99999, 100, 8000, 0],
+                                     '凛冬之吻': [0, 99999, 100, 1200, 0],
+                                     '海潮茎杆': [0, 99999, 100, 1000, 0],
+                                     '流波花苞': [0, 99999, 100, 2000, 0],
+                                     '海妖花粉': [0, 99999, 100, 2000, 0],
+                                     '星光苔': [0, 99999, 100, 1000, 0]
+    },
+  
+]
+
+'''
+
+
+'''
+in file scan_data.json
+
 {
 'item_name':'锚草', 
 'item_threshold_price': 9000, 
@@ -333,32 +309,6 @@ with open('scan_data.json', 'w') as fp:
                             'buyout_post':0,
                             '2nd_quotes':0
                         }], 
-'item_price_history':[{
-                            'date&time':'',
-                            '1st_quote_post':0,
-                            '1st_quote_stack':0,
-                            '1st_quote_buyout':0,
-                            '2nd_quote_post':0,
-                            '2nd_quote_stack':0,
-                            '2nd_quote_buyout':0,
-                            '3rd_quote_post':0,
-                            '3rd_quote_stack':0,
-                            '3rd_quote_buyout':0,
-                            'is_onshelf':'False'
-                        },
-                        {
-                            'date&time':'',
-                            '1st_quote_post':0,
-                            '1st_quote_stack':0,
-                            '1st_quote_buyout':0,
-                            '2nd_quote_post':0,
-                            '2nd_quote_stack':0,
-                            '2nd_quote_buyout':0,
-                            '3rd_quote_post':0,
-                            '3rd_quote_stack':0,
-                            '3rd_quote_buyout':0,
-                            'is_onshelf':'False'
-                        }]
 'item_onshelf_history':[{
                             'date&time':'',
                             'sticking_volume':0,
@@ -376,6 +326,68 @@ with open('scan_data.json', 'w') as fp:
                             'is_onshelf':'True'
                         }]
 '''
+
+'''
+in file '../scan_history/____history.json:
+
+[{                          'date&time':'',
+                            '1st_quote_post':0,
+                            '1st_quote_stack':0,
+                            '1st_quote_buyout':0,
+                            '2nd_quote_post':0,
+                            '2nd_quote_stack':0,
+                            '2nd_quote_buyout':0,
+                            '3rd_quote_post':0,
+                            '3rd_quote_stack':0,
+                            '3rd_quote_buyout':0,
+                        },
+                        {
+                            'date&time':'',
+                            '1st_quote_post':0,
+                            '1st_quote_stack':0,
+                            '1st_quote_buyout':0,
+                            '2nd_quote_post':0,
+                            '2nd_quote_stack':0,
+                            '2nd_quote_buyout':0,
+                            '3rd_quote_post':0,
+                            '3rd_quote_stack':0,
+                            '3rd_quote_buyout':0
+                        }]
+
+'''
+
+with open('target_goods_list.json', 'r') as fp:
+    target_goods_list = json.load(fp)
+    all_goods_names = target_goods_list[0]               # the botting goods name list
+    all_goods_to_do = target_goods_list[1]
+    # [on_shelf?, threshold_on_shelf_price(lowest), sticking_volume, snip_threshold_price(highest),
+    #  ship_theshold_price_percentage(first 3 rows)]
+
+# ===== loading history and initializing data to check any new items=====
+with open('scan_data.json', 'r') as fp:
+    scan_data = json.load(fp)
+
+recorded = False
+for item in all_goods_names:
+    for recorded_item in scan_data:
+        if recorded_item.get('item_name') == item:
+            recorded = True
+            print(item + 'recorded')
+    if not recorded:
+        print(item + 'NOT recorded')
+        scan_data.append({
+            'item_name': item,
+            'item_threshold_price': all_goods_to_do.get(item)[3],
+            'item_threshold_pct': all_goods_to_do.get(item)[4],
+            'item_onshelf_lowest': all_goods_to_do.get(item)[1],
+            'item_onshelf_sticking_volume': all_goods_to_do.get[2],
+            'item_buyout_history': [],
+            'item_onshelf_history': []
+        })
+        with open('scan_history\\' + item + '_history.json', 'w') as fp:
+            json.dump([], fp, ensure_ascii=False)
+with open('scan_data.json', 'w') as fp:
+    json.dump(scan_data, fp, ensure_ascii=False)
 
 
 # =======INITIALIZATION========
@@ -412,7 +424,7 @@ while True:
         get_random_wait(600, 900)
     logging.info('ready to start, tsm opened')
 
-    for goods_name in target_goods_names:
+    for goods_name in all_goods_names:
         move2(INPUT_BOX)
         get_random_wait(600, 900)
         key_2_sent('l')

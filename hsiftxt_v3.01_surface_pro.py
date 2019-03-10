@@ -298,8 +298,8 @@ class ShowBoundary:
 
 X_RATIO = 1.88
 Y_RATIO = 1.88
-J_RATIO = 2.70
-Q_RATIO = 2.70
+J_RATIO = 2.5
+Q_RATIO = 2.5
 PORT = 'COM3'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
