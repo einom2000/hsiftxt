@@ -260,17 +260,21 @@ Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
-with open('snipper_list.json', 'r') as fp:
-    snipper_list = json.load(fp)
-snipper_goods_names = snipper_list[0]
-snipper_goods_threshold_prc_pct = snipper_list[1]
+with open('target_goods_list.json', 'r') as fp:
+    target_goods_list = json.load(fp)
+    target_goods_names = target_goods_list[0]               # the botting goods name list
+    goods_is_onshelf = target_goods_list[1]                 # if the goods on shelf, it won't be snippered
+    goods_onshelf_lowest = target_goods_list[2]       # the lowest price on shelf
+    goods_onshelf_sticking_volume = target_goods_list[3]    # the onshelf spying volume threshold
+    snipper_goods_threshold_prc_pct = target_goods_list[4]  # if the goods is not shelf, the snipper threshold price
+
 
 # ===== loading history and initializing data to check any new items=====
 with open('scan_data.json', 'r') as fp:
     scan_data = json.load(fp)
 
 recorded = False
-for item in snipper_goods_names:
+for item in target_goods_names:
     for recorded_item in scan_data:
         if recorded_item.get('item_name') == item:
             recorded = True
@@ -281,8 +285,11 @@ for item in snipper_goods_names:
             'item_name': item,
             'item_threshold_price': snipper_goods_threshold_prc_pct.get(item)[0],
             'item_threshold_pct': snipper_goods_threshold_prc_pct.get(item)[1],
+            'item_onshelf_lowest': goods_onshelf_lowest,
+            'item_onshelf_sticking_volume': goods_onshelf_sticking_volume,
             'item_buyout_history': [],
-            'item_price_history': []
+            'item_price_history': [],
+            'item_onshelf_history':[]
         })
 with open('scan_data.json', 'w') as fp:
     json.dump(scan_data, fp, ensure_ascii=False)
@@ -306,10 +313,11 @@ with open('scan_data.json', 'w') as fp:
 'item_name':'锚草', 
 'item_threshold_price': 9000, 
 'item_threshold_pct': 0.70, 
+'item_onshelf_lowest': 999999,
+'item_onshelf_sticking_volume': 99,
 'item_buyout_history':[{
                             'date&time': '',
-                            'buyout_reason':'',
-                            'threshold_price':99999999,
+,                           'threshold_price':99999999,
                             'threshold_pct': 0,
                             'buyout_price':0,
                             'buyout_stack':0,
@@ -318,39 +326,54 @@ with open('scan_data.json', 'w') as fp:
                         },
                         {
                             'date&time': '',
-                            'buyout_reason':'',
                             'threshold_price':99999999,
                             'threshold_pct': 0,
                             'buyout_price':0,
                             'buyout_stack':0,
                             'buyout_post':0,
-                            '2nd_quote':0
+                            '2nd_quotes':0
                         }], 
 'item_price_history':[{
                             'date&time':'',
-                            '1st_quote_post':0',
-                            '1st_quote_stack':0',
-                            '1st_quote_buyout':0',
-                            '2nd_quote_post':0',
-                            '2nd_quote_stack':0',
-                            '2nd_quote_buyout':0',
-                            '3rd_quote_post':0',
-                            '3rd_quote_stack':0',
-                            '3rd_quote_buyout':0',
-                            'snipper':'False'
+                            '1st_quote_post':0,
+                            '1st_quote_stack':0,
+                            '1st_quote_buyout':0,
+                            '2nd_quote_post':0,
+                            '2nd_quote_stack':0,
+                            '2nd_quote_buyout':0,
+                            '3rd_quote_post':0,
+                            '3rd_quote_stack':0,
+                            '3rd_quote_buyout':0,
+                            'is_onshelf':'False'
                         },
                         {
                             'date&time':'',
-                            '1st_quote_post':0',
-                            '1st_quote_stack':0',
-                            '1st_quote_buyout':0',
-                            '2nd_quote_post':0',
-                            '2nd_quote_stack':0',
-                            '2nd_quote_buyout':0',
-                            '3rd_quote_post':0',
-                            '3rd_quote_stack':0',
-                            '3rd_quote_buyout':0',
-                            'snipper':'False'
+                            '1st_quote_post':0,
+                            '1st_quote_stack':0,
+                            '1st_quote_buyout':0,
+                            '2nd_quote_post':0,
+                            '2nd_quote_stack':0,
+                            '2nd_quote_buyout':0,
+                            '3rd_quote_post':0,
+                            '3rd_quote_stack':0,
+                            '3rd_quote_buyout':0,
+                            'is_onshelf':'False'
+                        }]
+'item_onshelf_history':[{
+                            'date&time':'',
+                            'sticking_volume':0,
+                            'sticking_volume's price':0,
+                            'onshelf_price':0,
+                            'onshelf_volume':0,
+                            'is_onshelf':'True'               
+                        },
+                        {
+                            'date&time':'',
+                            'sticking_volume':0,
+                            'sticking_volume's price':0,
+                            'onshelf_price':0,
+                            'onshelf_volume':0,
+                            'is_onshelf':'True'
                         }]
 '''
 
@@ -372,8 +395,6 @@ win32gui.EnumWindows(enumhandler, None)
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 
 
-
-
 # ===== wait to start ====
 while not keyboard.is_pressed('F10'):
     pass
@@ -391,20 +412,19 @@ while True:
         get_random_wait(600, 900)
     logging.info('ready to start, tsm opened')
 
-
-    for snipper_goods_name in snipper_goods_list:
+    for goods_name in target_goods_names:
         move2(INPUT_BOX)
         get_random_wait(600, 900)
         key_2_sent('l')
         get_random_wait(600, 900)
         for i in range(10):
             key_2_sent('<')
-        pyperclip.copy(snipper_goods_name)
+        pyperclip.copy(goods_name)
         key_2_sent('>')
         get_random_wait(600, 900)
         key_2_sent('o')
 
-        snipper_goods = Item()
+        goods = Item()
 
         # move2(ITEM_SEARCH)
         # key_2_sent('l')
@@ -424,7 +444,7 @@ while True:
         key_2_sent('k')
 
         for i in range(4):
-            fish_post = snipper_goods.get(i, 0)
+            fish_post = goods.get(i, 0)
             # if fish_post[2] == 0:
             #     fish_post = fish.get(i, 4)
             print(fish_post)
