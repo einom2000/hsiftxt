@@ -42,8 +42,11 @@ while True:
             break
         else:
             pass
-    time.sleep(2)
-    name = input('增加商品名称: ').replace(' ', '')
+    time.sleep(1)
+    while True:
+        name = input('增加商品名称: ').replace(' ', '')
+        if name !='':
+            break
 
     is_on_shelf = value_input('是否要上架 1 / 0: ', 0)
     lowest = value_input('最低的售价: ', 1)
