@@ -42,7 +42,7 @@ while True:
             break
         else:
             pass
-
+    time.sleep(2)
     name = input('增加商品名称: ').replace(' ', '')
 
     is_on_shelf = value_input('是否要上架 1 / 0: ', 0)

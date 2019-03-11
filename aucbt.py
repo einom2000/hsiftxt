@@ -310,7 +310,8 @@ AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 ANTI_AFK = 480
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
-SCAN_PERIOD = (300, 350)
+SCAN_PERIOD = (120, 240)
+END_TIME = [random.randint(3, 4), random.randint(10, 30)]
 
 X_RATIO = 1.04
 Y_RATIO = 1.04
@@ -640,6 +641,10 @@ while True:
     while time.time() - t1 <= wait:
         print('rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
         time.sleep(3)
+        print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+              str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
 
+    if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
+        sys.exit()
 
 
