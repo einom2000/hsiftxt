@@ -67,8 +67,8 @@ while True:
                 goods_name.append(name)
             goods_to_do.update (tmp)
             data = [goods_name, goods_to_do]
-            print(goods_name)
-            print(goods_to_do)
+            # print(goods_name)
+            # print(goods_to_do)
             with open('target_goods_list.json', 'w') as fp:
                 json.dump(data, fp, ensure_ascii=False)
             break
