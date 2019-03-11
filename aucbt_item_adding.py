@@ -1,7 +1,8 @@
 import json
 import pandas as pd
 import keyboard, sys
-
+import shutil
+import time
 
 def value_input(display, index):
     correct = False
@@ -17,6 +18,11 @@ def value_input(display, index):
                 print('此项输入错误！')
     return value
 
+
+t = time.localtime()
+timestamp = time.strftime('%b-%d-%Y_%H%M', t)
+BACKUP_NAME = ("target_goods_list_BACKUP_" + timestamp)
+shutil.copy('target_goods_list.json', BACKUP_NAME + '.bak')
 while True:
     with open('target_goods_list.json', 'r') as fp:
         data = json.load(fp)

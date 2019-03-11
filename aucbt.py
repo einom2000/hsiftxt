@@ -18,6 +18,7 @@ import datetime
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for space; '>' for ctrl-v, '<' for backspace
+    # ']' for ctrl-a, '[' for ctrl-c
     key_sent = str(key)
     ard.flush()
     # print("Python value sent: " + key_sent)
@@ -236,6 +237,19 @@ def scan_is_end():
             break
         time.sleep(0.5)
 
+def input_box(positon, scr):
+    move2(positon)
+    get_random_wait(100, 200)
+    key_2_sent('l')
+    get_random_wait(100, 200)
+    key_2_sent(']')
+    get_random_wait(100, 200)
+    pyperclip.copy(scr)
+    key_2_sent('>')
+    get_random_wait(100, 200)
+    key_2_sent('o')
+    get_random_wait(100, 200)
+
 # ======CONSTANTS========
 '''
 G  == target npc
@@ -273,15 +287,17 @@ FIRST_ROW_STACK  = (492, 267 + ADJ, 39, 14)
 FIRST_ROW_BUYOUT = (815, 268 + ADJ, 89, 14)
 FULL_SCAN_BUTTON = (343, 626 + ADJ)
 INPUT_BOX = (377, 220 + ADJ)
-BUYOUT_BUTTON = (0, 0)
-AUCTION_BUTTON_ON_SHOPPING = (0, 0)
-AUCTION_ON_SHOP_BIDING_PRICE_INPUT = (0, 0)
-AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT = (0, 0)
-AUCTION_ON_SHOP_MAX_STACK_BUTTON = (0, 0)
-AUCTION_ON_SHOP_POST_VOLUME_INPUT_BUTTON = (0, 0)
-AUCTION_ON_SHOP_CONFIRM_BUTTON =(0, 0)
+BUYOUT_BUTTON_ON_SHOP = (799, 626 + ADJ)
+AUCTION_BUTTON_ON_SHOP = (565, 626 + ADJ)
+AUCTION_ON_SHOP_BIDING_PRICE_INPUT = (687, 431 + ADJ)
+AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT = (686, 453 + ADJ)
+AUCTION_12_TIME = (590, 395 + ADJ)
+AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
+AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
+AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 ANTI_AFK = 480
-
+SCAN_ROW = 5
+SELLER = (567, 60)  # x and length
 
 X_RATIO = 1.04
 Y_RATIO = 1.04
@@ -314,10 +330,12 @@ in file scan_data.json
 
 {
 'item_name':'锚草', 
-'item_threshold_price': 9000, 
-'item_threshold_pct': 0.70, 
 'item_onshelf_lowest': 999999,
-'item_onshelf_sticking_volume': 99,
+'item_onshelf_sticking_volume': 100,
+'item_threshold_price': 9000, 
+'item_threshold_pct': 7 / 100,
+'item_onshelf_post': 3,
+'item_onshelf_stack': 100,
 'item_buyout_history':[{
                             'date&time': '',
 ,                           'threshold_price':99999999,
@@ -404,10 +422,12 @@ for item in all_goods_names:
         print(item + 'NOT recorded')
         scan_data.append({
             'item_name': item,
-            'item_threshold_price': all_goods_to_do.get(item)[4],
-            'item_threshold_pct': all_goods_to_do.get(item)[5],
             'item_onshelf_lowest': all_goods_to_do.get(item)[1],
-            'item_onshelf_sticking_volume': all_goods_to_do.get(item)[3],
+            'item_onshelf_sticking_volume': all_goods_to_do.get(item)[2],
+            'item_threshold_price': all_goods_to_do.get(item)[3],
+            'item_threshold_pct': all_goods_to_do.get(item)[4],
+            'item_onshelf_post': all_goods_to_do.get(item)[5],
+            'item_onshelf_stack': all_goods_to_do.get(item)[6],
             'item_buyout_history': [],
             'item_onshelf_history': []
         })
@@ -467,26 +487,18 @@ while True:
 
     scan_is_end()
     for goods_name in all_goods_names:
-        move2(INPUT_BOX)
-        get_random_wait(100, 200)
-        key_2_sent('l')
-        get_random_wait(100, 200)
-        for i in range(12):
-            key_2_sent('<')
-        pyperclip.copy(goods_name)
-        key_2_sent('>')
-        get_random_wait(100, 100)
-        key_2_sent('o')
+
+        input_box(INPUT_BOX, goods_name)
 
         goods = Item()
 
         scan_is_end()
 
         quotes = []
-        for i in range(5):
+        for i in range(SCAN_ROW):
             quote = goods.get(i, 0)
-            if quote[2] == 0:
-                quote = goods.get(i, 4)
+            # if quote[2] == 0:
+            #     quote = goods.get(i, 4)
             quotes.append(quote)
             print(quote)
         with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
@@ -505,9 +517,66 @@ while True:
                     })
         with open('scan_history\\' + goods_name + '_history.json', 'w') as fp:
             json.dump(data, fp, ensure_ascii=False)
+        # goods name = 'ABC'
+        # goods_to_do ={"暗月火酒": [1, 13000, 5, 9000, 7, 1, 1]}
+        # quotes
 
         # to check if the goods is the on_shelf goods:
-            # check the in range 8 check the first volume bigger than the minium volume
+        on_shelf = all_goods_to_do.get(goods_name)[0]
+        if on_shelf == 1:
+            on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
+            on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
+            on_shelf_post = all_goods_to_do.get(goods_name)[5]
+            on_shelf_stack = all_goods_to_do.get(goods_name)[6]
+            quit_on_shelf =0
+            for i in range(SCAN_ROW):
+                if quotes[i][1] >= on_shelf_sticking_volume:
+                    fd = pyautogui.locateCenterOnScreen('self.png', region=
+                        (SELLER[0], FIRST_ROW_POST[1] + i * 19, SELLER[1], FIRST_ROW_POST[3]))
+                    if fd is None and quotes[i][2] >= on_shelf_lowest * 100:
+                        print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                        move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                        key_2_sent('l')
+                        move2(AUCTION_BUTTON_ON_SHOP)
+                        key_2_sent('l')
+                        input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
+                        input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
+                        move2(AUCTION_12_TIME)
+                        key_2_sent('l')
+                        move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
+                        key_2_sent('l')
+                        get_random_wait(100, 300)
+                        key_2_sent('[')
+                        get_random_wait(100, 300)
+                        biding_price = pyperclip.paste()
+                        input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
+                        move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
+                        get_random_wait(100, 300)
+                        key_2_sent('l')
+                        # record
+                        with open('scan_data.json', 'r') as fp:
+                            scan_data = json.load(fp)
+                        for record in scan_data:
+                            if record.get('item_name') == goods_name:
+                                on_shelf_record = {
+                                                    'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                                                 + ' ('+ datetime.datetime.today().strftime('%A'),
+                                                    'sticking_volume': on_shelf_sticking_volume,
+                                                    'sticking_volume price': quotes[i][2],
+                                                    'onshelf_price': biding_price,
+                                                    'onshelf_volume': on_shelf_stack * on_shelf_post,
+                                                    'is_onshelf': 'True'
+                                                  }
+
+                        quit_on_shelf = 1
+                    if fd is not None:
+                        quit_on_shelf = 1
+
+                if quit_on_shelf == 1:
+                    break
+
+
+            # check the in range 5 check the first volume bigger than the minium volume
             # check the volume is make by self?
             # check the price is lower than the lowest
             # list the goods & record
