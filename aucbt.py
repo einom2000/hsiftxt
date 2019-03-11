@@ -140,7 +140,9 @@ class Item():
         try:
             post_num = int(re.findall("\d+", str_tmp)[0])
         except ValueError:
-            post_num = 0
+            post_num = 1
+        except IndexError:
+            post_num = 1
         ####   stack   ####
         pyautogui.screenshot(str(item_row)+'_row_stack.jpg',
                              region=(np.add(self.item_stack, (0, item_row * 19 + adjust, 0, 0))))
@@ -154,7 +156,7 @@ class Item():
         total_tmp = total_tmp + ' | ' + str_tmp
         try:
             stack_num = int(re.findall("\d+", str_tmp)[0])
-        except ValueError:
+        except IndexError:
             stack_num = 0
         ####   buyout   ####
         pyautogui.screenshot(str(item_row)+'_row_buyout.jpg',
@@ -177,15 +179,15 @@ class Item():
             str_tmp_cpp = str_tmp[str_tmp.index('s') + 1: -1]
             try:
                 gold = int(re.findall("\d+", str_tmp_gold)[0])
-            except ValueError:
+            except IndexError:
                 gold = 0
             try:
                 silver = int(re.findall("\d+", str_tmp_svr)[0])
-            except ValueError:
+            except IndexError:
                 silver = 0
             try:
                 copper = int(re.findall("\d+", str_tmp_cpp)[0])
-            except ValueError:
+            except IndexError:
                 copper = 0
         else:
             gold, silver, copper = 0, 0, 0
@@ -210,10 +212,20 @@ def move2(tar_position):
 
 
 def open_tsm():
-    key_2_sent('g')
-    get_random_wait(300, 700)
-    key_2_sent('y')
-    get_random_wait(500, 700)
+    t = time.time()
+    while True:
+        key_2_sent('g')
+        get_random_wait(300, 700)
+        key_2_sent('y')
+        get_random_wait(500, 700)
+        fd = pyautogui.locateCenterOnScreen('close_tsm_icon.png', region=CLOSE_TSM_ICON)
+        if fd is not None:
+            break
+        if time.time() - t >= 4:
+            key_2_sent('h')
+            while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+                pass
+            t = time.time()
 
 def scan_is_end():
     found = False
@@ -246,9 +258,11 @@ K  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
-ADJ = 2
+ADJ = -2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
 CLOSE_TSM = (911, 128 + ADJ)
+CLOSE_TSM_ICON =(897, 112, 40, 40)
+RELOAD_SUCCESS =(1036, 709, 180, 50)
 HISTORY_BUTTON_ON_SHOP = (641, 238 + ADJ)
 BUY_SEARCH = (641, 161 + ADJ)
 BUY_SEARCH_BACK = (217, 178 + ADJ)
@@ -266,6 +280,7 @@ AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT = (0, 0)
 AUCTION_ON_SHOP_MAX_STACK_BUTTON = (0, 0)
 AUCTION_ON_SHOP_POST_VOLUME_INPUT_BUTTON = (0, 0)
 AUCTION_ON_SHOP_CONFIRM_BUTTON =(0, 0)
+ANTI_AFK = 480
 
 
 X_RATIO = 1.04
@@ -281,13 +296,13 @@ DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manu
 in file target_goods_list.json
 [
     ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔'],
-    {                                '锚草': [0, 99999, 100, 9000, 0],
-                                     '阿昆达之噬': [0, 99999, 100, 8000, 0],
-                                     '凛冬之吻': [0, 99999, 100, 1200, 0],
-                                     '海潮茎杆': [0, 99999, 100, 1000, 0],
-                                     '流波花苞': [0, 99999, 100, 2000, 0],
-                                     '海妖花粉': [0, 99999, 100, 2000, 0],
-                                     '星光苔': [0, 99999, 100, 1000, 0]
+    {                                '锚草': [0, 99999, 100, 9000, 0, 3, 100],
+                                     '阿昆达之噬': [0, 99999, 100, 8000, 0, 3, 100],
+                                     '凛冬之吻': [0, 99999, 100, 1200, 0, 3, 100],
+                                     '海潮茎杆': [0, 99999, 100, 1000, 0, 3, 100],
+                                     '流波花苞': [0, 99999, 100, 2000, 0, 3, 100],
+                                     '海妖花粉': [0, 99999, 100, 2000, 0, 3, 100],
+                                     '星光苔': [0, 99999, 100, 1000, 0, 3, 100]
     },
   
 ]
@@ -389,10 +404,10 @@ for item in all_goods_names:
         print(item + 'NOT recorded')
         scan_data.append({
             'item_name': item,
-            'item_threshold_price': all_goods_to_do.get(item)[3],
-            'item_threshold_pct': all_goods_to_do.get(item)[4],
+            'item_threshold_price': all_goods_to_do.get(item)[4],
+            'item_threshold_pct': all_goods_to_do.get(item)[5],
             'item_onshelf_lowest': all_goods_to_do.get(item)[1],
-            'item_onshelf_sticking_volume': all_goods_to_do.get(item)[2],
+            'item_onshelf_sticking_volume': all_goods_to_do.get(item)[3],
             'item_buyout_history': [],
             'item_onshelf_history': []
         })
@@ -424,42 +439,51 @@ print('press F10 to start..')
 while not keyboard.is_pressed('F10'):
     pass
 winsound.Beep(1000, 200)
-get_random_wait(1000, 1200)
 
 # ====== start tsm ========
+t = time.time()
+open_tsm()
+action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+for act in action_list:
+    move2(act)
+    key_2_sent('l')
+logging.info('ready to start, tsm opened')
 
 while True:
-    open_tsm()
-    action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
-    for act in action_list:
-        move2(act)
-        key_2_sent('l')
-    logging.info('ready to start, tsm opened')
+    # anti AFK
+    if time.time() - t >= ANTI_AFK:
+        key_2_sent('k')
+        get_random_wait(1000, 2000)
+        key_2_sent('h')
+        while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+            pass
+        t = time.time()
+        open_tsm()
+        action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+        for act in action_list:
+            move2(act)
+            key_2_sent('l')
+        logging.info('wow reloaded, tsm opened')
+
     scan_is_end()
     for goods_name in all_goods_names:
         move2(INPUT_BOX)
-        get_random_wait(600, 900)
+        get_random_wait(100, 200)
         key_2_sent('l')
-        get_random_wait(600, 900)
-        for i in range(10):
+        get_random_wait(100, 200)
+        for i in range(12):
             key_2_sent('<')
         pyperclip.copy(goods_name)
         key_2_sent('>')
-        get_random_wait(600, 900)
+        get_random_wait(100, 100)
         key_2_sent('o')
 
         goods = Item()
 
         scan_is_end()
 
-        move2(SORT_RESULT)
-        get_random_wait(500, 600)
-        key_2_sent('l')
-        get_random_wait(900, 1100)
-        key_2_sent('k')
-
         quotes = []
-        for i in range(8):
+        for i in range(5):
             quote = goods.get(i, 0)
             if quote[2] == 0:
                 quote = goods.get(i, 4)
