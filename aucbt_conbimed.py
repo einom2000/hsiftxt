@@ -667,13 +667,13 @@ while True:
 
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
-        TIME_TO_RUN = random.randint(9, 12)
+        TIME_TO_RUN = random.randint(9, 11)
         SCAN_ROW = 5
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(5, 6)
         SCAN_ROW = 8
     else:
-        TIME_TO_RUN = random.randint(15, 20)
+        TIME_TO_RUN = random.randint(12, 15)
         SCAN_ROW = 5
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
@@ -737,7 +737,7 @@ while True:
         if on_shelf == 1:
             on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
             on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] // 2),
+            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] * 0.7),
                                            all_goods_to_do.get(goods_name)[5])
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
             quit_on_shelf =0
