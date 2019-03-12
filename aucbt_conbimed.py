@@ -511,7 +511,7 @@ AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
 AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
 AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 ANTI_AFK = 480
-SCAN_ROW = 8
+SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (120, 240)
 END_TIME = [random.randint(3, 4), random.randint(10, 30)]
@@ -547,7 +547,6 @@ infoTxt = ''
 hookMissed = 0
 soundMissed = 0
 count = 0
-running = True
 pause_is_pressed = False
 stop_is_pressed = False
 mixer_found = False
@@ -654,7 +653,7 @@ show_trigger.killframe()
 show_scopesize.killframe()
 del show_trigger
 del show_scopesize
-
+new_cst = CastPole(rect_center)
 # ====== start tsm ========
 t = time.time()
 open_tsm()
@@ -665,6 +664,17 @@ for act in action_list:
 logging.info('ready to start, tsm opened')
 
 while True:
+
+    # timetable for fishing during a day
+    if 18 > datetime.datetime.now().hour >= 15:
+        TIME_TO_RUN = random.randint(9, 12)
+    elif datetime.datetime.now().hour >= 18:
+        TIME_TO_RUN = random.randint(5, 6)
+    else:
+        TIME_TO_RUN = random.randint(15, 20)
+    # force to end
+    if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
+        sys.exit()
     # anti AFK
     if time.time() - t >= ANTI_AFK:
         key_2_sent('k')
@@ -812,10 +822,102 @@ while True:
                         with open('scan_data.json', 'w') as fp:
                             json.dump(scan_data, fp, ensure_ascii=False)
                         break
-
+    get_random_wait(1000, 2000)
     LOGOUT_WOW_ICON = (49, 93, 40, 40)
     key_2_sent('-')
     while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON) is None:
         pass
-    break
+    get_random_wait(1200, 1500)
+    key_2_sent('u')
+    get_random_wait(500, 700)
+    key_2_sent('u')
+    get_random_wait(500, 700)
+    key_2_sent('o')
+    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+        pass
+    mouse_2_sent([620, 220])
+    # ==================================fishting starts===================================================
+    running = True
+    cur_time = time.time()
+    fishing_time = TIME_TO_RUN * random.randint(58, 62)
+    while running:
+
+        while hook_found is None:
+            get_random_wait(500, 700)
+            new_cst.cast()
+            # Looking for the hook
+            hook_found = new_cst.find_hooker(rect, 0.88)
+        # move mouse to the blurred postion of the found hook
+
+        x, y, t = blur_pos_dur()
+        get_random_wait(500, 600)
+        curr_mouse = pyautogui.position()
+        rlt_x = int(hook_found[0] - curr_mouse[0])
+        rlt_y = int(hook_found[1] - curr_mouse[1])
+        while abs(rlt_x) > 8 or abs(rlt_y) > 8:
+            if abs(rlt_x) > 175:
+                rlt_x = 175 * (rlt_x / abs(rlt_x))
+            if abs(rlt_y) > 175:
+                rlt_y = 175 * (rlt_y / abs(rlt_y))
+            mouse_2_rtv([rlt_x + x, rlt_y + y])
+            print('relative move: ' + str([rlt_x + x, rlt_y + y]))
+            curr_mouse = pyautogui.position()
+            rlt_x = int(hook_found[0] - curr_mouse[0])
+            rlt_y = int(hook_found[1] - curr_mouse[1])
+
+        get_random_wait(300, 500)
+
+        listening = Listen2mixer(trigger_pos)
+        listen_result, pause_is_pressed, stop_is_pressed = listening.listen()
+        if pause_is_pressed:
+            listen_result = False
+            stop_is_pressed = False
+            go_pause()
+        if stop_is_pressed:
+            listen_result = False
+            running = False
+            end_game()
+        if listening.listen():
+            get_fish()
+            fish_counter += 1
+            hook_found = None
+            winsound.Beep(500, 300)
+            get_random_wait(400, 700)
+        else:
+            sound_missing_counter += 1
+            hook_found = None
+            winsound.Beep(1200, 300)
+            get_random_wait(600, 900)
+
+        # check if stop key or pause key has been pressed
+        check_key = check_for_key_in()
+        if check_key == 0:
+            running = False
+        elif check_key == 2:
+            go_pause()
+        t2 = time.time() - cur_time
+        if t2 >= fishing_time:
+            running = False
+
+        print('fish couter: ' + str(fish_counter))
+        print('hook_missing: ' + str(hook_missing_counter))
+        print('sound_missing: ' + str(sound_missing_counter))
+        print('there are ' + str(int(fishing_time - t2)) + ' seconds to fish.')
+
+    get_random_wait(1000, 2000)
+    LOGOUT_WOW_ICON = (49, 93, 40, 40)
+    key_2_sent('-')
+    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON) is None:
+        pass
+    get_random_wait(1200, 1500)
+    key_2_sent('j')
+    get_random_wait(500, 700)
+    key_2_sent('j')
+    get_random_wait(500, 700)
+    key_2_sent('o')
+    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+        pass
+
+    if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
+        sys.exit()
 
