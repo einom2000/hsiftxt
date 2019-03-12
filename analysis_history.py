@@ -8,7 +8,7 @@ import json
 import matplotlib.pyplot as plt
 from pandas.plotting import table
 import pandas as pd
-with open('scan_history\\锚草_history.json', 'r') as fp:
+with open('scan_history\\阿昆达之噬_history.json', 'r') as fp:
     data = json.load(fp)
 new_data = {}
 for item in data:
@@ -51,4 +51,10 @@ for i in range(len(post1)):
 final_data = {'date&time': new_date_time, 'average_quote': average_quote}
 df = pd.DataFrame.from_dict(final_data)
 print(df)
+ax = plt.gca()
 
+df.plot(kind='line', x='date&time', y='average_quote', ax=ax)
+# df.plot(kind='line', x='date&time', y='average_quote', color='red', ax=ax)
+
+plt.show()
+time.sleep(10)
