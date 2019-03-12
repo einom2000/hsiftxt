@@ -515,7 +515,8 @@ SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (120, 240)
 END_TIME = [random.randint(3, 4), random.randint(10, 30)]
-
+SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
+FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
@@ -836,9 +837,12 @@ while True:
         pass
     get_random_wait(1200, 1500)
     key_2_sent('u')
-    get_random_wait(500, 700)
+    get_random_wait(1200, 1500)
     key_2_sent('u')
-    get_random_wait(500, 700)
+    get_random_wait(1200, 1500)
+    while pyautogui.locateCenterOnScreen('selected_2nd.png', region=SECOND_ROLD_SELECTED) is None:
+        key_2_sent('u')
+        get_random_wait(1200, 1500)
     key_2_sent('o')
     while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
         pass
@@ -918,9 +922,12 @@ while True:
         pass
     get_random_wait(1200, 1500)
     key_2_sent('j')
-    get_random_wait(500, 700)
+    get_random_wait(1200, 1500)
     key_2_sent('j')
-    get_random_wait(500, 700)
+    get_random_wait(1200, 1500)
+    while pyautogui.locateCenterOnScreen('selected_4th.png', region=FOURTH_ROLD_SELECTED) is None:
+        key_2_sent('j')
+        get_random_wait(1200, 1500)
     key_2_sent('o')
     while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
         pass
