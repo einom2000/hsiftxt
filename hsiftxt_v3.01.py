@@ -439,7 +439,7 @@ while running:
     curr_mouse = pyautogui.position()
     rlt_x = int(hook_found[0] - curr_mouse[0])
     rlt_y = int(hook_found[1] - curr_mouse[1])
-    while abs(rlt_x) > 5 or abs(rlt_y) > 5:
+    while abs(rlt_x) > 8 or abs(rlt_y) > 8:
         if abs(rlt_x) > 175 :
             rlt_x = 175 * (rlt_x / abs(rlt_x))
         if abs(rlt_y) > 175 :

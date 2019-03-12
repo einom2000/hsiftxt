@@ -21,7 +21,7 @@ def value_input(display, index):
 
 t = time.localtime()
 timestamp = time.strftime('%b-%d-%Y_%H%M', t)
-BACKUP_NAME = ("target_goods_list_BACKUP_" + timestamp)
+BACKUP_NAME = ('backup_files\\' + "target_goods_list_BACKUP_" + timestamp)
 shutil.copy('target_goods_list.json', BACKUP_NAME + '.bak')
 while True:
     with open('target_goods_list.json', 'r') as fp:

@@ -262,11 +262,214 @@ def input_box(positon, scr):
     key_2_sent('o')
     get_random_wait(100, 200)
 
+
+# ================================fish=====================================
+def create_mixer():
+    # create mixer and allocate it after 5 seconds
+    os.startfile("SndVol.exe")
+    time.sleep(5)
+    win32gui.EnumWindows(enumhandler, None)
+
+def go_pause():
+    while not keyboard.is_pressed(PAUSE_KEY):
+        if keyboard.is_pressed(STOP_KEY):
+            end_game()
+        pass
+
+
+def end_game():
+    winsound.Beep(1000, 300)
+    time.sleep(0.300)
+    winsound.Beep(1000, 300)
+    for short_cut_key in AFTER_GAME_END:
+        key_2_sent(short_cut_key)
+        get_random_wait(400, 600)
+    sys.exit()
+    pass
+
+
+def blur_pos_dur():
+    # get a random blur relevant x and y and random time according to the constants
+    x = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
+    y = random.randint(BLUR_PIXEL[0], BLUR_PIXEL[1]) * random.choice([-1, 1])
+    t = random.randint(BLUR_DUR[0], BLUR_DUR[1])
+    return x, y, t
+
+
+def scope_size():
+    # get searching area for the bobber
+    rect = ((SCREEN_WIDTH * 10 // 36, SCREEN_HEIGHT // 4),
+            (SCREEN_WIDTH * 9 // 12, SCREEN_HEIGHT * 15 // 20))
+    return rect
+
+
+def locate_mixer():
+    # locate a trigger pixel in a mixer via proportion
+    # if there is a mixer next to the main window
+    # pyautogui.moveTo(SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4)
+    # pyautogui.click()
+    mouse_2_sent([SCREEN_WIDTH + 250, SCREEN_HEIGHT // 4])
+    key_2_sent('l')
+    mixer_txt = win32gui.GetWindowText(win32gui.GetForegroundWindow())
+    mixer_txt = mixer_txt[:4]
+    if mixer_txt == "音量合成":
+        mixer_rect = win32gui.GetWindowRect(win32gui.GetForegroundWindow())
+        width = mixer_rect[2] - mixer_rect[0]
+        height = mixer_rect[3] - mixer_rect[1]
+        mixer_x = mixer_rect[0] + int(width * 0.13)
+        mixer_y = mixer_rect[1] + int(height * (1 - SOUND_THRESHOLD * 0.85))
+        mixer_trigger = (mixer_x, mixer_y)
+    else:
+        mixer_trigger = None
+    return mixer_trigger
+
+
+def get_line(screen_shot, length):
+    line = []
+    for i in range(0, length):
+        line.append(screen_shot.getpixel((i, 1)))
+    return line
+
+
+def get_fish():
+    # ensure a right click to have a fish after bit
+    key_2_sent('t')
+    get_random_wait(800, 1300)
+
+
+def check_for_key_in():
+    if keyboard.is_pressed(START_KEY):
+        key = 1
+    elif keyboard.is_pressed(STOP_KEY):
+        key = 0
+    elif keyboard.is_pressed(PAUSE_KEY):
+        key = 2
+    else:
+        key = 99
+    return key
+
+
+class CastPole:
+    # cast the pole and looking for the bobber
+    # move mouse to the bobber
+    def __init__(self, mouse_position):
+        self.mouse_pos = mouse_position
+
+    def cast(self):
+        # get a blur
+        blur_x, blur_y, dur_t = blur_pos_dur()
+        self.mouse_pos = pyautogui.position()
+        self.mouse_pos = tuple(map(lambda x, y: x + y, self.mouse_pos,
+                                   (blur_x * 15, blur_y * 15)))
+        # cast command
+        key_2_sent('f')
+        get_random_wait(600, 900)
+        winsound.Beep(1000, 300)
+
+    def find_hooker(self, rect, confi=None):
+        global hook_missing_counter
+        if not confi: confi = 0.5
+        fd_hook = None
+        tm = time.time()
+        # print((rect[0][0], rect[0][1],rect[1][0], rect[1][1]))
+        while fd_hook is None:
+            for img in bobber_images:
+                fd_hook = pyautogui.locateCenterOnScreen(img, region=(rect[0][0], rect[0][1],
+                                                                      rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]),
+                                                         grayscale=False, confidence=confi)
+            # if searching time is too long quit loop
+                if fd_hook is not None:
+                    # if fd_hook[1] > rect[1][1]:
+                    if fd_hook[1] > rect[1][1] or \
+                       fd_hook[1] < rect[0][1] or \
+                       fd_hook[0] > rect[1][0] or \
+                       fd_hook[0] < rect[0][0]:
+                        pass
+                        print('too far away!')
+                        print(fd_hook)
+                        fd_hook = None
+                    else:
+                        good_bobber[bobber_images.index(img)] += 1
+                        print(good_bobber)
+                        break
+
+            if time.time() - tm >= 5.0:
+                hook_missing_counter += 1
+                break
+        return fd_hook
+
+
+class Listen2mixer:
+    def __init__(self, trigger):
+        self.trigger_x = trigger[0] - TRIGGER_DEDENT
+        # 8 can be adjusted
+        self.trigger_y = trigger[1]
+        self.trigger_length = TRIGGER_LENGTH
+        img = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
+                                           self.trigger_length, 2))
+        self.silent = get_line(img, self.trigger_length)
+
+    def listen(self):
+        global sound_missing_counter
+        t = time.time()
+        listening = True
+        bingo = False
+        pause = False
+        stop = False
+        while listening:
+            if keyboard.is_pressed(STOP_KEY):
+                stop = True
+                break
+            elif keyboard.is_pressed(PAUSE_KEY):
+                pause = True
+                break
+            new = pyautogui.screenshot(region=(self.trigger_x, self.trigger_y - 1,
+                                               self.trigger_length, 2))
+            new_line = get_line(new, self.trigger_length)
+            if new_line != self.silent:
+                bingo = True
+                listening = False
+            elif time.time() - t >= 17.0:
+                listening = False
+                bingo = False
+        return bingo, pause, stop
+
+
+class ShowBoundary:
+    def __init__(self, rec_size, top_left, color):
+        self.trigger_boards = list()
+        self.color = color
+        rec_top = str(rec_size[0] + 6) + "x3+" + str(top_left[0] - 3) + "+" + str(top_left[1] - 3)
+        rec_bottom = str(rec_size[0] + 6) + "x3+" + str(top_left[0] - 3) + "+" + str(top_left[1] + rec_size[1])
+        rec_left = str("3x" + str(rec_size[1] + 3 - 1) + "+" + str(top_left[0] - 3) + "+"
+                       + str(top_left[1] - 3))
+        rec_right = str("3x" + str(rec_size[1] + 3 - 1) + "+" + str(top_left[0] + rec_size[0]) + "+"
+                        + str(top_left[1] - 3))
+        geo = (rec_top, rec_bottom, rec_left, rec_right)
+
+        for i in range(0, 3 + 1):
+            self.trigger_boards.append(Tk())
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].overrideredirect(1)
+            self.trigger_boards[i].attributes("-topmost", True)
+            self.trigger_boards[i].config(bg=self.color)
+            self.trigger_boards[i].geometry(geo[i])
+
+    def showframe(self):
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].update()
+        pass
+
+    def killframe(self):
+        for i in range(0, 3 + 1):
+            self.trigger_boards[i].destroy()
+# ===============================fish_end====================================
 # ======CONSTANTS========
 '''
 G  == target npc
 Y  == talk with npc
-K  == /RL MACRO
+H  == /RL MACRO
+- == /LOGOUT /MACRO
 
 '''
 # full screen size 1280x720
@@ -320,100 +523,65 @@ Q_RATIO = 1.85
 PORT = 'COM17'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
+# ================================fishs=========================================
+# ===============================fish_end=======================================
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+BLUR_PIXEL = [1, 3]
+BLUR_DUR = [250, 400]
+SOUND_THRESHOLD = 0.40
+HAND_SHAKE_FACTOR = 0
+START_KEY = 'F10'
+STOP_KEY = 'F12'
+PAUSE_KEY = 'F11'
+TRIGGER_DEDENT = 8
+TRIGGER_LENGTH = 400
+TIME_TO_RUN = 10
+TIME_FOR_EACH_ROLE = 60
+AFTER_GAME_END = ['v']  # hide or quit after game end
+ANTI_AFT_TIME = 8
+ANTI_AFT_KEY = ['z', 'x', 'c']  # 3 action shortcut key to anti AFK
+CASTPOLE = 'f'  # key 'f' for cast fishing pole
 
-# ======= json file structure for scan_data.json ======
-'''
-in file target_goods_list.json
-[
-    ['锚草', '阿昆达之噬', '凛冬之吻', '海潮茎杆', '流波花苞', '海妖花粉', '星光苔'],
-    {                                '锚草': [0, 99999, 100, 9000, 0, 3, 100],
-                                     '阿昆达之噬': [0, 99999, 100, 8000, 0, 3, 100],
-                                     '凛冬之吻': [0, 99999, 100, 1200, 0, 3, 100],
-                                     '海潮茎杆': [0, 99999, 100, 1000, 0, 3, 100],
-                                     '流波花苞': [0, 99999, 100, 2000, 0, 3, 100],
-                                     '海妖花粉': [0, 99999, 100, 2000, 0, 3, 100],
-                                     '星光苔': [0, 99999, 100, 1000, 0, 3, 100]
-    },
-  
-]
+infoTxt = ''
+hookMissed = 0
+soundMissed = 0
+count = 0
+running = True
+pause_is_pressed = False
+stop_is_pressed = False
+mixer_found = False
+hook_found = None
+trigger_pos = ()
+running_elapsed = time.time()
+last_anti_afk = time.time()
+rect = scope_size()
+rect_center = (int((rect[1][0] - rect[0][0]) / 2 + rect[0][0]),
+               int((rect[1][1] - rect[0][1]) / 2 + rect[0][1]))
+fish_counter = 0
+hook_missing_counter = 0
+sound_missing_counter = 0
+end_time = [random.randint(6, 7), random.randint(10, 30)]
 
-'''
+# =======INITIALIZATION========
+logging.basicConfig(filename='AUCTION_LOGGING.log',
+                    filemode='w',
+                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                    datefmt='%H:%M:%S',
+                    level=logging.DEBUG
+                    )
 
-'''
-in file scan_data.json
+ard = serial.Serial(PORT, 9600, timeout=5)
+time.sleep(2)
+logging.info('Serial opened and program starts!')
 
-{
-'item_name':'锚草', 
-'item_onshelf_lowest': 999999,
-'item_onshelf_sticking_volume': 100,
-'item_threshold_price': 9000, 
-'item_threshold_pct': 7 / 100,
-'item_onshelf_post': 3,
-'item_onshelf_stack': 100,
-'item_buyout_history':[{
-                            'date&time': '',
-,                           'threshold_price':99999999,
-                            'threshold_pct': 0,
-                            'buyout_price':0,
-                            'buyout_stack':0,
-                            'buyout_post':0,
-                            '2nd_quotes':0
-                        },
-                        {
-                            'date&time': '',
-                            'threshold_price':99999999,
-                            'threshold_pct': 0,
-                            'buyout_price':0,
-                            'buyout_stack':0,
-                            'buyout_post':0,
-                            '2nd_quotes':0
-                        }], 
-'item_onshelf_history':[{
-                            'date&time':'',
-                            'sticking_volume':0,
-                            'sticking_volume's price':0,
-                            'onshelf_price':0,
-                            'onshelf_volume':0,
-                            'is_onshelf':'True'               
-                        },
-                        {
-                            'date&time':'',
-                            'sticking_volume':0,
-                            'sticking_volume's price':0,
-                            'onshelf_price':0,
-                            'onshelf_volume':0,
-                            'is_onshelf':'True'
-                        }]
-'''
+win32gui.EnumWindows(enumhandler, None)
 
-'''
-in file '../scan_history/____history.json:
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
 
-[{                          'date&time':'',
-                            '1st_quote_post':0,
-                            '1st_quote_stack':0,
-                            '1st_quote_buyout':0,
-                            '2nd_quote_post':0,
-                            '2nd_quote_stack':0,
-                            '2nd_quote_buyout':0,
-                            '3rd_quote_post':0,
-                            '3rd_quote_stack':0,
-                            '3rd_quote_buyout':0,
-                        },
-                        {
-                            'date&time':'',
-                            '1st_quote_post':0,
-                            '1st_quote_stack':0,
-                            '1st_quote_buyout':0,
-                            '2nd_quote_post':0,
-                            '2nd_quote_stack':0,
-                            '2nd_quote_buyout':0,
-                            '3rd_quote_post':0,
-                            '3rd_quote_stack':0,
-                            '3rd_quote_buyout':0
-                        }]
 
-'''
+# ===============================fish_end=======================================
+
 
 with open('target_goods_list.json', 'r') as fp:
     target_goods_list = json.load(fp)
@@ -451,22 +619,30 @@ for item in all_goods_names:
 with open('scan_data.json', 'w') as fp:
     json.dump(scan_data, fp, ensure_ascii=False)
 
+# ================================fishs=========================================
+bobber_images = []
+good_bobber = []
 
-# =======INITIALIZATION========
-logging.basicConfig(filename='AUCTION_LOGGING.log',
-                    filemode='w',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG
-                    )
-
-ard = serial.Serial(PORT, 9600, timeout=5)
 time.sleep(2)
-logging.info('Serial opened and program starts!')
 
-win32gui.EnumWindows(enumhandler, None)
+for i in range(1, 20 + 1):
+    bobber_images.append("pp{}.png".format(i))
+    good_bobber.append(0)
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
+while not mixer_found:
+    trigger_pos = locate_mixer()
+    if trigger_pos:
+        mixer_found = True
+    else:
+        create_mixer()
+
+show_trigger = ShowBoundary(((TRIGGER_DEDENT + TRIGGER_LENGTH), 3), (trigger_pos[0], trigger_pos[1] - 1), 'orange')
+show_trigger.showframe()
+show_scopesize = ShowBoundary((rect[1][0] - rect[0][0], rect[1][1] - rect[0][1]), rect[0], 'cyan')
+show_scopesize.showframe()
+
+
+# ===============================fish_end=======================================
 
 
 # ===== wait to start ====
@@ -474,6 +650,10 @@ print('press F10 to start..')
 while not keyboard.is_pressed('F10'):
     pass
 winsound.Beep(1000, 200)
+show_trigger.killframe()
+show_scopesize.killframe()
+del show_trigger
+del show_scopesize
 
 # ====== start tsm ========
 t = time.time()
@@ -633,21 +813,9 @@ while True:
                             json.dump(scan_data, fp, ensure_ascii=False)
                         break
 
-        # else to check if the 1st is lower the threshold of snipper
-        # to check if the 1st is lower than % of the threshold
-        # to check if the price is lower than % of the second
-        # if yes ,buyout and record
-
-
-    t1 = time.time()
-    wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
-    while time.time() - t1 <= wait:
-        print('rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
-        time.sleep(3)
-        print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
-              str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-
-    if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
-        sys.exit()
-
+    LOGOUT_WOW_ICON = (49, 93, 40, 40)
+    key_2_sent('-')
+    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON) is None:
+        pass
+    break
 
