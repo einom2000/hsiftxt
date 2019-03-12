@@ -668,13 +668,13 @@ while True:
 
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
-        TIME_TO_RUN = random.randint(9, 11)
+        TIME_TO_RUN = random.randint(12, 18)
         SCAN_ROW = 5
     elif datetime.datetime.now().hour >= 18:
-        TIME_TO_RUN = random.randint(5, 6)
+        TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
     else:
-        TIME_TO_RUN = random.randint(12, 15)
+        TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 5
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
