@@ -668,11 +668,17 @@ while True:
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
         TIME_TO_RUN = random.randint(9, 12)
+        SCAN_ROW = 5
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(5, 6)
+        SCAN_ROW = 8
     else:
         TIME_TO_RUN = random.randint(15, 20)
+        SCAN_ROW = 5
     # force to end
+    print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+          str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    print('Fishing duration currently is ' + str(TIME_TO_RUN) + ' minutes.')
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
     # anti AFK
@@ -731,7 +737,8 @@ while True:
         if on_shelf == 1:
             on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
             on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = random.randint(1, all_goods_to_do.get(goods_name)[5])
+            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] // 2),
+                                           all_goods_to_do.get(goods_name)[5])
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
             quit_on_shelf =0
             for i in range(SCAN_ROW):

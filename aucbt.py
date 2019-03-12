@@ -541,7 +541,8 @@ while True:
         if on_shelf == 1:
             on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
             on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = random.randint(1, all_goods_to_do.get(goods_name)[5])
+            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] // 2),
+                                           all_goods_to_do.get(goods_name)[5])
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
             quit_on_shelf =0
             for i in range(SCAN_ROW):
