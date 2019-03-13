@@ -744,7 +744,7 @@ while True:
             quit_on_shelf =0
             for i in range(SCAN_ROW):
                 try:
-                    if quotes[i][1] >= on_shelf_sticking_volume:
+                    if quotes[i][1] * quotes[i][0] >= random.randrange(2, 3) * on_shelf_sticking_volume:
                         fd = pyautogui.locateCenterOnScreen('self.png', region=
                             (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5))
                         fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
