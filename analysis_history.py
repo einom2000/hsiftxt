@@ -64,13 +64,21 @@ def get_history_data(goods_file_name):
 
     average_quote = []
     for i in range(len(post1)):
-        average_quote.append(int((post1[i] * stack1[i] * buyout1[i] +
+        item_quote = int((post1[i] * stack1[i] * buyout1[i] +
                               post2[i] * stack2[i] * buyout2[i] +
                               post3[i] * stack3[i] * buyout3[i]) /
                              (post1[i] * stack1[i] +
                               post2[i] * stack2[i] +
                               post3[i] * stack3[i])) / 100
-                             )
+        append = True
+        if i != 0:
+            if item_quote / average_quote[i - 1] > 5 or item_quote / average_quote[i - 1] < 0.2:
+                append = False
+            else:
+                append = True
+        if append:
+
+            average_quote.append(item_quote)
     goods_name = goods_file_name.replace('scan_history\\', '')
     goods_name = goods_name.replace('_history.json', '')
     print(goods_name)
