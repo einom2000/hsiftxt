@@ -78,11 +78,22 @@ def get_history_data(goods_file_name):
                 append = item_quote
         if append:
             average_quote.append(append)
+    # change average_quote[] to percent quote:
+    percent_quote = []
+    max_quote = max(average_quote)
+    min_quote = min(average_quote)
+    average = (max_quote + min_quote) / 2
+    for quote in average_quote:
+        percent_quote.append(round(((quote - average) / average), 2))
+
     goods_name = goods_file_name.replace('scan_history\\', '')
     goods_name = goods_name.replace('_history.json', '')
     print(goods_name)
     final_data = {'date&time': new_date_time, goods_name: average_quote}
-    return final_data, goods_name
+    final_per = {'date&time': new_date_time, goods_name: percent_quote}
+    return final_data, goods_name, final_per
+
+
 
 
 filenames = []
@@ -90,30 +101,46 @@ filenames = []
 for files in glob.glob("scan_history\\*.json"):
     filenames.append(files)
 
-data_histories = []
+df_histories = []
 goods_names = []
-# filenames = filenames[7:8]
+percent_histories =[]
+
 for file in filenames:
     history_clean(file)
-    data_history, goods_name = get_history_data(file)
+    data_history, goods_name, percent_history = get_history_data(file)
     df = pd.DataFrame.from_dict(data_history)
-    data_histories.append(df)
+    df_histories.append(df)
     goods_names.append(goods_name)
-
-print(data_histories)
-
-# ax = plt.gca()
-
+    percent_histories.append(percent_history)
 
 i = 0
-for df in data_histories:
-    # xs = df.get('date&time')
-    # ys = df.get(goods_names[i])
-    # plt.plot(xs, ys)
+for df in df_histories:
+
     df.plot(kind='line', x='date&time', y=goods_names[i])
-    # df.plot(kind='line', x='date&time', y='average_quote', color='red', ax=ax)
-    plt.savefig('scan_history\\' + goods_names[i] + 'quotes.png')
+    plt.savefig('scan_history\\' + goods_names[i] + 'quotes.png', dpi=300)
     i += 1
+
+# percentage whole chart
+data_list = []
+name_list = []
+for per_dic in percent_histories:
+        date_times_list = per_dic.get('date&time')
+        per_quote_list = []
+        for goods_name in goods_names:
+            if goods_name in per_dic:
+                name_list.append(goods_name)
+                per_quote_list = per_dic.get(goods_name)
+        dic = {}
+        for d in range(len(date_times_list)):
+            dic.update({d: per_quote_list[d]})
+        data_list.append(dic)
+dic = {}
+for i in range(len(name_list)):
+    dic.update({name_list[i]: data_list[i]})
+df = pd.DataFrame(dic)
+df.plot()
+plt.savefig('scan_history\\' + 'whole_chart.png', dpi=600)
+
 '''
 axes.unicode_minus:False
 font.family : sans-serif
