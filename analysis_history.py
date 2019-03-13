@@ -2,7 +2,7 @@ import keyboard, pyautogui,time
 import json
 import matplotlib.pyplot as plt
 import pandas as pd
-import glob, numpy
+import glob, numpy, sys
 import os
 plt.rcParams.update({'figure.max_open_warning': 0})
 
@@ -70,15 +70,14 @@ def get_history_data(goods_file_name):
                              (post1[i] * stack1[i] +
                               post2[i] * stack2[i] +
                               post3[i] * stack3[i])) / 100
-        append = True
-        if i != 0:
-            if item_quote / average_quote[i - 1] > 5 or item_quote / average_quote[i - 1] < 0.2:
-                append = False
+        append = item_quote
+        if len(average_quote) >= 1:
+            if item_quote / average_quote[-1] > 5 or item_quote / average_quote[-1] < 0.2:
+                append = average_quote[-1]
             else:
-                append = True
+                append = item_quote
         if append:
-
-            average_quote.append(item_quote)
+            average_quote.append(append)
     goods_name = goods_file_name.replace('scan_history\\', '')
     goods_name = goods_name.replace('_history.json', '')
     print(goods_name)
