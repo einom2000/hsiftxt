@@ -514,7 +514,7 @@ ANTI_AFK = 480
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (120, 240)
-END_TIME = [random.randint(3, 4), random.randint(10, 30)]
+END_TIME = [random.randint(2, 3), random.randint(10, 30)]
 SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 X_RATIO = 1.04
@@ -738,9 +738,11 @@ while True:
         if on_shelf == 1:
             on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
             on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] * 0.7),
-                                           all_goods_to_do.get(goods_name)[5])
+            on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
+            if 180 > on_shelf_stack >= 100:
+                on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 1,
+                                                int(all_goods_to_do.get(goods_name)[6] / 20) + 1) * 20
             quit_on_shelf =0
             for i in range(SCAN_ROW):
                 try:
@@ -797,7 +799,7 @@ while True:
 
                 if quit_on_shelf == 1:
                     break
-        if on_shelf == 0:
+        if on_shelf < 3:
             threshold_price = all_goods_to_do.get(goods_name)[3] * 100
             print('threshold_price = ' + str(threshold_price))
             triger_pct = all_goods_to_do.get(goods_name)[4] / 100
