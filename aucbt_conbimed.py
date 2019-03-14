@@ -487,6 +487,7 @@ H  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
+CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -748,9 +749,11 @@ while True:
                 try:
                     if quotes[i][1] * quotes[i][0] >= random.randrange(2, 3) * on_shelf_sticking_volume:
                         fd = pyautogui.locateCenterOnScreen('self.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5))
+                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                            , confidence=CONFI)
                         fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5))
+                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                             , confidence=CONFI)
                         print(fd, fd2)
                         if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                             print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
@@ -835,18 +838,18 @@ while True:
     get_random_wait(1000, 2000)
     LOGOUT_WOW_ICON = (49, 93, 40, 40)
     key_2_sent('-')
-    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON) is None:
+    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
         pass
     get_random_wait(1200, 1500)
     key_2_sent('u')
     get_random_wait(1200, 1500)
     key_2_sent('u')
     get_random_wait(1200, 1500)
-    while pyautogui.locateCenterOnScreen('selected_2nd.png', region=SECOND_ROLD_SELECTED) is None:
+    while pyautogui.locateCenterOnScreen('selected_2nd.png', region=SECOND_ROLD_SELECTED, confidence=CONFI) is None:
         key_2_sent('u')
         get_random_wait(1200, 1500)
     key_2_sent('o')
-    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
         pass
     mouse_2_sent([620, 220])
     # ==================================fishting starts===================================================
@@ -920,18 +923,18 @@ while True:
     get_random_wait(1000, 2000)
     LOGOUT_WOW_ICON = (49, 93, 40, 40)
     key_2_sent('-')
-    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON) is None:
+    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
         pass
     get_random_wait(1200, 1500)
     key_2_sent('j')
     get_random_wait(1200, 1500)
     key_2_sent('j')
     get_random_wait(1200, 1500)
-    while pyautogui.locateCenterOnScreen('selected_4th.png', region=FOURTH_ROLD_SELECTED) is None:
+    while pyautogui.locateCenterOnScreen('selected_4th.png', region=FOURTH_ROLD_SELECTED, confidence=CONFI) is None:
         key_2_sent('j')
         get_random_wait(1200, 1500)
     key_2_sent('o')
-    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
         pass
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
