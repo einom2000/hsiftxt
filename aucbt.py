@@ -93,7 +93,7 @@ def mouse_2_rtv(position):
 
 def get_random_wait(low, high):
     # wait for a random time
-    time.sleep(random.randint(low, high) / 1000)
+    time.sleep(random.randint(low * 1000, high * 1000) / 1000000)
 
 
 def enumhandler(hwnd, lParam):
@@ -310,6 +310,8 @@ AUCTION_12_TIME = (590, 395 + ADJ)
 AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
 AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
 AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
+AUCTION_ON_SHOP_OK_BUTTION = (515, 610 + ADJ, 115, 40)
+BUYOUT_ON_SHOP_OK_BUTTION =(735, 610 + ADJ, 115, 40)
 ANTI_AFK = 480
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
@@ -522,9 +524,7 @@ while True:
         logging.info('wow reloaded, tsm opened')
 
     scan_is_end()
-    move2(SORT_RESULT)
-    key_2_sent('l')
-    get_random_wait(500, 1000)
+
     for goods_name in all_goods_names:
 
         input_box(INPUT_BOX, goods_name)
@@ -532,6 +532,10 @@ while True:
         goods = Item()
 
         scan_is_end()
+
+        # move2(SORT_RESULT)
+        # key_2_sent('l')
+        # get_random_wait(500, 1000)
 
         quotes = []
         for i in range(SCAN_ROW):
@@ -585,40 +589,43 @@ while True:
                             print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                             move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                             key_2_sent('l')
-                            move2(AUCTION_BUTTON_ON_SHOP)
-                            key_2_sent('l')
-                            input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
-                            input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
-                            move2(AUCTION_12_TIME)
-                            key_2_sent('l')
-                            move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
-                            key_2_sent('l')
-                            get_random_wait(100, 300)
-                            key_2_sent('[')
-                            get_random_wait(100, 300)
-                            biding_price = pyperclip.paste()
-                            input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
-                            move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
-                            get_random_wait(100, 300)
-                            key_2_sent('l')
+                            get_random_wait(300, 600)
+                            if pyautogui.locateCenterOnScreen('list_auction_ok.png',
+                                                              region=AUCTION_ON_SHOP_OK_BUTTION) is not None:
+                                move2(AUCTION_BUTTON_ON_SHOP)
+                                key_2_sent('l')
+                                input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
+                                input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
+                                move2(AUCTION_12_TIME)
+                                key_2_sent('l')
+                                move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
+                                key_2_sent('l')
+                                get_random_wait(100, 300)
+                                key_2_sent('[')
+                                get_random_wait(100, 300)
+                                biding_price = pyperclip.paste()
+                                input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
+                                move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
+                                get_random_wait(100, 300)
+                                key_2_sent('l')
                             # record
-                            with open('scan_data.json', 'r') as fp:
-                                scan_data = json.load(fp)
-                            for record in scan_data:
-                                if record.get('item_name') == goods_name:
-                                    on_shelf_record = {
-                                                        'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                                                     + ' ('+ datetime.datetime.today().strftime('%A'),
-                                                        'sticking_volume': on_shelf_sticking_volume,
-                                                        'sticking_volume price': quotes[i][2],
-                                                        'onshelf_price': biding_price,
-                                                        'onshelf_volume': on_shelf_stack * on_shelf_post,
-                                                        'is_onshelf': 'True'
-                                                      }
-                                    record.get('item_onshelf_history').append(on_shelf_record)
-                                    with open('scan_data.json', 'w') as fp:
-                                        json.dump(scan_data, fp, ensure_ascii=False)
-                                    break
+                                with open('scan_data.json', 'r') as fp:
+                                    scan_data = json.load(fp)
+                                for record in scan_data:
+                                    if record.get('item_name') == goods_name:
+                                        on_shelf_record = {
+                                                            'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                                                         + ' ('+ datetime.datetime.today().strftime('%A'),
+                                                            'sticking_volume': on_shelf_sticking_volume,
+                                                            'sticking_volume price': quotes[i][2],
+                                                            'onshelf_price': biding_price,
+                                                            'onshelf_volume': on_shelf_stack * on_shelf_post,
+                                                            'is_onshelf': 'True'
+                                                          }
+                                        record.get('item_onshelf_history').append(on_shelf_record)
+                                        with open('scan_data.json', 'w') as fp:
+                                            json.dump(scan_data, fp, ensure_ascii=False)
+                                        break
 
                             quit_on_shelf = 1
                         if fd is not None or fd2 is not None:
@@ -642,7 +649,9 @@ while True:
                 key_2_sent('l')
                 get_random_wait(100, 300)
                 move2(BUYOUT_BUTTON_ON_SHOP)
-                key_2_sent('l')
+                for i in range(int(quotes[0][0])):
+                    key_2_sent('l')
+                    get_random_wait(500, 1000)
                 with open('scan_data.json', 'r') as fp:
                     scan_data = json.load(fp)
                 for record in scan_data:
@@ -671,12 +680,24 @@ while True:
     t1 = time.time()
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
-        print('rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
+        print('change role and rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
         time.sleep(3)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
+
+    get_random_wait(1000, 2000)
+    LOGOUT_WOW_ICON = (49, 93, 40, 40)
+    key_2_sent('-')
+    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
+        pass
+    get_random_wait(1200, 1500)
+    key_2_sent('u')
+    get_random_wait(1200, 1500)
+    key_2_sent('o')
+    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
+        pass
 
 
