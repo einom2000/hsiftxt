@@ -286,6 +286,7 @@ H  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
+FISHOIL_MAX = 6000
 CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
@@ -490,6 +491,8 @@ for act in action_list:
     key_2_sent('l')
 logging.info('ready to start, tsm opened')
 
+fish_oil_count = 0
+
 while True:
 
     # timetable for fishing during a day
@@ -681,7 +684,11 @@ while True:
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
-        time.sleep(3)
+        if fish_oil_count < FISHOIL_MAX:
+            get_random_wait(300, 500)
+            key_2_sent('f')
+        else:
+            get_random_wait(3000, 5000)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
 
