@@ -48,6 +48,7 @@ def get_history_data(goods_file_name):
 
     date_time = new_data.get('date&time')
     new_date_time = []
+    # print(goods_file_name)
     for dt in date_time:
         dt = dt[11:17] + dt[18:21]
         new_date_time.append(dt)
