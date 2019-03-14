@@ -15,6 +15,7 @@ import pyperclip
 import json
 import datetime
 
+#1280*720
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for space; '>' for ctrl-v, '<' for backspace
@@ -266,7 +267,8 @@ def input_box(positon, scr):
 '''
 G  == target npc
 Y  == talk with npc
-K  == /RL MACRO
+H  == /RL MACRO
+- == /LOGOUT /MACRO
 
 '''
 # full screen size 1280x720
@@ -284,6 +286,7 @@ K  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
+CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -308,11 +311,12 @@ AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
 AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
 AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 ANTI_AFK = 480
-SCAN_ROW = 8
+SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (120, 240)
-END_TIME = [random.randint(3, 4), random.randint(10, 30)]
-
+END_TIME = [random.randint(2, 3), random.randint(10, 30)]
+SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
+FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
@@ -485,6 +489,23 @@ for act in action_list:
 logging.info('ready to start, tsm opened')
 
 while True:
+
+    # timetable for fishing during a day
+    if 18 > datetime.datetime.now().hour >= 15:
+        TIME_TO_RUN = random.randint(12, 18)
+        SCAN_ROW = 5
+    elif datetime.datetime.now().hour >= 18:
+        TIME_TO_RUN = random.randint(9, 12)
+        SCAN_ROW = 8
+    else:
+        TIME_TO_RUN = random.randint(18, 20)
+        SCAN_ROW = 5
+    # force to end
+    print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+          str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
+    if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
+        sys.exit()
     # anti AFK
     if time.time() - t >= ANTI_AFK:
         key_2_sent('k')
@@ -501,6 +522,9 @@ while True:
         logging.info('wow reloaded, tsm opened')
 
     scan_is_end()
+    move2(SORT_RESULT)
+    key_2_sent('l')
+    get_random_wait(500, 1000)
     for goods_name in all_goods_names:
 
         input_box(INPUT_BOX, goods_name)
@@ -541,17 +565,21 @@ while True:
         if on_shelf == 1:
             on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
             on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = random.randint(int(all_goods_to_do.get(goods_name)[5] // 2),
-                                           all_goods_to_do.get(goods_name)[5])
+            on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
+            if 180 > on_shelf_stack >= 100:
+                on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 1,
+                                                int(all_goods_to_do.get(goods_name)[6] / 20) + 1) * 20
             quit_on_shelf =0
             for i in range(SCAN_ROW):
                 try:
-                    if quotes[i][1] >= on_shelf_sticking_volume:
+                    if quotes[i][1] * quotes[i][0] >= random.randrange(2, 3) * on_shelf_sticking_volume:
                         fd = pyautogui.locateCenterOnScreen('self.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5))
+                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                            , confidence=CONFI)
                         fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5))
+                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                             , confidence=CONFI)
                         print(fd, fd2)
                         if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                             print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
@@ -600,7 +628,7 @@ while True:
 
                 if quit_on_shelf == 1:
                     break
-        if on_shelf == 0:
+        if on_shelf < 3:
             threshold_price = all_goods_to_do.get(goods_name)[3] * 100
             print('threshold_price = ' + str(threshold_price))
             triger_pct = all_goods_to_do.get(goods_name)[4] / 100
