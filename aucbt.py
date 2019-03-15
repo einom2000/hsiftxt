@@ -286,7 +286,7 @@ H  == /RL MACRO
 (277, 220) INPUT_BOX
 '''
 
-FISHOIL_MAX = 6000
+FISHOIL_MAX = 4000
 CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
@@ -294,7 +294,7 @@ CLOSE_TSM = (911, 128 + ADJ)
 CLOSE_TSM_ICON =(897, 112, 40, 40)
 RELOAD_SUCCESS =(1036, 709, 180, 50)
 HISTORY_BUTTON_ON_SHOP = (641, 238 + ADJ)
-BUY_SEARCH = (641, 161 + ADJ)
+BUY_SEARCH = (651, 161 + ADJ)
 BUY_SEARCH_BACK = (217, 178 + ADJ)
 ITEM_SEARCH = (863, 220 + ADJ)
 SORT_RESULT = (867, 252 + ADJ)
@@ -316,8 +316,8 @@ BUYOUT_ON_SHOP_OK_BUTTION =(735, 610 + ADJ, 115, 40)
 ANTI_AFK = 480
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
-SCAN_PERIOD = (120, 240)
-END_TIME = [random.randint(2, 3), random.randint(10, 30)]
+SCAN_PERIOD = (350, 450)
+END_TIME = [random.randint(2, 2), random.randint(10, 30)]
 SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 X_RATIO = 1.04
@@ -499,12 +499,15 @@ while True:
     if 18 > datetime.datetime.now().hour >= 15:
         TIME_TO_RUN = random.randint(12, 18)
         SCAN_ROW = 5
+        SCAN_PERIOD = (400, 500)
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
+        SCAN_PERIOD = (300, 360)
     else:
         TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 5
+        SCAN_PERIOD = (500, 600)
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
@@ -513,9 +516,9 @@ while True:
         sys.exit()
     # anti AFK
     if time.time() - t >= ANTI_AFK:
-        key_2_sent('k')
+        # key_2_sent('k')
         get_random_wait(1000, 2000)
-        key_2_sent('h')
+        # key_2_sent('h')
         while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
             pass
         t = time.time()
@@ -575,12 +578,12 @@ while True:
             on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
             on_shelf_stack = all_goods_to_do.get(goods_name)[6]
             if 180 > on_shelf_stack >= 100:
-                on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 1,
-                                                int(all_goods_to_do.get(goods_name)[6] / 20) + 1) * 20
+                on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 0,
+                                                int(all_goods_to_do.get(goods_name)[6] / 20) + 0) * 20
             quit_on_shelf =0
             for i in range(SCAN_ROW):
                 try:
-                    if quotes[i][1] * quotes[i][0] >= random.randrange(2, 3) * on_shelf_sticking_volume:
+                    if quotes[i][1] * quotes[i][0] > random.randrange(2, 3) * on_shelf_sticking_volume:
                         fd = pyautogui.locateCenterOnScreen('self.png', region=
                             (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
                                                             , confidence=CONFI)
@@ -685,17 +688,16 @@ while True:
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(300, 500)
+            get_random_wait(10000,15000)
             key_2_sent('f')
         else:
-            get_random_wait(3000, 5000)
+            get_random_wait(200, 400)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
 
-    get_random_wait(1000, 2000)
     LOGOUT_WOW_ICON = (49, 93, 40, 40)
     key_2_sent('-')
     while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:

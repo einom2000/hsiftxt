@@ -118,7 +118,7 @@ i = 0
 for df in df_histories:
 
     df.plot(kind='line', x='date&time', y=goods_names[i])
-    plt.savefig('scan_history\\' + goods_names[i] + 'quotes.png', dpi=300)
+    plt.savefig('history_chart\\' + goods_names[i] + 'quotes.png', dpi=300)
     i += 1
 
 # percentage whole chart
@@ -140,7 +140,7 @@ for i in range(len(name_list)):
     dic.update({name_list[i]: data_list[i]})
 df = pd.DataFrame(dic)
 df.plot()
-plt.savefig('scan_history\\' + 'whole_chart.png', dpi=600)
+plt.savefig('history_chart\\' + 'whole_chart.png', dpi=600)
 
 '''
 axes.unicode_minus:False
