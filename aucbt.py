@@ -19,7 +19,7 @@ import datetime
 
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for space; '>' for ctrl-v, '<' for backspace
-    # ']' for ctrl-a, '[' for ctrl-c
+    # ']' for ctrl-a, '[' for ctrl-c, '?' is for ESC
     key_sent = str(key)
     ard.flush()
     # print("Python value sent: " + key_sent)
@@ -252,7 +252,11 @@ def scan_is_end():
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
-        if time.time() - ct >= 60 and tried <3:
+
+        if time.time() - ct >= 60 and tried < 3:
+            if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
+                key_2_sent('?')
+                get_random_wait(1100, 1200)
             key_2_sent('l')
             get_random_wait(1100, 1200)
             key_2_sent('o')
@@ -261,6 +265,9 @@ def scan_is_end():
             tried += 1
             ct = time.time()
         elif tried >= 3:
+            move2(CLOSE_TSM)
+            key_2_sent('l')
+            get_random_wait(1200, 1500)
             open_tsm()
             action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
             for act in action_list:
@@ -353,6 +360,7 @@ AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 AUCTION_ON_SHOP_OK_BUTTION = (515, 610 + ADJ, 115, 40)
 BUYOUT_ON_SHOP_OK_BUTTION =(735, 610 + ADJ, 115, 40)
 ANTI_AFK = 480
+SPEECH_BOX = (39, 610, 60, 40)
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (350, 450)
@@ -559,6 +567,7 @@ while True:
         # anti AFK
         anti_afk()
 
+        scan_is_end()
         input_box(INPUT_BOX, goods_name + '/exact')
 
         goods = Item()
