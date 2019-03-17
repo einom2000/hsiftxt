@@ -244,19 +244,30 @@ def open_tsm():
 def scan_is_end():
     found = False
     ct = time.time()
+    tried = 0
     while not found:
         fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
         if fd is not None:
             found = True
             break
         time.sleep(0.5)
-        print('wating for scan to finish, rescan after' + str(int(time.time() - ct)))
-        if time.time() - ct >= 60:
+        print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
+        if time.time() - ct >= 60 and tried <3:
             key_2_sent('l')
             get_random_wait(1100, 1200)
             key_2_sent('o')
             get_random_wait(1100, 1200)
             key_2_sent('k')
+            tried += 1
+            ct = time.time()
+        elif tried >= 3:
+            open_tsm()
+            action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+            for act in action_list:
+                move2(act)
+                key_2_sent('l')
+            tried = 0
+
 
 
 def input_box(positon, scr):
@@ -317,7 +328,7 @@ H  == /RL MACRO
 FISHOIL_MAX = 4000
 CONFI = 0.9
 ADJ = -2
-SCAN_DONE_PIC = (320, 614 + ADJ, 83, 36)
+SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
 CLOSE_TSM_ICON =(897, 112, 40, 40)
 RELOAD_SUCCESS =(1036, 709, 180, 50)
