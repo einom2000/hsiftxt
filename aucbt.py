@@ -137,7 +137,7 @@ class Item():
         str_tmp = str_tmp.replace('g', '9')
         str_tmp = str_tmp.replace('°', '')
         str_tmp = str_tmp.replace('s', '5')
-        str_tmp = str_tmp.replace('S', '5')
+        str_tmp = str_tmp.replace('B', '8')
         total_tmp = str_tmp
         try:
             post_num = int(re.findall("\d+", str_tmp)[0])
@@ -243,12 +243,21 @@ def open_tsm():
 
 def scan_is_end():
     found = False
+    ct = time.time()
     while not found:
         fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
         if fd is not None:
             found = True
             break
         time.sleep(0.5)
+        print('wating for scan to finish, rescan after' + str(int(time.time() - ct)))
+        if time.time() - ct >= 60:
+            key_2_sent('l')
+            get_random_wait(1100, 1200)
+            key_2_sent('o')
+            get_random_wait(1100, 1200)
+            key_2_sent('k')
+
 
 def input_box(positon, scr):
     move2(positon)
@@ -262,6 +271,25 @@ def input_box(positon, scr):
     get_random_wait(100, 200)
     key_2_sent('o')
     get_random_wait(100, 200)
+
+def anti_afk():
+    global t
+    if time.time() - t >= ANTI_AFK:
+        key_2_sent('k')
+        get_random_wait(1000, 2000)
+        t = time.time()
+        key_2_sent('h')
+        while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+            pass
+        open_tsm()
+        action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+        for act in action_list:
+            move2(act)
+            key_2_sent('l')
+        logging.info('wow reloaded, tsm opened')
+        scan_is_end()
+
+
 
 # ======CONSTANTS========
 '''
@@ -515,23 +543,10 @@ while True:
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
     # anti AFK
-    if time.time() - t >= ANTI_AFK:
-        # key_2_sent('k')
-        get_random_wait(1000, 2000)
-        # key_2_sent('h')
-        while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
-            pass
-        t = time.time()
-        open_tsm()
-        action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
-        for act in action_list:
-            move2(act)
-            key_2_sent('l')
-        logging.info('wow reloaded, tsm opened')
-
-    scan_is_end()
-
+    anti_afk()
     for goods_name in all_goods_names:
+        # anti AFK
+        anti_afk()
 
         input_box(INPUT_BOX, goods_name)
 
