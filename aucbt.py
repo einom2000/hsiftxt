@@ -559,7 +559,7 @@ while True:
         # anti AFK
         anti_afk()
 
-        input_box(INPUT_BOX, goods_name)
+        input_box(INPUT_BOX, goods_name + '/exact')
 
         goods = Item()
 
