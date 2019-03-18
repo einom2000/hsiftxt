@@ -120,7 +120,7 @@ timestamp_hunting_record.json
 # try to get yesterday /open / close /high and /low
 filename = ''
 classification= 0
-
+hunting_final = {}
 for code in daily_hunting_list:
     if code[0] == '1':
         filename = 'C:\\new_ajzq_v6\\vipdoc\\sh\\lday\\sh' + code[1:] + '.day'
@@ -131,7 +131,7 @@ for code in daily_hunting_list:
     name = get_name(code[1:])
     status, head, foot, body = line_shape()
 
-    hunting_bid = algorithm()
+    hunting_bid = round(algorithm(), 2)
 
     max_bid = round(close_at * 1.1, 2)
     min_bid = round(close_at * 0.9, 2)
@@ -165,6 +165,37 @@ for code in daily_hunting_list:
                 print(Style.RESET_ALL)
                 winsound.Beep(2000, 400)
 
+    hunting_volume = 200
+    input_is_done = False
+    while not input_is_done:
+        print('press enter to accept ', end='')
+        print(Fore.RED + '200', end='')
+        print(Style.RESET_ALL + ' ', end='')
+        key = input('or type a new volume')
+        if key == '':
+            input_is_done = True
+        else:
+            try:
+                number = int(key)
+                if number > 1000 or number < 100:
+                    print(Fore.LIGHTYELLOW_EX + 'please input a valid volume', end='')
+                    print(Style.RESET_ALL)
+                    winsound.Beep(2000, 400)
+                else:
+                    hunting_volume = round(number / 100, 0) * 100
+                    input_is_done = True
+            except SyntaxError:
+                print(Fore.LIGHTYELLOW_EX + 'please input a valid volume', end='')
+                print(Style.RESET_ALL)
+                winsound.Beep(2000, 400)
+            except ValueError:
+                print(Fore.LIGHTYELLOW_EX + 'please input a valid volume', end='')
+                print(Style.RESET_ALL)
+                winsound.Beep(2000, 400)
+
+    hunting_final[(code, name)] = (hunting_bid, hunting_volume)
+
+print(hunting_final)
 
 
 
