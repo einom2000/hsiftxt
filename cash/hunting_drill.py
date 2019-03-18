@@ -99,17 +99,12 @@ def algorithm():
 today = time.localtime()
 timestamp = time.strftime('%b-%d-%Y', today)
 
-file_path = 'C:\\new_ajzq_v6\\T0002\\blocknew\\'
-block_name = timestamp + '-in-test.blk'
-
 PRT_LIB = [Fore.RED, Fore.MAGENTA, Fore.WHITE, Fore.YELLOW, Fore.GREEN]
 HEAD_FOOT_RATIO = 2.3
 HDFT_BODY_RATIO = 2.3
 
-with open(file_path + block_name, 'r') as daily_block:
-    daily_hunting_list = re.findall(r'\d+', daily_block.read())
-
-print(daily_hunting_list)
+daily_hunting_list_drill = ['0000001']
+perform_day = '20180322'
 
 '''
 hunting file module

@@ -5,6 +5,7 @@ import easyquotation
 import winsound
 from colorama import init, Fore, Back, Style
 import ast
+import shutil
 
 init()
 quotation = easyquotation.use('sina')
@@ -62,7 +63,7 @@ def algorithm():
               + '|高:' + str(highest) + '|低:' + str(lowest))
         print(Fore.MAGENTA + Style.DIM + '阳线，上影线短于下影线1/3, 或者阴线， 下影线长于上影线5倍, 或者阳线，无下影线', end='')
         print(Style.RESET_ALL)
-        suggested_hunting_bid = close_at * 1.01
+        suggested_hunting_bid = close_at * 1
         classification =2
     # 最低收 或者 最高开 且下影短于本体1/3
     elif close_at == lowest or (open_at == highest and foot * HDFT_BODY_RATIO <= body):
@@ -100,7 +101,8 @@ today = time.localtime()
 timestamp = time.strftime('%b-%d-%Y', today)
 
 file_path = 'C:\\new_ajzq_v6\\T0002\\blocknew\\'
-block_name = timestamp + '-in-test.blk'
+block_name = timestamp + '-in-pool.blk'
+block_name = block_name.upper()
 
 PRT_LIB = [Fore.RED, Fore.MAGENTA, Fore.WHITE, Fore.YELLOW, Fore.GREEN]
 HEAD_FOOT_RATIO = 2.3
@@ -177,7 +179,7 @@ for code in daily_hunting_list:
         else:
             try:
                 number = int(key)
-                if number > 1000 or number < 100:
+                if number > 1000 or number < 0:
                     print(Fore.LIGHTYELLOW_EX + 'please input a valid volume', end='')
                     print(Style.RESET_ALL)
                     winsound.Beep(2000, 400)
@@ -192,13 +194,13 @@ for code in daily_hunting_list:
                 print(Fore.LIGHTYELLOW_EX + 'please input a valid volume', end='')
                 print(Style.RESET_ALL)
                 winsound.Beep(2000, 400)
-
-    hunting_final[name] = (hunting_bid, hunting_volume)
-    hunting_final[code] = name
+    if hunting_volume != 0:
+        hunting_final[name] = (hunting_bid, hunting_volume)
+        hunting_final[code] = name
 with open(timestamp + 'next_day_hunting.json', 'w') as fp:
     json.dump(hunting_final, fp,  ensure_ascii=False)
 
-
+shutil.copy(timestamp + 'next_day_hunting.json', 'snipper_nextday.json')
 
 
 
