@@ -240,6 +240,11 @@ def open_tsm():
             while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
                 pass
             t = time.time()
+    action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+    for act in action_list:
+        move2(act)
+        key_2_sent('l')
+    scan_is_end()
 
 def scan_is_end():
     found = False
@@ -253,10 +258,11 @@ def scan_is_end():
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
 
-        if time.time() - ct >= 60 and tried < 3:
+        if time.time() - ct >= 60 and tried < 2:
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
                 key_2_sent('?')
                 get_random_wait(1100, 1200)
+            move2(INPUT_BOX)
             key_2_sent('l')
             get_random_wait(1100, 1200)
             key_2_sent('o')
@@ -264,7 +270,10 @@ def scan_is_end():
             key_2_sent('k')
             tried += 1
             ct = time.time()
-        elif tried >= 3:
+        elif tried >= 2:
+            if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
+                key_2_sent('?')
+                get_random_wait(1100, 1200)
             move2(CLOSE_TSM)
             key_2_sent('l')
             get_random_wait(1200, 1500)
@@ -331,8 +340,8 @@ H  == /RL MACRO
 (321, 617) BUY_SCAN_BUTTON
 (277, 220) INPUT_BOX
 '''
-
-FISHOIL_MAX = 4000
+UNIVERSIAL_DISCOUNT = 1
+FISHOIL_MAX = 3600
 CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
@@ -531,16 +540,14 @@ winsound.Beep(1000, 200)
 
 # ====== start tsm ========
 t = time.time()
-open_tsm()
-action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
-for act in action_list:
-    move2(act)
-    key_2_sent('l')
+
 logging.info('ready to start, tsm opened')
 
 fish_oil_count = 0
 
 while True:
+
+    open_tsm()
 
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
@@ -567,7 +574,6 @@ while True:
         # anti AFK
         anti_afk()
 
-        scan_is_end()
         input_box(INPUT_BOX, goods_name + '/exact')
 
         goods = Item()
@@ -677,7 +683,7 @@ while True:
                 if quit_on_shelf == 1:
                     break
         if on_shelf < 3:
-            threshold_price = all_goods_to_do.get(goods_name)[3] * 100
+            threshold_price = all_goods_to_do.get(goods_name)[3] * 100 * UNIVERSIAL_DISCOUNT
             print('threshold_price = ' + str(threshold_price))
             triger_pct = all_goods_to_do.get(goods_name)[4] / 100
             print(triger_pct)
@@ -723,7 +729,7 @@ while True:
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(10000,15000)
+            get_random_wait(3000, 6000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)
