@@ -195,8 +195,8 @@ for code in daily_hunting_list:
                 print(Style.RESET_ALL)
                 winsound.Beep(2000, 400)
     if hunting_volume != 0:
-        hunting_final[name] = (hunting_bid, hunting_volume)
-        hunting_final[code] = name
+        hunting_final[code] = (hunting_bid, hunting_volume)
+        hunting_final[code[1:]] = name
 with open(timestamp + 'next_day_hunting.json', 'w') as fp:
     json.dump(hunting_final, fp,  ensure_ascii=False)
 
