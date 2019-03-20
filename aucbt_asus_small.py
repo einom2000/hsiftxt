@@ -18,6 +18,9 @@ import datetime
 
 # 1280*720
 
+# This is for lower resolution other than 1280 x 720
+
+
 def key_2_sent(key):  # 'r' for right mouse double click, 'l' for left click, 't' for right click
     # 'o' for enter; 'u' for up; 'j' for down(jump); 'k' for space; '>' for ctrl-v, '<' for backspace
     # ']' for ctrl-a, '[' for ctrl-c, '?' is for ESC
