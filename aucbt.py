@@ -244,9 +244,10 @@ def open_tsm():
     for act in action_list:
         move2(act)
         key_2_sent('l')
-    scan_is_end()
+    scan_is_end('000')
 
-def scan_is_end():
+
+def scan_is_end(scaned_name):
     found = False
     ct = time.time()
     tried = 0
@@ -278,10 +279,8 @@ def scan_is_end():
             key_2_sent('l')
             get_random_wait(1200, 1500)
             open_tsm()
-            action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
-            for act in action_list:
-                move2(act)
-                key_2_sent('l')
+            if scaned_name != '000':
+                input_box(INPUT_BOX, scaned_name + '/exact')
             tried = 0
 
 
@@ -314,7 +313,7 @@ def anti_afk():
             move2(act)
             key_2_sent('l')
         logging.info('wow reloaded, tsm opened')
-        scan_is_end()
+        scan_is_end('000')
 
 
 
@@ -340,8 +339,10 @@ H  == /RL MACRO
 (321, 617) BUY_SCAN_BUTTON
 (277, 220) INPUT_BOX
 '''
+CHANGE_ROLL = True
+MAX_MONEY = 1000.00
 UNIVERSIAL_DISCOUNT = 1
-FISHOIL_MAX = 3600
+FISHOIL_MAX = 8000
 CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
@@ -574,154 +575,157 @@ while True:
         # anti AFK
         anti_afk()
 
-        input_box(INPUT_BOX, goods_name + '/exact')
+        if all_goods_to_do.get(goods_name)[0] != 9:
 
-        goods = Item()
+            input_box(INPUT_BOX, goods_name + '/exact')
 
-        scan_is_end()
+            goods = Item()
 
-        # move2(SORT_RESULT)
-        # key_2_sent('l')
-        # get_random_wait(500, 1000)
+            scan_is_end(goods_name)
 
-        quotes = []
-        for i in range(SCAN_ROW):
-            quote = goods.get(i, 0)
-            # if quote[2] == 0:
-            #     quote = goods.get(i, 4)
-            quotes.append(quote)
-            print(quote)
-        with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
-            data = json.load(fp)
-        data.append({   'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                     + ' ('+ datetime.datetime.today().strftime('%A'),
-                        '1st_quote_post': quotes[0][0],
-                        '1st_quote_stack': quotes[0][1],
-                        '1st_quote_buyout': quotes[0][2],
-                        '2nd_quote_post': quotes[1][0],
-                        '2nd_quote_stack': quotes[1][1],
-                        '2nd_quote_buyout': quotes[1][2],
-                        '3rd_quote_post': quotes[2][0],
-                        '3rd_quote_stack': quotes[2][1],
-                        '3rd_quote_buyout': quotes[2][2],
-                    })
-        with open('scan_history\\' + goods_name + '_history.json', 'w') as fp:
-            json.dump(data, fp, ensure_ascii=False)
-        # goods name = 'ABC'
-        # goods_to_do ={"暗月火酒": [1, 13000, 5, 9000, 7, 1, 1]}
-        # quotes
+            # move2(SORT_RESULT)
+            # key_2_sent('l')
+            # get_random_wait(500, 1000)
 
-        # to check if the goods is the on_shelf goods:
-        on_shelf = all_goods_to_do.get(goods_name)[0]
-        if on_shelf == 1:
-            on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
-            on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
-            on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
-            on_shelf_stack = all_goods_to_do.get(goods_name)[6]
-            if 180 > on_shelf_stack >= 100:
-                on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 0,
-                                                int(all_goods_to_do.get(goods_name)[6] / 20) + 0) * 20
-            quit_on_shelf =0
+            quotes = []
+
             for i in range(SCAN_ROW):
-                try:
-                    if quotes[i][1] * quotes[i][0] > random.randrange(2, 3) * on_shelf_sticking_volume:
-                        fd = pyautogui.locateCenterOnScreen('self.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                            , confidence=CONFI)
-                        fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
-                            (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                             , confidence=CONFI)
-                        print(fd, fd2)
-                        if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
-                            print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
-                            move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
-                            key_2_sent('l')
-                            get_random_wait(300, 600)
-                            if pyautogui.locateCenterOnScreen('list_auction_ok.png',
-                                                              region=AUCTION_ON_SHOP_OK_BUTTION) is not None:
-                                move2(AUCTION_BUTTON_ON_SHOP)
-                                key_2_sent('l')
-                                input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
-                                input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
-                                move2(AUCTION_12_TIME)
-                                key_2_sent('l')
-                                move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
-                                key_2_sent('l')
-                                get_random_wait(100, 300)
-                                key_2_sent('[')
-                                get_random_wait(100, 300)
-                                biding_price = pyperclip.paste()
-                                input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
-                                move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
-                                get_random_wait(100, 300)
-                                key_2_sent('l')
-                            # record
-                                with open('scan_data.json', 'r') as fp:
-                                    scan_data = json.load(fp)
-                                for record in scan_data:
-                                    if record.get('item_name') == goods_name:
-                                        on_shelf_record = {
-                                                            'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                                                         + ' ('+ datetime.datetime.today().strftime('%A'),
-                                                            'sticking_volume': on_shelf_sticking_volume,
-                                                            'sticking_volume price': quotes[i][2],
-                                                            'onshelf_price': biding_price,
-                                                            'onshelf_volume': on_shelf_stack * on_shelf_post,
-                                                            'is_onshelf': 'True'
-                                                          }
-                                        record.get('item_onshelf_history').append(on_shelf_record)
-                                        with open('scan_data.json', 'w') as fp:
-                                            json.dump(scan_data, fp, ensure_ascii=False)
-                                        break
+                quote = goods.get(i, 0)
+                # if quote[2] == 0:
+                #     quote = goods.get(i, 4)
+                quotes.append(quote)
+                print(quote)
+            with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
+                data = json.load(fp)
+            data.append({   'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                         + ' ('+ datetime.datetime.today().strftime('%A'),
+                            '1st_quote_post': quotes[0][0],
+                            '1st_quote_stack': quotes[0][1],
+                            '1st_quote_buyout': quotes[0][2],
+                            '2nd_quote_post': quotes[1][0],
+                            '2nd_quote_stack': quotes[1][1],
+                            '2nd_quote_buyout': quotes[1][2],
+                            '3rd_quote_post': quotes[2][0],
+                            '3rd_quote_stack': quotes[2][1],
+                            '3rd_quote_buyout': quotes[2][2],
+                        })
+            with open('scan_history\\' + goods_name + '_history.json', 'w') as fp:
+                json.dump(data, fp, ensure_ascii=False)
+            # goods name = 'ABC'
+            # goods_to_do ={"暗月火酒": [1, 13000, 5, 9000, 7, 1, 1]}
+            # quotes
 
-                            quit_on_shelf = 1
-                        if fd is not None or fd2 is not None:
-                            quit_on_shelf = 1
-                except IndexError:
-                    break
+            # to check if the goods is the on_shelf goods:
+            on_shelf = all_goods_to_do.get(goods_name)[0]
+            if on_shelf == 1:
+                on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
+                on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
+                on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
+                on_shelf_stack = all_goods_to_do.get(goods_name)[6]
+                if 180 > on_shelf_stack >= 100:
+                    on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 0,
+                                                    int(all_goods_to_do.get(goods_name)[6] / 20) + 0) * 20
+                quit_on_shelf =0
+                for i in range(SCAN_ROW):
+                    try:
+                        if quotes[i][1] * quotes[i][0] > random.randrange(2, 3) * on_shelf_sticking_volume:
+                            fd = pyautogui.locateCenterOnScreen('self.png', region=
+                                (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                                , confidence=CONFI)
+                            fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
+                                (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
+                                                                 , confidence=CONFI)
+                            print(fd, fd2)
+                            if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
+                                print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                                move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                                key_2_sent('l')
+                                get_random_wait(300, 600)
+                                if pyautogui.locateCenterOnScreen('list_auction_ok.png',
+                                                                  region=AUCTION_ON_SHOP_OK_BUTTION) is not None:
+                                    move2(AUCTION_BUTTON_ON_SHOP)
+                                    key_2_sent('l')
+                                    input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
+                                    input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
+                                    move2(AUCTION_12_TIME)
+                                    key_2_sent('l')
+                                    move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
+                                    key_2_sent('l')
+                                    get_random_wait(100, 300)
+                                    key_2_sent('[')
+                                    get_random_wait(100, 300)
+                                    biding_price = pyperclip.paste()
+                                    input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
+                                    move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
+                                    get_random_wait(100, 300)
+                                    key_2_sent('l')
+                                # record
+                                    with open('scan_data.json', 'r') as fp:
+                                        scan_data = json.load(fp)
+                                    for record in scan_data:
+                                        if record.get('item_name') == goods_name:
+                                            on_shelf_record = {
+                                                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                                                             + ' ('+ datetime.datetime.today().strftime('%A'),
+                                                                'sticking_volume': on_shelf_sticking_volume,
+                                                                'sticking_volume price': quotes[i][2],
+                                                                'onshelf_price': biding_price,
+                                                                'onshelf_volume': on_shelf_stack * on_shelf_post,
+                                                                'is_onshelf': 'True'
+                                                              }
+                                            record.get('item_onshelf_history').append(on_shelf_record)
+                                            with open('scan_data.json', 'w') as fp:
+                                                json.dump(scan_data, fp, ensure_ascii=False)
+                                            break
 
-                if quit_on_shelf == 1:
-                    break
-        if on_shelf < 3:
-            threshold_price = all_goods_to_do.get(goods_name)[3] * 100 * UNIVERSIAL_DISCOUNT
-            print('threshold_price = ' + str(threshold_price))
-            triger_pct = all_goods_to_do.get(goods_name)[4] / 100
-            print(triger_pct)
-            if triger_pct > 1:
-                triger_pct = 0.7
-            if quotes[0][2] != 0 and quotes[1][2] !=0 and quotes[0][2] / quotes[1][2] <= triger_pct \
-                and quotes[0][2] <= threshold_price:
-                move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
-                get_random_wait(100, 300)
-                key_2_sent('l')
-                get_random_wait(100, 300)
-                move2(BUYOUT_BUTTON_ON_SHOP)
-                for i in range(int(quotes[0][0])):
-                    key_2_sent('l')
-                    get_random_wait(500, 1000)
-                with open('scan_data.json', 'r') as fp:
-                    scan_data = json.load(fp)
-                for record in scan_data:
-                    if record.get('item_name') == goods_name:
-                        buy_out_record = {
-                            'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                         + ' (' + datetime.datetime.today().strftime('%A'),
-                            'threshold_price': threshold_price / 100,
-                            'threshold_pct': triger_pct,
-                            'buyout_price': quotes[0][2],
-                            'buyout_post': quotes[0][0],
-                            'buyout_stack': quotes[0][1],
-                            '2nd_quotes': quotes[1][2]
-                        }
-                        record.get('item_buyout_history').append(buy_out_record)
-                        with open('scan_data.json', 'w') as fp:
-                            json.dump(scan_data, fp, ensure_ascii=False)
+                                quit_on_shelf = 1
+                            if fd is not None or fd2 is not None:
+                                quit_on_shelf = 1
+                    except IndexError:
                         break
 
-        # else to check if the 1st is lower the threshold of snipper
-        # to check if the 1st is lower than % of the threshold
-        # to check if the price is lower than % of the second
-        # if yes ,buyout and record
+                    if quit_on_shelf == 1:
+                        break
+            if on_shelf < 3:
+                threshold_price = all_goods_to_do.get(goods_name)[3] * 100 * UNIVERSIAL_DISCOUNT
+                print('threshold_price = ' + str(threshold_price))
+                triger_pct = all_goods_to_do.get(goods_name)[4] / 100
+                print(triger_pct)
+                if triger_pct > 1:
+                    triger_pct = 0.7
+                if quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct \
+                    and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
+                    move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
+                    get_random_wait(100, 300)
+                    key_2_sent('l')
+                    get_random_wait(100, 300)
+                    move2(BUYOUT_BUTTON_ON_SHOP)
+                    for i in range(int(quotes[0][0])):
+                        key_2_sent('l')
+                        get_random_wait(500, 1000)
+                    with open('scan_data.json', 'r') as fp:
+                        scan_data = json.load(fp)
+                    for record in scan_data:
+                        if record.get('item_name') == goods_name:
+                            buy_out_record = {
+                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                             + ' (' + datetime.datetime.today().strftime('%A'),
+                                'threshold_price': threshold_price / 100,
+                                'threshold_pct': triger_pct,
+                                'buyout_price': quotes[0][2],
+                                'buyout_post': quotes[0][0],
+                                'buyout_stack': quotes[0][1],
+                                '2nd_quotes': quotes[1][2]
+                            }
+                            record.get('item_buyout_history').append(buy_out_record)
+                            with open('scan_data.json', 'w') as fp:
+                                json.dump(scan_data, fp, ensure_ascii=False)
+                            break
+
+            # else to check if the 1st is lower the threshold of snipper
+            # to check if the 1st is lower than % of the threshold
+            # to check if the price is lower than % of the second
+            # if yes ,buyout and record
 
 
     t1 = time.time()
@@ -739,15 +743,20 @@ while True:
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
 
-    LOGOUT_WOW_ICON = (49, 93, 40, 40)
-    key_2_sent('-')
-    while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
-        pass
-    get_random_wait(1200, 1500)
-    key_2_sent('u')
-    get_random_wait(1200, 1500)
-    key_2_sent('o')
-    while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
-        pass
+    if CHANGE_ROLL:
+        LOGOUT_WOW_ICON = (49, 93, 40, 40)
+        key_2_sent('-')
+        while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
+            pass
+        get_random_wait(1200, 1500)
+        key_2_sent('u')
+        get_random_wait(1200, 1500)
+        key_2_sent('o')
+        while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
+            pass
+    else:
+        move2(CLOSE_TSM)
+        get_random_wait(1200, 1500)
+        key_2_sent('l')
 
 

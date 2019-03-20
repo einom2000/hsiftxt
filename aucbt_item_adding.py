@@ -18,6 +18,24 @@ def value_input(display, index):
                 print('此项输入错误！')
     return value
 
+def modify(on_shelf):
+    for name in data[0]:
+        data[1].get(name)[0] = on_shelf
+    temp_show = pd.DataFrame.from_dict(data[1], orient='index', columns=
+    ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
+    temp_show.style.set_properties(**{'text-align': 'right'})
+    print(temp_show.astype(int))
+    print('please press Y to confirm or N to cancel! ')
+
+    while True:
+        if keyboard.is_pressed('y'):
+            with open('target_goods_list.json', 'w') as fp:
+                json.dump(data, fp, ensure_ascii=False)
+            break
+        elif keyboard.is_pressed('n'):
+            print('editing canceled')
+            break
+
 
 t = time.localtime()
 timestamp = time.strftime('%b-%d-%Y_%H%M', t)
@@ -33,10 +51,17 @@ while True:
                                    ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
     shows.style.set_properties(**{'text-align': 'right'})
     print(shows.astype(int))
-    print('please press SPACE to input! or press X to exit')
+    print('please press SPACE to input! or press X to exit, or 5 to set all goods overlooked! or 0 to set all goods to'
+          'snipper')
 
     while True:
         if keyboard.is_pressed('x'):
+            sys.exit()
+        elif keyboard.is_pressed('9'):
+            modify(9)
+            sys.exit()
+        elif keyboard.is_pressed('0'):
+            modify(0)
             sys.exit()
         elif keyboard.is_pressed(' '):
             break
