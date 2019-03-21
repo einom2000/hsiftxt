@@ -385,7 +385,7 @@ X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
 Q_RATIO = 1.85
-PORT = 'COM17'
+PORT = 'COM5'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
 
 # ======= json file structure for scan_data.json ======
