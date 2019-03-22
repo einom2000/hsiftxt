@@ -322,6 +322,7 @@ def anti_afk():
         scan_is_end('000')
 
 
+
 # ======CONSTANTS========
 '''
 G  == target npc
@@ -388,6 +389,7 @@ J_RATIO = 1.85
 Q_RATIO = 1.85
 PORT = 'COM5'
 DESKTOP = (2560, 1440)  # Related with X_RATIO, and Y_RATIO, set in arduino manually
+
 
 # ======= json file structure for scan_data.json ======
 '''
@@ -494,6 +496,7 @@ with open('target_goods_list.json', 'r') as fp:
 with open('scan_data.json', 'r') as fp:
     scan_data = json.load(fp)
 
+
 for item in all_goods_names:
     recorded = False
     for recorded_item in scan_data:
@@ -517,6 +520,7 @@ for item in all_goods_names:
             json.dump([], fp, ensure_ascii=False)
 with open('scan_data.json', 'w') as fp:
     json.dump(scan_data, fp, ensure_ascii=False)
+
 
 # =======INITIALIZATION========
 logging.basicConfig(filename='AUCTION_LOGGING.log',
@@ -717,6 +721,7 @@ while True:
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
                     move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                     engine.say('found low price, and goting to buy them out')
+                    engine.runAndWait
                     get_random_wait(100, 300)
                     key_2_sent('l')
                     get_random_wait(100, 300)
@@ -747,6 +752,7 @@ while True:
             # to check if the 1st is lower than % of the threshold
             # to check if the price is lower than % of the second
             # if yes ,buyout and record
+
 
     t1 = time.time()
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])

@@ -14,6 +14,7 @@ import pyperclip
 # from matplotlib import pyplot as plt
 import json
 import datetime
+import pyttsx3
 
 #1280*720
 
@@ -108,6 +109,7 @@ def enumhandler(hwnd, lParam):
             # print(rect[2] - rect[0], rect[3] - rect[1])
             # print(rect)
 
+
 def process_img(image):
     img = Image.open('ocr_files\\' + image)
     img = PIL.ImageOps.invert(img)
@@ -118,18 +120,17 @@ def process_img(image):
     return img
 
 
-
 class Item():
     def __init__(self):
         self.item_post = FIRST_ROW_POST
         self.item_stack = FIRST_ROW_STACK
         self.item_buyout = FIRST_ROW_BUYOUT
 
-    def get(self, item_row , adjust):
+    def get(self, item_row, adjust):
         ####   post   ####
-        pyautogui.screenshot('ocr_files\\' + str(item_row)+'_row_post.jpg',
+        pyautogui.screenshot('ocr_files\\' + str(item_row) + '_row_post.jpg',
                              region=(np.add(self.item_post, (0, item_row * 19 + adjust, 0, 0))))
-        img = process_img(str(item_row)+'_row_post.jpg')
+        img = process_img(str(item_row) + '_row_post.jpg')
         # str_tmp = pytesseract.image_to_string(img, config='--psm 6')
         str_tmp = pytesseract.image_to_string(img, lang='eng',
                                               config='--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789')
@@ -146,9 +147,9 @@ class Item():
         except IndexError:
             post_num = 1
         ####   stack   ####
-        pyautogui.screenshot('ocr_files\\' + str(item_row)+'_row_stack.jpg',
+        pyautogui.screenshot('ocr_files\\' + str(item_row) + '_row_stack.jpg',
                              region=(np.add(self.item_stack, (0, item_row * 19 + adjust, 0, 0))))
-        img = process_img(str(item_row)+'_row_stack.jpg')
+        img = process_img(str(item_row) + '_row_stack.jpg')
         str_tmp = pytesseract.image_to_string(img, config='--psm 6')
         str_tmp = str_tmp.replace('l', '1')
         str_tmp = str_tmp.replace('g', '9')
@@ -161,9 +162,9 @@ class Item():
         except IndexError:
             stack_num = 0
         ####   buyout   ####
-        pyautogui.screenshot('ocr_files\\' + str(item_row)+'_row_buyout.jpg',
+        pyautogui.screenshot('ocr_files\\' + str(item_row) + '_row_buyout.jpg',
                              region=(np.add(self.item_buyout, (0, item_row * 19 + adjust, 0, 0))))
-        img = process_img(str(item_row)+'_row_buyout.jpg')
+        img = process_img(str(item_row) + '_row_buyout.jpg')
         str_tmp = pytesseract.image_to_string(img, config='--psm 6')
         str_tmp = str_tmp.replace('l', '1')
         str_tmp = str_tmp.replace(' ', '')
@@ -208,6 +209,7 @@ class Item():
         buyout_price = copper + silver * 100 + gold * 10000
         print(total_tmp)
         return post_num, stack_num, buyout_price
+
 
 def move2(tar_position):
     cur_position = pyautogui.position()
@@ -258,7 +260,8 @@ def scan_is_end(scaned_name):
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
-
+        engine.say('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
+        engine.runAndWait()
         if time.time() - ct >= 60 and tried < 2:
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
                 key_2_sent('?')
@@ -284,7 +287,6 @@ def scan_is_end(scaned_name):
             tried = 0
 
 
-
 def input_box(positon, scr):
     move2(positon)
     get_random_wait(100, 200)
@@ -297,6 +299,7 @@ def input_box(positon, scr):
     get_random_wait(100, 200)
     key_2_sent('o')
     get_random_wait(100, 200)
+
 
 def anti_afk():
     global t
@@ -347,15 +350,15 @@ CONFI = 0.9
 ADJ = -2
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
-CLOSE_TSM_ICON =(897, 112, 40, 40)
-RELOAD_SUCCESS =(1036, 709, 180, 50)
+CLOSE_TSM_ICON = (897, 112, 40, 40)
+RELOAD_SUCCESS = (1036, 709, 180, 50)
 HISTORY_BUTTON_ON_SHOP = (641, 238 + ADJ)
 BUY_SEARCH = (651, 161 + ADJ)
 BUY_SEARCH_BACK = (217, 178 + ADJ)
 ITEM_SEARCH = (863, 220 + ADJ)
 SORT_RESULT = (867, 252 + ADJ)
 FIRST_ROW_POST = (446, 267 + ADJ, 36, 14)
-FIRST_ROW_STACK  = (492, 267 + ADJ, 39, 14)
+FIRST_ROW_STACK = (492, 267 + ADJ, 39, 14)
 FIRST_ROW_BUYOUT = (815, 268 + ADJ, 89, 14)
 FULL_SCAN_BUTTON = (343, 626 + ADJ)
 INPUT_BOX = (377, 220 + ADJ)
@@ -368,7 +371,7 @@ AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
 AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
 AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
 AUCTION_ON_SHOP_OK_BUTTION = (515, 610 + ADJ, 115, 40)
-BUYOUT_ON_SHOP_OK_BUTTION =(735, 610 + ADJ, 115, 40)
+BUYOUT_ON_SHOP_OK_BUTTION = (735, 610 + ADJ, 115, 40)
 ANTI_AFK = 480
 SPEECH_BOX = (39, 610, 60, 40)
 SCAN_ROW = 5
@@ -398,7 +401,7 @@ in file target_goods_list.json
                                      '海妖花粉': [0, 99999, 100, 2000, 0, 3, 100],
                                      '星光苔': [0, 99999, 100, 1000, 0, 3, 100]
     },
-  
+
 ]
 
 '''
@@ -481,7 +484,7 @@ in file '../scan_history/____history.json:
 
 with open('target_goods_list.json', 'r') as fp:
     target_goods_list = json.load(fp)
-    all_goods_names = target_goods_list[0]               # the botting goods name list
+    all_goods_names = target_goods_list[0]  # the botting goods name list
     all_goods_to_do = target_goods_list[1]
     # [on_shelf?, threshold_on_shelf_price(lowest), sticking_volume, snip_threshold_price(highest),
     #  ship_threshold_price_percentage(first 3 rows)]
@@ -531,13 +534,16 @@ logging.info('Serial opened and program starts!')
 win32gui.EnumWindows(enumhandler, None)
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
-
+engine = pyttsx3.init()
 
 # ===== wait to start ====
 print('press F10 to start..')
+engine.say('press F ten to start')
+engine.runAndWait()
 while not keyboard.is_pressed('F10'):
     pass
-winsound.Beep(1000, 200)
+engine.say('program has started')
+engine.runAndWait()
 
 # ====== start tsm ========
 t = time.time()
@@ -566,6 +572,9 @@ while True:
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    engine.runAndWait()
     print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
@@ -576,6 +585,9 @@ while True:
         anti_afk()
 
         if all_goods_to_do.get(goods_name)[0] != 9:
+
+            engine.say('scaning ' + goods_name)
+            engine.runAndWait()
 
             input_box(INPUT_BOX, goods_name + '/exact')
 
@@ -597,18 +609,18 @@ while True:
                 print(quote)
             with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
                 data = json.load(fp)
-            data.append({   'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                         + ' ('+ datetime.datetime.today().strftime('%A'),
-                            '1st_quote_post': quotes[0][0],
-                            '1st_quote_stack': quotes[0][1],
-                            '1st_quote_buyout': quotes[0][2],
-                            '2nd_quote_post': quotes[1][0],
-                            '2nd_quote_stack': quotes[1][1],
-                            '2nd_quote_buyout': quotes[1][2],
-                            '3rd_quote_post': quotes[2][0],
-                            '3rd_quote_stack': quotes[2][1],
-                            '3rd_quote_buyout': quotes[2][2],
-                        })
+            data.append({'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                      + ' (' + datetime.datetime.today().strftime('%A'),
+                         '1st_quote_post': quotes[0][0],
+                         '1st_quote_stack': quotes[0][1],
+                         '1st_quote_buyout': quotes[0][2],
+                         '2nd_quote_post': quotes[1][0],
+                         '2nd_quote_stack': quotes[1][1],
+                         '2nd_quote_buyout': quotes[1][2],
+                         '3rd_quote_post': quotes[2][0],
+                         '3rd_quote_stack': quotes[2][1],
+                         '3rd_quote_buyout': quotes[2][2],
+                         })
             with open('scan_history\\' + goods_name + '_history.json', 'w') as fp:
                 json.dump(data, fp, ensure_ascii=False)
             # goods name = 'ABC'
@@ -625,19 +637,28 @@ while True:
                 if 180 > on_shelf_stack >= 100:
                     on_shelf_stack = random.randint(int(all_goods_to_do.get(goods_name)[6] / 20) - 0,
                                                     int(all_goods_to_do.get(goods_name)[6] / 20) + 0) * 20
-                quit_on_shelf =0
+                quit_on_shelf = 0
                 for i in range(SCAN_ROW):
                     try:
-                        if quotes[i][1] * quotes[i][0] > random.randrange(2, 3) * on_shelf_sticking_volume:
+                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
-                                (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                                , confidence=CONFI)
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
+
+                            im = pyautogui.screenshot(region=
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5))
+                            im.save('temp_sc.png')
+                            engine.say('the sellers post image captured')
+                            engine.runAndWait()
                             fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
-                                (SELLER[0]-10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                                 , confidence=CONFI)
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
                             print(fd, fd2)
                             if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                                 print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                                engine.say('list to the front')
+                                engine.runAndWait()
                                 move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                                 key_2_sent('l')
                                 get_random_wait(300, 600)
@@ -659,20 +680,20 @@ while True:
                                     move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
                                     get_random_wait(100, 300)
                                     key_2_sent('l')
-                                # record
+                                    # record
                                     with open('scan_data.json', 'r') as fp:
                                         scan_data = json.load(fp)
                                     for record in scan_data:
                                         if record.get('item_name') == goods_name:
                                             on_shelf_record = {
-                                                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                                                             + ' ('+ datetime.datetime.today().strftime('%A'),
-                                                                'sticking_volume': on_shelf_sticking_volume,
-                                                                'sticking_volume price': quotes[i][2],
-                                                                'onshelf_price': biding_price,
-                                                                'onshelf_volume': on_shelf_stack * on_shelf_post,
-                                                                'is_onshelf': 'True'
-                                                              }
+                                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                                             + ' (' + datetime.datetime.today().strftime('%A'),
+                                                'sticking_volume': on_shelf_sticking_volume,
+                                                'sticking_volume price': quotes[i][2],
+                                                'onshelf_price': biding_price,
+                                                'onshelf_volume': on_shelf_stack * on_shelf_post,
+                                                'is_onshelf': 'True'
+                                            }
                                             record.get('item_onshelf_history').append(on_shelf_record)
                                             with open('scan_data.json', 'w') as fp:
                                                 json.dump(scan_data, fp, ensure_ascii=False)
@@ -694,8 +715,10 @@ while True:
                 if triger_pct > 1:
                     triger_pct = 0.7
                 if quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct \
-                    and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
+                        and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
                     move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
+                    engine.say('found low price, and goting to buy them out')
+                    engine.runAndWait
                     get_random_wait(100, 300)
                     key_2_sent('l')
                     get_random_wait(100, 300)
@@ -731,7 +754,9 @@ while True:
     t1 = time.time()
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
-        print('change role and rescan after ' + str(int(wait-(time.time() - t1))) + ' seconds.')
+        print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
+        engine.say('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
+        engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
             get_random_wait(3000, 6000)
             key_2_sent('f')
@@ -739,6 +764,9 @@ while True:
             get_random_wait(200, 400)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+        engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+              str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+        engine.runAndWait()
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
