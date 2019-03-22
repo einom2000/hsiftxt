@@ -14,7 +14,7 @@ import pyperclip
 # from matplotlib import pyplot as plt
 import json
 import datetime
-
+import pyttsx3
 
 # 1280*720
 
@@ -263,7 +263,8 @@ def scan_is_end(scaned_name):
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
-
+        engine.say('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
+        engine.runAndWait()
         if time.time() - ct >= 60 and tried < 2:
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
                 key_2_sent('?')
@@ -347,7 +348,7 @@ CHANGE_ROLL = True
 MAX_MONEY = 1000.00
 UNIVERSIAL_DISCOUNT = 1
 FISHOIL_MAX = 8000
-CONFI = 0.78
+CONFI = 0.9
 ADJ = -1
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -532,13 +533,16 @@ logging.info('Serial opened and program starts!')
 win32gui.EnumWindows(enumhandler, None)
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
+engine = pyttsx3.init()
 
 # ===== wait to start ====
 print('press F10 to start..')
-winsound.Beep(2000, 2000)
+engine.say('press F ten to start')
+engine.runAndWait()
 while not keyboard.is_pressed('F10'):
     pass
-winsound.Beep(1000, 200)
+engine.say('program has started')
+engine.runAndWait()
 
 # ====== start tsm ========
 t = time.time()
@@ -567,6 +571,9 @@ while True:
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    engine.runAndWait()
     print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
@@ -577,6 +584,9 @@ while True:
         anti_afk()
 
         if all_goods_to_do.get(goods_name)[0] != 9:
+
+            engine.say('scaning ' + goods_name)
+            engine.runAndWait()
 
             input_box(INPUT_BOX, goods_name + '/exact')
 
@@ -638,13 +648,16 @@ while True:
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 5))
                             im.save('temp_sc.png')
+                            engine.say('the sellers post image captured')
+                            engine.runAndWait()
                             fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
                             print(fd, fd2)
                             if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                                 print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
-                                winsound.Beep(5000, 200)
+                                engine.say('list to the front')
+                                engine.runAndWait()
                                 move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                                 key_2_sent('l')
                                 get_random_wait(300, 600)
@@ -703,6 +716,7 @@ while True:
                 if quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct \
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
                     move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
+                    engine.say('found low price, and goting to buy them out')
                     get_random_wait(100, 300)
                     key_2_sent('l')
                     get_random_wait(100, 300)
@@ -738,6 +752,8 @@ while True:
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
+        engine.say('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
+        engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
             get_random_wait(13000, 16000)
             key_2_sent('f')
@@ -745,6 +761,9 @@ while True:
             get_random_wait(200, 400)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+        engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+              str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+        engine.runAndWait()
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
