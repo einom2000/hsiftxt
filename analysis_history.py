@@ -147,5 +147,5 @@ axes.unicode_minus:False
 font.family : sans-serif
 font.sans-serif : SimHei, 
 from matplotlib.font_manager import _rebuild
-rebuild()
+_rebuild()
 '''

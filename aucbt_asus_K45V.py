@@ -347,8 +347,8 @@ CHANGE_ROLL = True
 MAX_MONEY = 1000.00
 UNIVERSIAL_DISCOUNT = 1
 FISHOIL_MAX = 8000
-CONFI = 0.9
-ADJ = -2
+CONFI = 0.78
+ADJ = -1
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
 CLOSE_TSM_ICON = (897, 112, 40, 40)
@@ -481,7 +481,7 @@ in file '../scan_history/____history.json:
                         }]
 
 '''
-
+time.sleep(5)
 with open('target_goods_list.json', 'r') as fp:
     target_goods_list = json.load(fp)
     all_goods_names = target_goods_list[0]  # the botting goods name list
@@ -535,6 +535,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files (x86)\Tesseract-OCR\t
 
 # ===== wait to start ====
 print('press F10 to start..')
+winsound.Beep(2000, 2000)
 while not keyboard.is_pressed('F10'):
     pass
 winsound.Beep(1000, 200)
@@ -628,16 +629,22 @@ while True:
                 quit_on_shelf = 0
                 for i in range(SCAN_ROW):
                     try:
-                        if quotes[i][1] * quotes[i][0] > random.randrange(2, 3) * on_shelf_sticking_volume:
+                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
-                            (SELLER[0] - 10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                                , confidence=CONFI)
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
+
+                            im = pyautogui.screenshot(region=
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5))
+                            im.save('temp_sc.png')
                             fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
-                            (SELLER[0] - 10, FIRST_ROW_POST[1] + i * 19 - 5, SELLER[1] + 10, FIRST_ROW_POST[3] + 5)
-                                                                 , confidence=CONFI)
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
                             print(fd, fd2)
                             if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                                 print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
+                                winsound.Beep(5000, 200)
                                 move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                                 key_2_sent('l')
                                 get_random_wait(300, 600)
@@ -732,7 +739,7 @@ while True:
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(3000, 6000)
+            get_random_wait(13000, 16000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)

@@ -51,7 +51,7 @@ while True:
                                    ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
     shows.style.set_properties(**{'text-align': 'right'})
     print(shows.astype(int))
-    print('please press SPACE to input! or press X to exit, or 5 to set all goods overlooked! or 0 to set all goods to'
+    print('please press SPACE to input! or press X to exit, or 9 to set all goods overlooked! or 0 to set all goods to'
           'snipper')
 
     while True:
