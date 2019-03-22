@@ -541,11 +541,11 @@ engine = pyttsx3.init()
 
 # ===== wait to start ====
 print('press F10 to start..')
-engine.say('press F ten to start')
+engine.say('请按F十开始')
 engine.runAndWait()
 while not keyboard.is_pressed('F10'):
     pass
-engine.say('program has started')
+engine.say('程序开始')
 engine.runAndWait()
 
 # ====== start tsm ========
@@ -575,7 +575,7 @@ while True:
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-    engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+    engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
                str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
     engine.runAndWait()
     print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
@@ -589,7 +589,7 @@ while True:
 
         if all_goods_to_do.get(goods_name)[0] != 9:
 
-            engine.say('scaning ' + goods_name)
+            engine.say('扫描 ' + goods_name)
             engine.runAndWait()
 
             input_box(INPUT_BOX, goods_name + '/exact')
@@ -648,19 +648,19 @@ while True:
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
 
-                            im = pyautogui.screenshot(region=
-                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
-                                             FIRST_ROW_POST[3] * (i + 1) + 5))
-                            im.save('temp_sc.png')
-                            engine.say('the sellers post image captured')
-                            engine.runAndWait()
+                            # im = pyautogui.screenshot(region=
+                            #                 (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
+                            #                  FIRST_ROW_POST[3] * (i + 1) + 5))
+                            # im.save('temp_sc.png')
+                            # engine.say('the sellers post image captured')
+                            # engine.runAndWait()
                             fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
                             print(fd, fd2)
                             if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                                 print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
-                                engine.say('list to the front')
+                                engine.say('竞争牌价到前位')
                                 engine.runAndWait()
                                 move2((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
                                 key_2_sent('l')
@@ -720,7 +720,7 @@ while True:
                 if quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct \
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
                     move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
-                    engine.say('found low price, and goting to buy them out')
+                    engine.say('找到低价格，准备买入')
                     engine.runAndWait
                     get_random_wait(100, 300)
                     key_2_sent('l')
@@ -767,7 +767,7 @@ while True:
             get_random_wait(200, 400)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-        engine.say('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
+        engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
         engine.runAndWait()
 
