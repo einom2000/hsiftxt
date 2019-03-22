@@ -645,18 +645,18 @@ while True:
                     try:
                         if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
-                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
-                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 10), confidence=CONFI)
 
-                            # im = pyautogui.screenshot(region=
-                            #                 (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
-                            #                  FIRST_ROW_POST[3] * (i + 1) + 5))
-                            # im.save('temp_sc.png')
-                            # engine.say('the sellers post image captured')
-                            # engine.runAndWait()
-                            fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
+                            im = pyautogui.screenshot(region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
-                                             FIRST_ROW_POST[3] * (i + 1) + 5), confidence=CONFI)
+                                             FIRST_ROW_POST[3] * (i + 1) + 5))
+                            im.save('temp_sc.png')
+                            engine.say('the sellers post image captured')
+                            engine.runAndWait()
+                            fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
+                                             FIRST_ROW_POST[3] * (i + 1) + 10), confidence=CONFI)
                             print(fd, fd2)
                             if fd is None and fd2 is None and quotes[i][2] >= on_shelf_lowest * 100:
                                 print((SELLER[0], FIRST_ROW_POST[1] + i * 19 + 5))
@@ -784,6 +784,8 @@ while True:
         get_random_wait(1200, 1500)
         key_2_sent('o')
         while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
+            get_random_wait(2000, 5000)
+            key_2_sent('o')
             pass
     else:
         move2(CLOSE_TSM)
