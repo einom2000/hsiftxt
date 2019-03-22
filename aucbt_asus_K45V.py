@@ -263,7 +263,7 @@ def scan_is_end(scaned_name):
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
-        engine.say('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
+        engine.say('等待扫描结束, 或在' + str(int(60 - time.time() + ct)) + '秒后重新扫描')
         engine.runAndWait()
         if time.time() - ct >= 60 and tried < 2:
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
@@ -652,7 +652,7 @@ while True:
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 5))
                             im.save('temp_sc.png')
-                            engine.say('the sellers post image captured')
+                            engine.say('上架货物价格分析中')
                             engine.runAndWait()
                             fd2 = pyautogui.locateCenterOnScreen('self2.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
@@ -761,7 +761,7 @@ while True:
         engine.say('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
         engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(13000, 16000)
+            get_random_wait(6000, 8000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)
@@ -784,7 +784,7 @@ while True:
         get_random_wait(1200, 1500)
         key_2_sent('o')
         while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
-            get_random_wait(2000, 5000)
+            get_random_wait(20000, 30000)
             key_2_sent('o')
             pass
     else:
