@@ -284,6 +284,13 @@ def scan_is_end(scaned_name):
             move2(CLOSE_TSM)
             key_2_sent('l')
             get_random_wait(1200, 1500)
+            if pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is not None:
+                get_random_wait(1200, 1500)
+                key_2_sent('o')
+                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
+                    get_random_wait(20000, 30000)
+                    key_2_sent('o')
+                    pass
             open_tsm()
             if scaned_name != '000':
                 input_box(INPUT_BOX, scaned_name + '/exact')
@@ -351,6 +358,7 @@ UNIVERSIAL_DISCOUNT = 1
 FISHOIL_MAX = 8000
 CONFI = 0.9
 ADJ = -1
+LOGOUT_WOW_ICON = (49, 93, 40, 40)
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
 CLOSE_TSM_ICON = (897, 112, 40, 40)
@@ -555,9 +563,9 @@ logging.info('ready to start, tsm opened')
 
 fish_oil_count = 0
 
-while True:
+open_tsm()
 
-    open_tsm()
+while True:
 
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
@@ -579,6 +587,7 @@ while True:
                str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
     engine.runAndWait()
     print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
+
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
     # anti AFK
@@ -758,7 +767,7 @@ while True:
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
-        engine.say('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
+        engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新扫描')
         engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
             get_random_wait(6000, 8000)
@@ -775,7 +784,6 @@ while True:
         sys.exit()
 
     if CHANGE_ROLL:
-        LOGOUT_WOW_ICON = (49, 93, 40, 40)
         key_2_sent('-')
         while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
             pass
