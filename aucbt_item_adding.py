@@ -3,6 +3,8 @@ import pandas as pd
 import keyboard, sys
 import shutil
 import time
+from colorama import init, Fore, Back, Style
+
 
 def value_input(display, index):
     correct = False
@@ -36,7 +38,7 @@ def modify(on_shelf):
             print('editing canceled')
             break
 
-
+init()
 t = time.localtime()
 timestamp = time.strftime('%b-%d-%Y_%H%M', t)
 BACKUP_NAME = ('backup_files\\' + "target_goods_list_BACKUP_" + timestamp)
@@ -72,14 +74,26 @@ while True:
         name = input('增加商品名称: ').replace(' ', '')
         if name !='':
             break
+    if name in goods_name:
+        originals = goods_to_do.get(name).copy()
+    else:
+        originals = ['无数值', '无数值', '无数值', '无数值', '无数值', '无数值', '无数值']
 
-    is_on_shelf = value_input('是否要上架 1 / 0: ', 0)
-    lowest = value_input('最低的售价: ', 1)
-    stack = value_input('紧盯的数量: ', 2)
-    highest = value_input('扫货最高价: ', 3)
-    percent = value_input('扫货价差比: ', 4)
-    on_post = value_input('上架的堆数: ', 5)
-    on_stack = value_input('每堆的数量: ', 6)
+    print(Fore.YELLOW + Style.DIM + '%s-原来上架指数是：%s' %(name, originals[0]))
+    is_on_shelf = value_input(Fore.RED + Style.BRIGHT + '是否要上架 1 / 0: ', 0)
+    print(Fore.YELLOW + Style.DIM + '%s-原来最低的售价是：%d' % (name, originals[1]))
+    lowest = value_input(Fore.RED + Style.BRIGHT + '新的最低售价: ', 1)
+    print(Fore.YELLOW + Style.DIM + '%s-原来紧盯的数量是：%d' % (name, originals[2]))
+    stack = value_input(Fore.RED + Style.BRIGHT + '新的紧盯的数量: ', 2)
+    print(Fore.YELLOW + Style.DIM + '%s-原来扫货最高价是：%d' % (name, originals[3]))
+    highest = value_input(Fore.RED + Style.BRIGHT + '新的扫货最高价: ', 3)
+    print(Fore.YELLOW + Style.DIM + '%s-原来扫货价差比是：%d' % (name, originals[4]))
+    percent = value_input(Fore.RED + Style.BRIGHT + '新的扫货价差比: ', 4)
+    print(Fore.YELLOW + Style.DIM + '%s-原来上架的堆数是：%d' % (name, originals[5]))
+    on_post = value_input(Fore.RED + Style.BRIGHT + '新的上架的堆数: ', 5)
+    print(Fore.YELLOW + Style.DIM + '%s-原来每堆的数量是：%d' % (name, originals[6]))
+    on_stack = value_input(Fore.RED + Style.BRIGHT + '新的每堆的数量: ', 6)
+    print(Style.RESET_ALL)
 
     tmp = {name: [is_on_shelf, lowest, stack, highest, percent, on_post, on_stack]}
     temp_show = pd.DataFrame.from_dict(tmp, orient='index', columns=

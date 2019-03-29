@@ -381,9 +381,9 @@ def scan_is_end(scaned_name):
                 key_2_sent('o')
                 while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) \
                        is None:
-                     get_random_wait(20000, 30000)
-                     key_2_sent('o')
-                     pass
+                    get_random_wait(20000, 30000)
+                    key_2_sent('o')
+                    pass
             key_2_sent('k')  # jump
             open_tsm()
             if scaned_name != '000':
