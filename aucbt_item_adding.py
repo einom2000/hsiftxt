@@ -70,11 +70,14 @@ def calc_lowest_average(goodsname, lastday):
                 quotelist.append(int(history_data.get('2nd_quote_buyout')))
             if int(history_data.get('3rd_quote_buyout')) != 0:
                 quotelist.append(int(history_data.get('3rd_quote_buyout')))
+        if len(quotelist) != 0:
             sum = 0
             for price in quotelist:
                 sum += price
             past_week_average_quote.append(int(sum / len(quotelist)))
-    print(len(past_week_average_quote), goodsname)
+        else:
+            past_week_average_quote =[]
+
     if len(past_week_average_quote) >= 3:
         lowest_three = []
         for i in range(3):
