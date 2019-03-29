@@ -263,7 +263,14 @@ def close_tsm():
 
 
 def is_off_line():
-    pass
+    start_t = time.time()
+    found = None
+    while time.time() - start_t <= 60:
+        found = pyautogui.locateCenterOnScreen('off_line_logo.png', region=OFF_LINE_LOGO_REGION,
+                                               grayscale=False, confidence=0.9)
+        if found is not None:
+            break
+    return found
 
 
 def log_in(account):
@@ -294,7 +301,7 @@ def log_in(account):
     time.sleep(1)
 
     while True:
-        found = pyautogui.locateCenterOnScreen('login_png', region=(450, 850, 880, 1000),
+        found = pyautogui.locateCenterOnScreen('bt_logged_in.png', region=BT_LOGGED_IN_REGION,
                                                grayscale=False, confidence=0.9)
         if found is not None:
             x = found[0]
@@ -354,18 +361,30 @@ def scan_is_end(scaned_name):
             ct = time.time()
         elif tried >= 2:
             close_tsm()
-            # check if it it offline:
-                # close wow window
-                # restart bt
-                # login
-            if pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is not None:
+            if is_off_line() is not None:
+                kill_process('Wow.exe', '魔兽世界')
+                time.sleep(10)
+                log_in(log_in_data)
+                while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
+                    pass
+                get_random_wait(1200, 1500)
+                key_2_sent('u')
                 get_random_wait(1200, 1500)
                 key_2_sent('o')
-                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) \
-                        is None:
+                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS,
+                                                     confidence=CONFI) is None:
                     get_random_wait(20000, 30000)
                     key_2_sent('o')
                     pass
+
+            elif pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is not None:
+                get_random_wait(1200, 1500)
+                key_2_sent('o')
+                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) \
+                       is None:
+                     get_random_wait(20000, 30000)
+                     key_2_sent('o')
+                     pass
             key_2_sent('k')  # jump
             open_tsm()
             if scaned_name != '000':
@@ -546,6 +565,8 @@ SCAN_PERIOD = (350, 450)
 END_TIME = [random.randint(2, 2), random.randint(10, 30)]
 SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
+BT_LOGGED_IN_REGION = (250, 650, 350, 200)
+OFF_LINE_LOGO_REGION = (10, 30, 250, 150)
 X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
@@ -932,7 +953,7 @@ while True:
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
                     move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                     engine.say('找到低价格，准备买入')
-                    engine.runAndWait
+                    engine.runAndWait()
                     get_random_wait(100, 300)
                     key_2_sent('l')
                     get_random_wait(100, 300)
