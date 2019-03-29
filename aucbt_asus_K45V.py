@@ -17,6 +17,7 @@ import datetime
 import pyttsx3
 from win32api import GetKeyState
 from win32con import VK_CAPITAL
+import winshell, psutil
 
 # 1280*720
 
@@ -253,17 +254,64 @@ def open_tsm():
         key_2_sent('l')
     scan_is_end('000')
 
+
 def close_tsm():
     move2(CLOSE_TSM)
     key_2_sent('l')
     get_random_wait(1200, 1500)
     pass
 
+
 def is_off_line():
     pass
 
-def log_in():
-    pass
+
+def log_in(account):
+    # open in battle net login window
+    loginbt = LoginWindow(bn_target, '暴雪战网登录', account[0], account[1])
+    logged_in = False
+    logging_time = time.time()
+    bt_window = 0
+    while not logged_in:
+        loginbt.runbnet()
+        bn_hwnd = loginbt.findWindow()
+        loginbt.login()
+        # wait for the battle net window shows up
+        time_login = time.time()
+        while time.time() - time_login <= 50:
+            bt_window = win32gui.FindWindow(None, '暴雪战网')
+            if bt_window > 0:
+                logged_in = True
+                break
+        if not logged_in:
+            kill_process('Battle.net.exe', '暴雪战网登录')
+        if time.time() - logging_time >= 600:
+            # after 10 minutes failure, terminate program
+            sys.exit()
+    win32gui.SetForegroundWindow(bt_window)
+    win32gui.MoveWindow(bt_window, 0, 0, 1280, 820, 1)
+    bt_rec = win32gui.GetWindowRect(bt_window)
+    time.sleep(1)
+
+    while True:
+        found = pyautogui.locateCenterOnScreen('login_png', region=(450, 850, 880, 1000),
+                                               grayscale=False, confidence=0.9)
+        if found is not None:
+            x = found[0]
+            y = found[1]
+            break
+    pyautogui.moveTo(x, y, 1,  pyautogui.easeInQuad)
+    pyautogui.click(x, y)
+
+    # waiting for wow running
+    wow_is_running = False
+    wow_window = 0
+    while not wow_is_running:
+        wow_window = win32gui.FindWindow(None, '魔兽世界')
+        if wow_window > 0:
+            wow_is_running = True
+    time.sleep(3)
+
 
 def select_all_and_paste():
     get_random_wait(100, 200)
@@ -412,7 +460,7 @@ class LoginWindow:
 
     def login(self):
         # to log in id
-        for i in range(4): # orginal 4
+        for i in range(4):  # orginal 4
             pyautogui.press('tab')
             time.sleep(random.randint(3, 5) / 10)
         # clear box
@@ -599,6 +647,8 @@ in file '../scan_history/____history.json:
                         }]
 
 '''
+
+# -------------------data file initialization-------------------------------------
 time.sleep(5)
 with open('target_goods_list.json', 'r') as fp:
     target_goods_list = json.load(fp)
@@ -636,6 +686,12 @@ for item in all_goods_names:
 with open('scan_data.json', 'w') as fp:
     json.dump(scan_data, fp, ensure_ascii=False)
 
+acc_f = open("account.txt", "r")
+acc_lines = acc_f.readlines()
+account_id = acc_lines[0][:-1]
+account_psd = acc_lines[1][:-1]
+log_in_data = [account_id, account_psd]
+bn_target = winshell.shortcut(os.path.join(winshell.desktop(), "暴雪战网.lnk")).path
 
 # =======INITIALIZATION========
 logging.basicConfig(filename='AUCTION_LOGGING.log',
