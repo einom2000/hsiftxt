@@ -262,6 +262,9 @@ def close_tsm():
 def is_off_line():
     pass
 
+def log_in():
+    pass
+
 def select_all_and_paste():
     get_random_wait(100, 200)
     key_2_sent('l')
@@ -343,17 +346,18 @@ def anti_afk():
     if time.time() - t >= ANTI_AFK:
         key_2_sent('k')
         get_random_wait(1000, 2000)
-        t = time.time()
-        key_2_sent('h')
-        while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
-            pass
-        open_tsm()
-        action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
-        for act in action_list:
-            move2(act)
-            key_2_sent('l')
-        logging.info('wow reloaded, tsm opened')
-        scan_is_end('000')
+        # t = time.time()
+        # key_2_sent('h')
+        # while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
+        #     pass
+        # close_tsm()
+        # open_tsm()
+        # action_list = [BUY_SEARCH, HISTORY_BUTTON_ON_SHOP]
+        # for act in action_list:
+        #     move2(act)
+        #     key_2_sent('l')
+        # logging.info('wow reloaded, tsm opened')
+        # scan_is_end('000')
 
 
 while GetKeyState(VK_CAPITAL):
@@ -813,10 +817,10 @@ while True:
                                             with open('scan_data.json', 'w') as fp:
                                                 json.dump(scan_data, fp, ensure_ascii=False)
                                             break
-
+                                # special for the '暗月火酒'
                                 elif goods_name == '暗月火酒' and pyautogui.locateCenterOnScreen('list_auction_ok.png',
                                                                   region=AUCTION_ON_SHOP_OK_BUTTON) is None:
-                                    move2((SELLER[0], FIRST_ROW_POST[1] + (i+1) * 19 + 5))
+                                    move2((SELLER[0], FIRST_ROW_POST[1] + (i + 1) * 19 + 5))
                                     key_2_sent('l')
                                     get_random_wait(300, 600)
                                     move2(AUCTION_BUTTON_ON_SHOP)
@@ -904,15 +908,14 @@ while True:
             # to check if the price is lower than % of the second
             # if yes ,buyout and record
 
-
     t1 = time.time()
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
-        # engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新扫描')
-        # engine.runAndWait()
+        engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新循环任务')
+        engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(8000, 9000)
+            get_random_wait(3000, 4000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)
@@ -937,9 +940,6 @@ while True:
             get_random_wait(20000, 30000)
             key_2_sent('o')
             pass
-    # else:
-    #     move2(CLOSE_TSM)
-    #     get_random_wait(1200, 1500)
-    #     key_2_sent('l')
+
 
 
