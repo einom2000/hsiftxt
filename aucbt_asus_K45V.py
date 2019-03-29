@@ -251,6 +251,27 @@ def open_tsm():
         key_2_sent('l')
     scan_is_end('000')
 
+def close_tsm():
+    move2(CLOSE_TSM)
+    key_2_sent('l')
+    get_random_wait(1200, 1500)
+    pass
+
+def is_off_line():
+    pass
+
+def select_all_and_paste():
+    get_random_wait(100, 200)
+    key_2_sent('l')
+    get_random_wait(100, 200)
+    key_2_sent(']')   # ctrl-a
+    get_random_wait(100, 200)
+    key_2_sent(']')
+    get_random_wait(300, 500)
+    key_2_sent('>')   # ctrl-v
+    get_random_wait(100, 200)
+    key_2_sent('o')   # enter
+    get_random_wait(100, 200)
 
 def scan_is_end(scaned_name):
     found = False
@@ -269,28 +290,30 @@ def scan_is_end(scaned_name):
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
                 key_2_sent('?')
                 get_random_wait(1100, 1200)
-            move2(INPUT_BOX)
+            move2(AUCTION_ON_SHOP_STOP_SCAN_BUTTON)
             key_2_sent('l')
             get_random_wait(1100, 1200)
-            key_2_sent('o')
+            move2(INPUT_BOX)
+            select_all_and_paste()
             get_random_wait(1100, 1200)
-            key_2_sent('k')
+            # key_2_sent('k')  # jump
             tried += 1
             ct = time.time()
         elif tried >= 2:
-            if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
-                key_2_sent('?')
-                get_random_wait(1100, 1200)
-            move2(CLOSE_TSM)
-            key_2_sent('l')
-            get_random_wait(1200, 1500)
+            close_tsm()
+            # check if it it offline:
+                # close wow window
+                # restart bt
+                # login
             if pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is not None:
                 get_random_wait(1200, 1500)
                 key_2_sent('o')
-                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) is None:
+                while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS, confidence=CONFI) \
+                        is None:
                     get_random_wait(20000, 30000)
                     key_2_sent('o')
                     pass
+            key_2_sent('k')  # jump
             open_tsm()
             if scaned_name != '000':
                 input_box(INPUT_BOX, scaned_name + '/exact')
@@ -383,8 +406,9 @@ AUCTION_12_TIME = (590, 395 + ADJ)
 AUCTION_ON_SHOP_STACK_INPUT = (683, 350 + ADJ)
 AUCTION_ON_SHOP_POST_INPUT = (597, 350 + ADJ)
 AUCTION_ON_SHOP_CONFIRM_BUTTON = (593, 500 + ADJ)
-AUCTION_ON_SHOP_OK_BUTTION = (515, 610 + ADJ, 115, 40)
-BUYOUT_ON_SHOP_OK_BUTTION = (735, 610 + ADJ, 115, 40)
+AUCTION_ON_SHOP_OK_BUTTON = (515, 610 + ADJ, 115, 40)
+AUCTION_ON_SHOP_STOP_SCAN_BUTTON = (900, 638 + ADJ)
+BUYOUT_ON_SHOP_OK_BUTTON = (735, 610 + ADJ, 115, 40)
 ANTI_AFK = 480
 SPEECH_BOX = (39, 610, 60, 40)
 SCAN_ROW = 5
@@ -677,7 +701,7 @@ while True:
                                 key_2_sent('l')
                                 get_random_wait(300, 600)
                                 if pyautogui.locateCenterOnScreen('list_auction_ok.png',
-                                                                  region=AUCTION_ON_SHOP_OK_BUTTION) is not None:
+                                                                  region=AUCTION_ON_SHOP_OK_BUTTON) is not None:
                                     move2(AUCTION_BUTTON_ON_SHOP)
                                     key_2_sent('l')
                                     input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
@@ -714,7 +738,7 @@ while True:
                                             break
 
                                 elif goods_name == '暗月火酒' and pyautogui.locateCenterOnScreen('list_auction_ok.png',
-                                                                  region=AUCTION_ON_SHOP_OK_BUTTION) is None:
+                                                                  region=AUCTION_ON_SHOP_OK_BUTTON) is None:
                                     move2((SELLER[0], FIRST_ROW_POST[1] + (i+1) * 19 + 5))
                                     key_2_sent('l')
                                     get_random_wait(300, 600)
