@@ -30,7 +30,7 @@ def modify(on_shelf, is_one_changed):
             data[1].get(name)[4] = 80
     elif not is_one_changed:
         for name in data[0]:
-            if data[1].get(name)[0] != 1:
+            if 1 != data[1].get(name)[0] != 9:
                 data[1].get(name)[0] = on_shelf
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
             data[1].get(name)[3] = lowest_snipper
