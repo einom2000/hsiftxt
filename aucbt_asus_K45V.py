@@ -365,7 +365,8 @@ def scan_is_end(scaned_name):
                 kill_process('Wow.exe', '魔兽世界')
                 time.sleep(10)
                 log_in(log_in_data)
-                while pyautogui.locateCenterOnScreen('wow_icon.png', region=LOGOUT_WOW_ICON, confidence=CONFI) is None:
+                while pyautogui.locateCenterOnScreen('role_select_icon.png', region=ROLE_SELECT_ICON_REGION,
+                                                     confidence=CONFI) is None:
                     pass
                 get_random_wait(1200, 1500)
                 key_2_sent('u')
@@ -567,6 +568,7 @@ SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 BT_LOGGED_IN_REGION = (250, 650, 350, 200)
 OFF_LINE_LOGO_REGION = (10, 30, 250, 150)
+ROLE_SELECT_ICON_REGION = (550, 650, 250, 100)
 X_RATIO = 1.04
 Y_RATIO = 1.04
 J_RATIO = 1.85
