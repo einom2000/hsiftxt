@@ -369,8 +369,6 @@ def scan_is_end(scaned_name):
                                                      confidence=CONFI) is None:
                     pass
                 get_random_wait(1200, 1500)
-                key_2_sent('u')
-                get_random_wait(1200, 1500)
                 key_2_sent('o')
                 while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS,
                                                      confidence=CONFI) is None:
