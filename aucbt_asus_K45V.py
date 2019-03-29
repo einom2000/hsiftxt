@@ -958,7 +958,7 @@ while True:
                     key_2_sent('l')
                     get_random_wait(100, 300)
                     move2(BUYOUT_BUTTON_ON_SHOP)
-                    for i in range(int(quotes[0][0])):
+                    for i in range(1):
                         key_2_sent('l')
                         get_random_wait(500, 1000)
                     with open('scan_data.json', 'r') as fp:
