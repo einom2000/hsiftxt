@@ -263,8 +263,8 @@ def scan_is_end(scaned_name):
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
-        engine.say('等待扫描结束, 或在' + str(int(60 - time.time() + ct)) + '秒后重新扫描')
-        engine.runAndWait()
+        # engine.say('等待扫描结束, 或在' + str(int(60 - time.time() + ct)) + '秒后重新扫描')
+        # engine.runAndWait()
         if time.time() - ct >= 60 and tried < 2:
             if pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX) is not None:
                 key_2_sent('?')
@@ -301,6 +301,8 @@ def input_box(positon, scr):
     move2(positon)
     get_random_wait(100, 200)
     key_2_sent('l')
+    get_random_wait(100, 200)
+    key_2_sent(']')
     get_random_wait(100, 200)
     key_2_sent(']')
     get_random_wait(100, 200)
@@ -352,12 +354,12 @@ H  == /RL MACRO
 (321, 617) BUY_SCAN_BUTTON
 (277, 220) INPUT_BOX
 '''
-CHANGE_ROLL = True
+CHANGE_ROLL = False
 MAX_MONEY = 1000.00
-UNIVERSIAL_DISCOUNT = 1
+UNIVERSIAL_DISCOUNT = 0.8
 FISHOIL_MAX = 8000
 CONFI = 0.9
-ADJ = -1
+ADJ = -2
 LOGOUT_WOW_ICON = (49, 93, 40, 40)
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -571,21 +573,21 @@ while True:
     if 18 > datetime.datetime.now().hour >= 15:
         TIME_TO_RUN = random.randint(12, 18)
         SCAN_ROW = 5
-        SCAN_PERIOD = (400, 500)
+        SCAN_PERIOD = (400, 600)
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
-        SCAN_PERIOD = (300, 360)
+        SCAN_PERIOD = (300, 500)
     else:
         TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 5
-        SCAN_PERIOD = (500, 600)
+        SCAN_PERIOD = (250, 350)
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-    engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
-               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-    engine.runAndWait()
+    # engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
+    #            str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+    # engine.runAndWait()
     print('Fishing duration currently is ' + str(TIME_TO_RUN * 0) + ' minutes.')
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
@@ -598,8 +600,8 @@ while True:
 
         if all_goods_to_do.get(goods_name)[0] != 9:
 
-            engine.say('扫描 ' + goods_name)
-            engine.runAndWait()
+            # engine.say('扫描 ' + goods_name)
+            # engine.runAndWait()
 
             input_box(INPUT_BOX, goods_name + '/exact')
 
@@ -652,7 +654,7 @@ while True:
                 quit_on_shelf = 0
                 for i in range(SCAN_ROW):
                     try:
-                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):
+                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
                                              FIRST_ROW_POST[3] * (i + 1) + 10), confidence=CONFI)
@@ -679,7 +681,7 @@ while True:
                                     move2(AUCTION_BUTTON_ON_SHOP)
                                     key_2_sent('l')
                                     input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
-                                    input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)
+                                    input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)  #  1 * int(quotes[i][0] )
                                     move2(AUCTION_12_TIME)
                                     key_2_sent('l')
                                     move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
@@ -711,6 +713,45 @@ while True:
                                                 json.dump(scan_data, fp, ensure_ascii=False)
                                             break
 
+                                elif goods_name == '暗月火酒' and pyautogui.locateCenterOnScreen('list_auction_ok.png',
+                                                                  region=AUCTION_ON_SHOP_OK_BUTTION) is None:
+                                    move2((SELLER[0], FIRST_ROW_POST[1] + (i+1) * 19 + 5))
+                                    key_2_sent('l')
+                                    get_random_wait(300, 600)
+                                    move2(AUCTION_BUTTON_ON_SHOP)
+                                    key_2_sent('l')
+                                    input_box(AUCTION_ON_SHOP_STACK_INPUT, on_shelf_stack)
+                                    input_box(AUCTION_ON_SHOP_POST_INPUT, on_shelf_post)  #  1 * int(quotes[i][0] )
+                                    move2(AUCTION_12_TIME)
+                                    key_2_sent('l')
+                                    move2(AUCTION_ON_SHOP_BUYOUT_PRICE_INPUT)
+                                    key_2_sent('l')
+                                    get_random_wait(100, 300)
+                                    key_2_sent('[')
+                                    get_random_wait(100, 300)
+                                    biding_price = pyperclip.paste()
+                                    input_box(AUCTION_ON_SHOP_BIDING_PRICE_INPUT, biding_price)
+                                    move2(AUCTION_ON_SHOP_CONFIRM_BUTTON)
+                                    get_random_wait(100, 300)
+                                    key_2_sent('l')
+                                    # record
+                                    with open('scan_data.json', 'r') as fp:
+                                        scan_data = json.load(fp)
+                                    for record in scan_data:
+                                        if record.get('item_name') == goods_name:
+                                            on_shelf_record = {
+                                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                                             + ' (' + datetime.datetime.today().strftime('%A'),
+                                                'sticking_volume': on_shelf_sticking_volume,
+                                                'sticking_volume price': quotes[i][2],
+                                                'onshelf_price': biding_price,
+                                                'onshelf_volume': on_shelf_stack * on_shelf_post,
+                                                'is_onshelf': 'True'
+                                            }
+                                            record.get('item_onshelf_history').append(on_shelf_record)
+                                            with open('scan_data.json', 'w') as fp:
+                                                json.dump(scan_data, fp, ensure_ascii=False)
+                                            break
                                 quit_on_shelf = 1
                             if fd is not None or fd2 is not None:
                                 quit_on_shelf = 1
@@ -767,18 +808,18 @@ while True:
     wait = random.randint(SCAN_PERIOD[0], SCAN_PERIOD[1])
     while time.time() - t1 <= wait:
         print('change role and rescan after ' + str(int(wait - (time.time() - t1))) + ' seconds.')
-        engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新扫描')
-        engine.runAndWait()
+        # engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新扫描')
+        # engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(6000, 8000)
+            get_random_wait(8000, 9000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)
         print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
               str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-        engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
-              str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
-        engine.runAndWait()
+        # engine.say('现在是 ' + str(datetime.datetime.now().hour) + '. 程序将结束于 ' +
+        #       str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
+        # engine.runAndWait()
 
     if datetime.datetime.now().hour == END_TIME[0] and datetime.datetime.now().minute >= END_TIME[1]:
         sys.exit()
@@ -795,9 +836,9 @@ while True:
             get_random_wait(20000, 30000)
             key_2_sent('o')
             pass
-    else:
-        move2(CLOSE_TSM)
-        get_random_wait(1200, 1500)
-        key_2_sent('l')
+    # else:
+    #     move2(CLOSE_TSM)
+    #     get_random_wait(1200, 1500)
+    #     key_2_sent('l')
 
 
