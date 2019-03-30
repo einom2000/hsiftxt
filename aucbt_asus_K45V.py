@@ -298,6 +298,7 @@ def log_in(account):
     win32gui.SetForegroundWindow(bt_window)
     win32gui.MoveWindow(bt_window, 0, 0, 1280, 820, 1)
     bt_rec = win32gui.GetWindowRect(bt_window)
+
     time.sleep(1)
 
     while True:
@@ -317,7 +318,9 @@ def log_in(account):
         wow_window = win32gui.FindWindow(None, '魔兽世界')
         if wow_window > 0:
             wow_is_running = True
-    time.sleep(3)
+
+    time.sleep(20)
+    win32gui.EnumWindows(enumhandler, None)
 
 
 def select_all_and_paste():
