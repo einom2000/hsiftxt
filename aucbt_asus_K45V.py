@@ -529,7 +529,7 @@ H  == /RL MACRO
 '''
 CHANGE_ROLL = False
 MAX_MONEY = 1000.00
-UNIVERSIAL_DISCOUNT = 0.8
+UNIVERSIAL_DISCOUNT = 1
 FISHOIL_MAX = 8000
 CONFI = 0.9
 ADJ = -2
@@ -842,11 +842,11 @@ while True:
                         if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
-                                             FIRST_ROW_POST[3] * (i + 1) + 10), confidence=CONFI)
+                                             (i + 1) * 19 + ADJ), confidence=CONFI)
 
                             im = pyautogui.screenshot(region=
-                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19 - 5, SELLER[1] + 10,
-                                             FIRST_ROW_POST[3] * (i + 1) + 5))
+                                            (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
+                                             (i + 1) * 19 + ADJ))
                             im.save('temp_sc.png')
                             engine.say('上架货物价格分析中')
                             engine.runAndWait()
