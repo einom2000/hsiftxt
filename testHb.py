@@ -1,8 +1,11 @@
 import keyboard, pyautogui,time, winshell, os
 while True:
-    if keyboard.is_pressed(' '):
-        print(pyautogui.position())
-        time.sleep(1)
+    # if keyboard.is_pressed(' '):
+    #     print(pyautogui.position())
+    #     time.sleep(1)
+
+    time.sleep(300)
+    pyautogui.press(' ')
 
 # SPEECH_BOX = (39, 610, 60, 40)
 # print(pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX))

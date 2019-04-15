@@ -415,7 +415,7 @@ def anti_afk():
     if time.time() - t >= ANTI_AFK:
         key_2_sent('k')
         get_random_wait(1000, 2000)
-        # t = time.time()
+        t = time.time()
         # key_2_sent('h')
         # while pyautogui.locateCenterOnScreen('reload_success.png', region=RELOAD_SUCCESS) is None:
         #     pass
@@ -529,10 +529,10 @@ H  == /RL MACRO
 '''
 CHANGE_ROLL = False
 MAX_MONEY = 1000.00
-UNIVERSIAL_DISCOUNT = 1
+UNIVERSIAL_DISCOUNT = 1.0
 FISHOIL_MAX = 8000
 CONFI = 0.9
-ADJ = -2
+ADJ = -1
 LOGOUT_WOW_ICON = (49, 93, 40, 40)
 SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
 CLOSE_TSM = (911, 128 + ADJ)
@@ -564,7 +564,7 @@ SPEECH_BOX = (39, 610, 60, 40)
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (350, 450)
-END_TIME = [random.randint(2, 2), random.randint(10, 30)]
+END_TIME = [random.randint(88, 100), random.randint(10, 30)]
 SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 BT_LOGGED_IN_REGION = (250, 650, 350, 200)
@@ -757,16 +757,16 @@ while True:
     # timetable for fishing during a day
     if 18 > datetime.datetime.now().hour >= 15:
         TIME_TO_RUN = random.randint(12, 18)
-        SCAN_ROW = 5
-        SCAN_PERIOD = (400, 600)
+        SCAN_ROW = 8
+        SCAN_PERIOD = (100, 200)
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
-        SCAN_PERIOD = (300, 500)
+        SCAN_PERIOD = (200, 300)
     else:
         TIME_TO_RUN = random.randint(18, 20)
-        SCAN_ROW = 5
-        SCAN_PERIOD = (250, 350)
+        SCAN_ROW = 8
+        SCAN_PERIOD = (100, 120)
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
@@ -839,7 +839,8 @@ while True:
                 quit_on_shelf = 0
                 for i in range(SCAN_ROW):
                     try:
-                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
+                        # if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
+                        if quotes[i][1] == 20 or quotes[i][1] == 10:
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
                                              (i + 1) * 19 + ADJ), confidence=CONFI)
@@ -995,7 +996,7 @@ while True:
         engine.say('在 ' + str(int(wait - (time.time() - t1))) + ' 更换角色或重新循环任务')
         engine.runAndWait()
         if fish_oil_count < FISHOIL_MAX:
-            get_random_wait(3000, 4000)
+            get_random_wait(15000, 20000)
             key_2_sent('f')
         else:
             get_random_wait(200, 400)
