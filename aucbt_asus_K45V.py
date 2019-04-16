@@ -762,7 +762,7 @@ while True:
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
-        SCAN_PERIOD = (200, 300)
+        SCAN_PERIOD = (100, 200)
     else:
         TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 8
@@ -839,8 +839,8 @@ while True:
                 quit_on_shelf = 0
                 for i in range(SCAN_ROW):
                     try:
-                        # if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
-                        if quotes[i][1] == 20 or quotes[i][1] == 10:
+                        if quotes[i][1] * quotes[i][0] > int(1 * on_shelf_sticking_volume):  # and quotes[i][1] * quotes[i][0] <= 120:
+                        # if quotes[i][1] == 5 or quotes[i][1] == 20:
                             fd = pyautogui.locateCenterOnScreen('self.png', region=
                                             (SELLER[0] - 10, FIRST_ROW_POST[1] + 0 * i * 19, SELLER[1] + 10,
                                              (i + 1) * 19 + ADJ), confidence=CONFI)
