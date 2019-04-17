@@ -950,7 +950,7 @@ while True:
 
                     if quit_on_shelf == 1:
                         break
-            if on_shelf < 3: # 0, and 1 all to buy lowest, 2 to just scanner
+            if on_shelf < 3 or ONLY_RECORD is True: # 0, and 1 all to buy lowest, 2 to just scanner
                 threshold_price = all_goods_to_do.get(goods_name)[3] * 100 * UNIVERSIAL_DISCOUNT
                 print('threshold_price = ' + str(threshold_price))
                 triger_pct = all_goods_to_do.get(goods_name)[4] / 100
@@ -961,7 +961,7 @@ while True:
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY) or \
                         ONLY_RECORD is True or on_shelf == 2:
 
-                    if ONLY_RECORD is True or on_shelf == 2:
+                    if ONLY_RECORD is not  True or on_shelf != 2:
                         move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                         engine.say('找到低价格，准备买入')
                         engine.runAndWait()
