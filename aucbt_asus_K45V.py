@@ -527,6 +527,7 @@ H  == /RL MACRO
 (321, 617) BUY_SCAN_BUTTON
 (277, 220) INPUT_BOX
 '''
+ONLY_RECORD = False
 CHANGE_ROLL = False
 MAX_MONEY = 1000.00
 UNIVERSIAL_DISCOUNT = 1.0
@@ -736,9 +737,12 @@ engine = pyttsx3.init()
 
 # ===== wait to start ====
 print('press F10 to start..')
-engine.say('请按F十开始')
+engine.say('请按F十开始,或者F九纪录数据')
 engine.runAndWait()
 while not keyboard.is_pressed('F10'):
+    if keyboard.is_pressed('F9'):
+        ONLY_RECORD = True
+        break
     pass
 engine.say('程序开始')
 engine.runAndWait()
@@ -955,9 +959,9 @@ while True:
                     triger_pct = 0.7
                 if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY) or \
-                        on_shelf == 2:
+                        ONLY_RECORD is True or on_shelf == 2:
 
-                    if on_shelf != 2:
+                    if ONLY_RECORD is True or on_shelf == 2:
                         move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                         engine.say('找到低价格，准备买入')
                         engine.runAndWait()
