@@ -511,7 +511,7 @@ G  == target npc
 Y  == talk with npc
 H  == /RL MACRO
 - == /LOGOUT /MACRO
-
+SET ENTER TO ELSE THAN CHAT
 '''
 # full screen size 1280x720
 # minimize the aution panel to the topleft of the top action bar
