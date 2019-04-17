@@ -142,10 +142,10 @@ while True:
         originals = goods_to_do.get(name).copy()
         lowest_average = int(calc_lowest_average(name, 7) / 100)
     else:
-        originals = ['无数值', '无数值', '无数值', '无数值', '无数值', '无数值', '无数值']
+        originals = [0, 0, 0, 0, 0, 0, 0]
         lowest_average = 0
 
-    print(Fore.YELLOW + Style.DIM + '%s-原来上架指数是：%s' %(name, originals[0]))
+    print(Fore.YELLOW + Style.DIM + '%s-原来上架指数是：%d' %(name, originals[0]))
     is_on_shelf = value_input(Fore.RED + Style.BRIGHT + '是否要上架 1 / 0: ', 0)
     print(Fore.YELLOW + Style.DIM + '%s-原来最低的售价是：%d' % (name, originals[1]))
     lowest = value_input(Fore.RED + Style.BRIGHT + '新的最低售价: ', 1)
