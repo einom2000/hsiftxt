@@ -111,7 +111,7 @@ while True:
                                    ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
     shows.style.set_properties(**{'text-align': 'right'})
     print(shows.astype(int))
-    print('please press SPACE to input! or press X to exit, or 9 to set all goods overlooked! or 0 to set all goods to'
+    print('please press SPACE to input! or press X to exit, or 9/2 to set all goods overlooked or just recorded(2)! or 0 to set all goods to'
           'snipper at 80% lowest_average or press 1 to keep curent onshelf and change the others to 0')
 
     while True:
@@ -119,6 +119,9 @@ while True:
             sys.exit()
         elif keyboard.is_pressed('9'):
             modify(9, True)
+            sys.exit()
+        elif keyboard.is_pressed('2'):
+            modify(2, True)
             sys.exit()
         elif keyboard.is_pressed('0'):
             modify(0, True)

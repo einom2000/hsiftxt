@@ -758,15 +758,15 @@ while True:
     if 18 > datetime.datetime.now().hour >= 15:
         TIME_TO_RUN = random.randint(12, 18)
         SCAN_ROW = 8
-        SCAN_PERIOD = (100, 200)
+        SCAN_PERIOD = (300, 400)
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 8
-        SCAN_PERIOD = (100, 200)
+        SCAN_PERIOD = (200, 300)
     else:
         TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 8
-        SCAN_PERIOD = (100, 120)
+        SCAN_PERIOD = (400, 500)
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
@@ -946,25 +946,30 @@ while True:
 
                     if quit_on_shelf == 1:
                         break
-            if on_shelf < 3:
+            if on_shelf < 3: # 0, and 1 all to buy lowest, 2 to just scanner
                 threshold_price = all_goods_to_do.get(goods_name)[3] * 100 * UNIVERSIAL_DISCOUNT
                 print('threshold_price = ' + str(threshold_price))
                 triger_pct = all_goods_to_do.get(goods_name)[4] / 100
                 print(triger_pct)
                 if triger_pct > 1:
                     triger_pct = 0.7
-                if quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct \
-                        and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY:
-                    move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
-                    engine.say('找到低价格，准备买入')
-                    engine.runAndWait()
-                    get_random_wait(100, 300)
-                    key_2_sent('l')
-                    get_random_wait(100, 300)
-                    move2(BUYOUT_BUTTON_ON_SHOP)
-                    for i in range(1):
+                if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct
+                        and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY) or \
+                        on_shelf == 2:
+
+                    if on_shelf != 2:
+                        move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
+                        engine.say('找到低价格，准备买入')
+                        engine.runAndWait()
+                        get_random_wait(100, 300)
                         key_2_sent('l')
-                        get_random_wait(500, 1000)
+                        get_random_wait(100, 300)
+                        move2(BUYOUT_BUTTON_ON_SHOP)
+                        for i in range(1):
+                            key_2_sent('l')
+                            get_random_wait(500, 1000)
+                    engine.say('价格纪录在案')
+                    engine.runAndWait()
                     with open('scan_data.json', 'r') as fp:
                         scan_data = json.load(fp)
                     for record in scan_data:
