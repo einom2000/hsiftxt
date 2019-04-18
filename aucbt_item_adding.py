@@ -30,8 +30,12 @@ def modify(on_shelf, is_one_changed):
             data[1].get(name)[4] = 60
     elif not is_one_changed:
         for name in data[0]:
-            if 1 != data[1].get(name)[0] != 9:
-                data[1].get(name)[0] = on_shelf
+            if on_shelf !=8:
+                if 1 != data[1].get(name)[0] != 9:
+                    data[1].get(name)[0] = on_shelf
+            else:
+                if data[1].get(name)[0] == 2:
+                    data[1].get(name)[0] = 9
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
             data[1].get(name)[3] = lowest_snipper
             data[1].get(name)[4] = 60
@@ -128,6 +132,9 @@ while True:
             sys.exit()
         elif keyboard.is_pressed('1'):
             modify(0, False)
+            sys.exit()
+        elif keyboard.is_pressed('8'):  #temp
+            modify(8, False)
             sys.exit()
         elif keyboard.is_pressed(' '):
             break

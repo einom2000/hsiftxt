@@ -796,6 +796,7 @@ while True:
 
             goods = Item()
 
+
             scan_is_end(goods_name)
 
             # move2(SORT_RESULT)
@@ -961,7 +962,7 @@ while True:
                         and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY) or \
                         ONLY_RECORD is True or on_shelf == 2:
 
-                    if ONLY_RECORD is not  True or on_shelf != 2:
+                    if ONLY_RECORD is not  True and on_shelf != 2:
                         move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                         engine.say('找到低价格，准备买入')
                         engine.runAndWait()
