@@ -960,11 +960,11 @@ while True:
                 if triger_pct >= 0.7:
                     triger_pct = 0.7
                 if quotes[1][2] == 0:
-                    quotes[1][2] = quotes[0][2] +1
-                print(quotes[0][2] / quotes[1][2])
+                    second_quote = quotes[0][2] +1
+                print(quotes[0][2] / second_quote)
                 print(quotes[0][2], threshold_price )
                 print(quotes[0][2] * quotes[0][1], MAX_MONEY )
-                if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct) or \
+                if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / second_quote <= triger_pct) or \
                         (quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] / 10000 <= MAX_MONEY ) or \
                         ONLY_RECORD is True or on_shelf == 2:
 
