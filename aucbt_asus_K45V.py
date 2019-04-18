@@ -959,8 +959,9 @@ while True:
                 print(triger_pct)
                 if triger_pct >= 0.7:
                     triger_pct = 0.7
+                second_quote = quotes[0][2]
                 if quotes[1][2] == 0:
-                    second_quote = quotes[0][2] +1
+                    second_quote = quotes[0][2] + 1
                 print(quotes[0][2] / second_quote)
                 print(quotes[0][2], threshold_price )
                 print(quotes[0][2] * quotes[0][1], MAX_MONEY )
