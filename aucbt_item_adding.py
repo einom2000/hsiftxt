@@ -27,7 +27,7 @@ def modify(on_shelf, is_one_changed):
             data[1].get(name)[0] = on_shelf
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
             data[1].get(name)[3] = lowest_snipper
-            data[1].get(name)[4] = 60
+            data[1].get(name)[4] = 100
     elif not is_one_changed:
         for name in data[0]:
             if on_shelf !=8:
@@ -38,7 +38,7 @@ def modify(on_shelf, is_one_changed):
                     data[1].get(name)[0] = 9
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
             data[1].get(name)[3] = lowest_snipper
-            data[1].get(name)[4] = 60
+            data[1].get(name)[4] = 100
     temp_show = pd.DataFrame.from_dict(data[1], orient='index', columns=
     ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
     temp_show.style.set_properties(**{'text-align': 'right'})

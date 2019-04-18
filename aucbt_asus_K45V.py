@@ -529,8 +529,8 @@ SET ENTER TO ELSE THAN CHAT
 '''
 ONLY_RECORD = False
 CHANGE_ROLL = False
-MAX_MONEY = 1000.00
-UNIVERSIAL_DISCOUNT = 1.0
+MAX_MONEY = 3000.00
+UNIVERSIAL_DISCOUNT = 1
 FISHOIL_MAX = 8000
 CONFI = 0.9
 ADJ = -1
@@ -565,7 +565,7 @@ SPEECH_BOX = (39, 610, 60, 40)
 SCAN_ROW = 5
 SELLER = (567, 60)  # x and length
 SCAN_PERIOD = (350, 450)
-END_TIME = [random.randint(4, 4), random.randint(10, 30)]
+END_TIME = [random.randint(4, 6), random.randint(10, 30)]
 SECOND_ROLD_SELECTED = (1169, 152, 100, 50)
 FOURTH_ROLD_SELECTED = (1169, 252, 100, 50)
 BT_LOGGED_IN_REGION = (250, 650, 350, 200)
@@ -765,12 +765,12 @@ while True:
         SCAN_PERIOD = (300, 400)
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
-        SCAN_ROW = 8
-        SCAN_PERIOD = (200, 300)
+        SCAN_ROW = 4
+        SCAN_PERIOD = (40, 60)
     else:
         TIME_TO_RUN = random.randint(18, 20)
-        SCAN_ROW = 8
-        SCAN_PERIOD = (400, 500)
+        SCAN_ROW = 4
+        SCAN_PERIOD = (40, 50)
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
@@ -836,6 +836,7 @@ while True:
             if on_shelf == 1:
                 on_shelf_lowest = all_goods_to_do.get(goods_name)[1]
                 on_shelf_sticking_volume = all_goods_to_do.get(goods_name)[2]
+                on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
                 on_shelf_post = all_goods_to_do.get(goods_name)[5] - random.randint(0, 1)
                 on_shelf_stack = all_goods_to_do.get(goods_name)[6]
                 if 180 > on_shelf_stack >= 100:
@@ -956,13 +957,18 @@ while True:
                 print('threshold_price = ' + str(threshold_price))
                 triger_pct = all_goods_to_do.get(goods_name)[4] / 100
                 print(triger_pct)
-                if triger_pct > 1:
+                if triger_pct >= 0.7:
                     triger_pct = 0.7
-                if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct
-                        and quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] <= MAX_MONEY) or \
+                if quotes[1][2] == 0:
+                    quotes[1][2] = quotes[0][2] +1
+                print(quotes[0][2] / quotes[1][2])
+                print(quotes[0][2], threshold_price )
+                print(quotes[0][2] * quotes[0][1], MAX_MONEY )
+                if (quotes[0][2] != 0 and quotes[1][2] != 0 and quotes[0][2] / quotes[1][2] <= triger_pct) or \
+                        (quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] / 10000 <= MAX_MONEY ) or \
                         ONLY_RECORD is True or on_shelf == 2:
 
-                    if ONLY_RECORD is not  True and on_shelf != 2:
+                    if ONLY_RECORD is not True and on_shelf != 2:
                         move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                         engine.say('找到低价格，准备买入')
                         engine.runAndWait()
@@ -973,26 +979,26 @@ while True:
                         for i in range(1):
                             key_2_sent('l')
                             get_random_wait(500, 1000)
-                    engine.say('价格纪录在案')
-                    engine.runAndWait()
-                    with open('scan_data.json', 'r') as fp:
-                        scan_data = json.load(fp)
-                    for record in scan_data:
-                        if record.get('item_name') == goods_name:
-                            buy_out_record = {
-                                'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
-                                             + ' (' + datetime.datetime.today().strftime('%A'),
-                                'threshold_price': threshold_price / 100,
-                                'threshold_pct': triger_pct,
-                                'buyout_price': quotes[0][2],
-                                'buyout_post': quotes[0][0],
-                                'buyout_stack': quotes[0][1],
-                                '2nd_quotes': quotes[1][2]
-                            }
-                            record.get('item_buyout_history').append(buy_out_record)
-                            with open('scan_data.json', 'w') as fp:
-                                json.dump(scan_data, fp, ensure_ascii=False)
-                            break
+                engine.say('价格纪录在案')
+                engine.runAndWait()
+                with open('scan_data.json', 'r') as fp:
+                    scan_data = json.load(fp)
+                for record in scan_data:
+                    if record.get('item_name') == goods_name:
+                        buy_out_record = {
+                            'date&time': datetime.datetime.today().strftime('%Y-%m-%d %H:%M')
+                                         + ' (' + datetime.datetime.today().strftime('%A'),
+                            'threshold_price': threshold_price / 100,
+                            'threshold_pct': triger_pct,
+                            'buyout_price': quotes[0][2],
+                            'buyout_post': quotes[0][0],
+                            'buyout_stack': quotes[0][1],
+                            '2nd_quotes': quotes[1][2]
+                        }
+                        record.get('item_buyout_history').append(buy_out_record)
+                        with open('scan_data.json', 'w') as fp:
+                            json.dump(scan_data, fp, ensure_ascii=False)
+                        break
 
             # else to check if the 1st is lower the threshold of snipper
             # to check if the 1st is lower than % of the threshold
