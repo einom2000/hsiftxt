@@ -959,7 +959,7 @@ while True:
                 print(triger_pct)
                 if triger_pct >= 0.7:
                     triger_pct = 0.7
-                second_quote = quotes[0][2]
+                second_quote = quotes[1][2]
                 if quotes[1][2] == 0:
                     second_quote = quotes[0][2] + 1
                 print(quotes[0][2] / second_quote)
