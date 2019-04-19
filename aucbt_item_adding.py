@@ -9,6 +9,7 @@ import datetime
 
 def value_input(display, index):
     correct = False
+    value = None
     while not correct:
         try:
             value = int(input(display))
@@ -20,6 +21,7 @@ def value_input(display, index):
             except TypeError:
                 print('此项输入错误！')
     return value
+
 
 def modify(on_shelf, is_one_changed):
     if is_one_changed:
@@ -40,7 +42,7 @@ def modify(on_shelf, is_one_changed):
                      data[1].get(name)[0] = 2
 
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
-            data[1].get(name)[3] = lowest_snipper
+            data[1].get(name)[3] = int(lowest_snipper * 0.80)
             data[1].get(name)[4] = 100
     temp_show = pd.DataFrame.from_dict(data[1], orient='index', columns=
     ['上架', '最低价', '紧盯量', '扫最高', '扫货比', '上架数', '堆数量'])
@@ -50,12 +52,14 @@ def modify(on_shelf, is_one_changed):
 
     while True:
         if keyboard.is_pressed('y'):
+            shutil.copyfile('target_goods_list.json', 'target_goods_list.json_backup')
             with open('target_goods_list.json', 'w') as fp:
                 json.dump(data, fp, ensure_ascii=False)
             break
         elif keyboard.is_pressed('n'):
             print('editing canceled')
             break
+
 
 def calc_lowest_average(goodsname, lastday):
     today = datetime.datetime.today()
@@ -100,6 +104,25 @@ def calc_lowest_average(goodsname, lastday):
     else:
         return 0
 
+def delete_item():
+    del_name = input('请输入要删除的商品：').replace(' ', '')
+    if del_name !='':
+        return
+    if del_name in goods_name:
+        print('商品：' + del_name + ' 将被删除！ 请按Y确认，或N退出！')
+    while True:
+        # if keyboard.is_pressed('y'):
+        #     if name not in goods_name:
+        #         goods_name.append(name)
+        #     goods_to_do.update (tmp)
+        #     data = [goods_name, goods_to_do]
+        #     # print(goods_name)
+        #     # print(goods_to_do)
+        #     with open('target_goods_list.json', 'w') as fp:
+        #         json.dump(data, fp, ensure_ascii=False)
+            break
+        else:
+            break
 
 init()
 t = time.localtime()
@@ -138,7 +161,7 @@ while True:
             modify(2, True)
             sys.exit()
         elif keyboard.is_pressed('0'):
-            modify(0, True) # need to be done
+            modify(0, True)
             sys.exit()
         elif keyboard.is_pressed('1'):
             modify(0, False)
@@ -148,6 +171,9 @@ while True:
             sys.exit()
         elif keyboard.is_pressed(' '):
             break
+        elif keyboard.is_pressed('d'): # need to be programed
+            delete_item()
+            sys.exit()
         else:
             pass
     time.sleep(1)
