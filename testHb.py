@@ -21,13 +21,13 @@ from win32con import VK_CAPITAL
 import winshell, psutil
 
 
-while True:
+# while True:
     # if keyboard.is_pressed(' '):
     #     print(pyautogui.position())
     #     time.sleep(1)
-
-    time.sleep(300)
-    pyautogui.press(' ')
+    #
+    # time.sleep(300)
+    # pyautogui.press(' ')
 
 # SPEECH_BOX = (39, 610, 60, 40)
 # print(pyautogui.locateCenterOnScreen('speech_box.png', region=SPEECH_BOX))
@@ -42,10 +42,13 @@ while True:
 # print(log_in_data)
 # print(bn_target)
 
-# image = 'test.jpg'
-# img = Image.open('ocr_files\\' + image)
-# img = PIL.ImageOps.invert(img)
-# img.save('ocr_files\\' + '_con_' + image)
-# img = cv2.imread('ocr_files\\' + '_con_' + image)
-# img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
-# cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)
+image = 'test.jpg'
+img = Image.open('ocr_files\\' + image)
+img = PIL.ImageOps.invert(img)
+img.save('ocr_files\\' + '_con_' + image)
+img = cv2.imread('ocr_files\\' + '_con_' + image)
+img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
+cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)
+kernel = np.array([[-1,-1,-1], [-1,9.9,-1], [-1,-1,-1]])
+im = cv2.filter2D(img, -1, kernel)
+cv2.imwrite('ocr_files\\' + 'test_' + image, im)
