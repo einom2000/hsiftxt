@@ -36,6 +36,9 @@ def modify(on_shelf, is_one_changed):
             else:
                 if data[1].get(name)[0] == 2:
                     data[1].get(name)[0] = 9
+                elif data[1].get(name)[0] == 9:
+                     data[1].get(name)[0] = 2
+
             lowest_snipper = int(calc_lowest_average(name, 3) / 100)
             data[1].get(name)[3] = lowest_snipper
             data[1].get(name)[4] = 100

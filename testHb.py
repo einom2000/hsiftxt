@@ -1,4 +1,26 @@
 import keyboard, pyautogui,time, winshell, os
+import serial, keyboard, sys
+import win32api, win32gui, winsound
+import time, random, pyautogui
+import logging, json
+import cv2, os
+from datetime import datetime
+from tkinter import *
+from PIL import Image, ImageFilter, ImageChops
+import pytesseract
+import numpy as np
+import cv2
+import PIL.ImageOps
+import pyperclip
+# from matplotlib import pyplot as plt
+import json
+import datetime
+import pyttsx3
+from win32api import GetKeyState
+from win32con import VK_CAPITAL
+import winshell, psutil
+
+
 while True:
     # if keyboard.is_pressed(' '):
     #     print(pyautogui.position())
@@ -19,3 +41,11 @@ while True:
 #
 # print(log_in_data)
 # print(bn_target)
+
+# image = 'test.jpg'
+# img = Image.open('ocr_files\\' + image)
+# img = PIL.ImageOps.invert(img)
+# img.save('ocr_files\\' + '_con_' + image)
+# img = cv2.imread('ocr_files\\' + '_con_' + image)
+# img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
+# cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)

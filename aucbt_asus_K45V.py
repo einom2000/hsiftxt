@@ -807,8 +807,11 @@ while True:
 
             for i in range(SCAN_ROW):
                 quote = goods.get(i, 0)
-                # if quote[2] == 0:
-                #     quote = goods.get(i, 4)
+                if quote[2] == 0:
+                    time.sleep(2)
+                    engine.say('扫描的零价格，重新识别一次')
+                    engine.runAndWait()
+                    quote = goods.get(i, 0)
                 quotes.append(quote)
                 print(quote)
             with open('scan_history\\' + goods_name + '_history.json', 'r') as fp:
@@ -969,7 +972,7 @@ while True:
                         (quotes[0][2] <= threshold_price and quotes[0][2] * quotes[0][1] / 10000 <= MAX_MONEY ) or \
                         ONLY_RECORD is True or on_shelf == 2:
 
-                    if ONLY_RECORD is not True and on_shelf != 2:
+                    if ONLY_RECORD is not True and on_shelf != 2 and quotes[0][2] != 0:
                         move2((FIRST_ROW_POST[0], FIRST_ROW_POST[1] + 9))
                         engine.say('找到低价格，准备买入')
                         engine.runAndWait()
