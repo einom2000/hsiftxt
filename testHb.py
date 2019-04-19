@@ -42,13 +42,15 @@ import winshell, psutil
 # print(log_in_data)
 # print(bn_target)
 
-image = 'test.jpg'
-img = Image.open('ocr_files\\' + image)
-img = PIL.ImageOps.invert(img)
-img.save('ocr_files\\' + '_con_' + image)
-img = cv2.imread('ocr_files\\' + '_con_' + image)
-img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
-cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)
-kernel = np.array([[-1,-1,-1], [-1,9.6,-1], [-1,-1,-1]])
-im = cv2.filter2D(img, -1, kernel)
-cv2.imwrite('ocr_files\\' + 'test_' + image, im)
+# image = 'test.jpg'
+# img = Image.open('ocr_files\\' + image)
+# img = PIL.ImageOps.invert(img)
+# img.save('ocr_files\\' + '_con_' + image)
+# img = cv2.imread('ocr_files\\' + '_con_' + image)
+# img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
+# cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)
+# kernel = np.array([[-1,-1,-1], [-1,9.6,-1], [-1,-1,-1]])
+# im = cv2.filter2D(img, -1, kernel)
+# cv2.imwrite('ocr_files\\' + 'test_' + image, im)
+with open('scan_data.json', 'r') as fp:
+    scan_data = json.load(fp)

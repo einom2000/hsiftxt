@@ -347,6 +347,8 @@ def scan_is_end(scaned_name):
         if fd is not None:
             found = True
             time.sleep(1)
+            engine.say('扫描完成')
+            engine.runAndWait()
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
@@ -530,6 +532,8 @@ SET ENTER TO ELSE THAN CHAT
 (321, 617) BUY_SCAN_BUTTON
 (277, 220) INPUT_BOX
 '''
+SNIPPER_OVER_SCAN = 3
+THEME = 'daytime'
 ONLY_RECORD = False
 CHANGE_ROLL = False
 MAX_MONEY = 3000.00
@@ -759,21 +763,31 @@ fish_oil_count = 0
 
 open_tsm()
 
+snipper_over_scan = 0
+
 while True:
 
     # timetable for fishing during a day
-    if 18 > datetime.datetime.now().hour >= 15:
+    if 18 > datetime.datetime.now().hour >= 12:
         TIME_TO_RUN = random.randint(12, 18)
-        SCAN_ROW = 8
-        SCAN_PERIOD = (300, 400)
+        SCAN_ROW = 4
+        SCAN_PERIOD = (40, 60)
+        THEME = 'afternoon'
     elif datetime.datetime.now().hour >= 18:
         TIME_TO_RUN = random.randint(9, 12)
         SCAN_ROW = 4
         SCAN_PERIOD = (40, 60)
+        THEME = 'night'
+    elif datetime.datetime.now().hour <= 3:
+        TIME_TO_RUN = random.randint(9, 12)
+        SCAN_ROW = 4
+        SCAN_PERIOD = (40, 60)
+        THEME = 'night'
     else:
         TIME_TO_RUN = random.randint(18, 20)
         SCAN_ROW = 4
-        SCAN_PERIOD = (40, 50)
+        SCAN_PERIOD = (40, 60)
+        THEME = 'daytime'
     # force to end
     print('Now is ' + str(datetime.datetime.now().hour) + '. Program is going to terminate on ' +
           str(END_TIME[0]) + ':' + str(END_TIME[1]) + ' .')
@@ -790,7 +804,14 @@ while True:
         # anti AFK
         anti_afk()
 
-        if all_goods_to_do.get(goods_name)[0] != 9 and all_goods_to_do.get(goods_name)[0] != 7:
+        if ((all_goods_to_do.get(goods_name)[0] == 2 and THEME == 'daytime')
+                and all_goods_to_do.get(goods_name)[0] != 9) \
+                or all_goods_to_do.get(goods_name)[0] == 0 \
+                or all_goods_to_do.get(goods_name)[0] == 1 \
+                or (all_goods_to_do.get(goods_name)[0] == 2 and THEME != 'daytime'
+                    and snipper_over_scan % 4 == 0
+                    and all_goods_to_do.get(goods_name)[0] != 9):
+
 
             # engine.say('扫描 ' + goods_name)
             # engine.runAndWait()
@@ -1045,5 +1066,5 @@ while True:
             key_2_sent('o')
             pass
 
-
+    snipper_over_scan += 1
 
