@@ -7,7 +7,7 @@ from colorama import init, Fore, Back, Style
 import winsound
 import pyperclip
 init()
-SPF = 1.5
+SPF = 3
 # while not keyboard.is_pressed(','):
 # #     pass
 # # time.sleep(3)
@@ -43,7 +43,7 @@ def auto_key_in(cd, pr, vl):
     pyautogui.click(coordination.GO_BID_BUTTON)
     time.sleep(3)
     pyautogui.click(coordination.CONFIRM)
-    time.sleep(2)
+    time.sleep(3)
     pyautogui.click(coordination.CONFIRM)
     time.sleep(2)
     pyautogui.click(coordination.END_BUTTON)
