@@ -122,6 +122,8 @@ def process_img(image):
     img.save('ocr_files\\' + '_con_' + image)
     img = cv2.imread('ocr_files\\' + '_con_' + image)
     img = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 3, 21)
+    # kernel = np.array([[-1, -1, -1], [-1, 9.6, -1], [-1, -1, -1]])
+    # img = cv2.filter2D(img, -1, kernel)
     cv2.imwrite('ocr_files\\' + '_dnos_' + image, img)
     return img
 
@@ -787,7 +789,7 @@ while True:
         # anti AFK
         anti_afk()
 
-        if all_goods_to_do.get(goods_name)[0] != 9:
+        if all_goods_to_do.get(goods_name)[0] != 9 != 7:
 
             # engine.say('扫描 ' + goods_name)
             # engine.runAndWait()
