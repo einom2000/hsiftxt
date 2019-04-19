@@ -21,11 +21,11 @@ from win32con import VK_CAPITAL
 import winshell, psutil
 
 
-# while True:
-    # if keyboard.is_pressed(' '):
-    #     print(pyautogui.position())
-    #     time.sleep(1)
-    #
+while True:
+    if keyboard.is_pressed(' '):
+        print(pyautogui.position())
+        time.sleep(1)
+
     # time.sleep(300)
     # pyautogui.press(' ')
 
@@ -52,5 +52,3 @@ import winshell, psutil
 # kernel = np.array([[-1,-1,-1], [-1,9.6,-1], [-1,-1,-1]])
 # im = cv2.filter2D(img, -1, kernel)
 # cv2.imwrite('ocr_files\\' + 'test_' + image, im)
-with open('scan_data.json', 'r') as fp:
-    scan_data = json.load(fp)

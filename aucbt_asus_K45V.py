@@ -241,7 +241,7 @@ def open_tsm():
         key_2_sent('g')
         get_random_wait(300, 700)
         key_2_sent('y')
-        get_random_wait(500, 700)
+        get_random_wait(1200, 1700)
         fd = pyautogui.locateCenterOnScreen('close_tsm_icon.png', region=CLOSE_TSM_ICON)
         if fd is not None:
             break
@@ -542,7 +542,7 @@ FISHOIL_MAX = 8000
 CONFI = 0.9
 ADJ = -1
 LOGOUT_WOW_ICON = (49, 93, 40, 40)
-SCAN_DONE_PIC = (300, 600 + ADJ, 110, 60)
+SCAN_DONE_PIC = (258, 580 + ADJ, 200, 70)
 CLOSE_TSM = (911, 128 + ADJ)
 CLOSE_TSM_ICON = (897, 112, 40, 40)
 RELOAD_SUCCESS = (1036, 709, 180, 50)
