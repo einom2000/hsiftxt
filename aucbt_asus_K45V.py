@@ -346,6 +346,7 @@ def scan_is_end(scaned_name):
         fd = pyautogui.locateCenterOnScreen('scan_done.png', region=SCAN_DONE_PIC, grayscale=False)
         if fd is not None:
             found = True
+            time.sleep(1)
             break
         time.sleep(0.5)
         print('wating for scan to finish, rescan after' + str(int(60 - time.time() + ct)))
@@ -789,7 +790,7 @@ while True:
         # anti AFK
         anti_afk()
 
-        if all_goods_to_do.get(goods_name)[0] != 9 != 7:
+        if all_goods_to_do.get(goods_name)[0] != 9 and all_goods_to_do.get(goods_name)[0] != 7:
 
             # engine.say('扫描 ' + goods_name)
             # engine.runAndWait()
